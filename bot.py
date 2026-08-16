@@ -10,7 +10,6 @@ from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKe
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 
-# بارگذاری متغیرهای محیطی
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = int(os.getenv("ADMIN_ID", 0))
@@ -31,10 +30,10 @@ async def init_db():
             CREATE TABLE IF NOT EXISTS apis (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT,
-                architecture TEXT, -- 'openai' یا 'gemini'
+                architecture TEXT,
                 base_url TEXT,
                 api_key TEXT,
-                models TEXT -- لیست مدل‌ها به صورت JSON
+                models TEXT
             )
         """)
         await db.execute("""
@@ -117,7 +116,7 @@ async def cb_admin_mode(callback: CallbackQuery):
 async def cb_user_mode(callback: CallbackQuery):
     await callback.message.edit_text("🤖 پنل کاربری:", reply_markup=user_panel_keyboard())
 
-# ================= هندلرهای پنل مدیریت (افزودن API) =================
+# ================= مدیریت APIها =================
 @router.callback_query(F.data == "add_api")
 async def add_api_start(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer("نام این اتصال را وارد کنید (مثلا: Groq API):")
@@ -133,7 +132,7 @@ async def add_api_name(message: Message, state: FSMContext):
 async def add_api_arch(callback: CallbackQuery, state: FSMContext):
     arch = "openai" if callback.data == "arch_openai" else "gemini"
     await state.update_data(architecture=arch)
-    await callback.message.answer("آدرس Base URL را وارد کنید:\n(برای جمینای می‌توانید عبارت `gemini` را بفرستید)")
+    await callback.message.answer("آدرس Base URL را وارد کنید:\n(مثال: https://api.openai.com/v1 یا برای جمینای عبارت gemini)")
     await state.set_state(AddAPIStates.waiting_for_url)
 
 @router.message(AddAPIStates.waiting_for_url)
@@ -163,7 +162,6 @@ async def add_api_models(message: Message, state: FSMContext):
     await message.answer("✅ اتصال با موفقیت ذخیره شد!", reply_markup=admin_keyboard())
     await state.clear()
 
-# ================= هندلرهای لیست و حذف API =================
 @router.callback_query(F.data == "list_apis")
 async def list_apis(callback: CallbackQuery):
     async with aiosqlite.connect(DB_PATH) as db:
@@ -189,7 +187,7 @@ async def delete_api(callback: CallbackQuery):
     await callback.answer("✅ حذف شد!", show_alert=True)
     await list_apis(callback)
 
-# ================= هندلرهای کاربری =================
+# ================= بخش کاربری =================
 @router.callback_query(F.data == "clear_history")
 async def clear_history(callback: CallbackQuery):
     async with aiosqlite.connect(DB_PATH) as db:
@@ -233,7 +231,7 @@ async def finalize_selection(callback: CallbackQuery):
         await db.commit()
     await callback.message.edit_text(f"✅ مدل {model} تنظیم شد. حالا می‌توانید چت کنید!", reply_markup=user_panel_keyboard())
 
-# ================= منطق چت و اتصال به API =================
+# ================= حافظه و فراخوانی API =================
 async def fetch_history(user_id, limit=10):
     async with aiosqlite.connect(DB_PATH) as db:
         async with db.execute("SELECT role, content FROM history WHERE user_id = ? ORDER BY id DESC LIMIT ?", (user_id, limit)) as cursor:
@@ -246,37 +244,63 @@ async def save_history(user_id, role, content):
         await db.commit()
 
 async def call_ai_api(api_data, model, messages):
-    url = api_data['base_url']
-    key = api_data['api_key']
+    url = api_data['base_url'].strip().rstrip('/')
+    key = api_data['api_key'].strip()
     arch = api_data['architecture']
     
     async with aiohttp.ClientSession() as session:
         if arch == "openai":
-            headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
-            payload = {"model": model, "messages": messages}
-            async with session.post(url, headers=headers, json=payload) as resp:
-                data = await resp.json()
-                return data['choices'][0]['message']['content']
+            if not url.endswith("/chat/completions"):
+                url += "/chat/completions"
+                
+            headers = {
+                "Authorization": f"Bearer {key}",
+                "Content-Type": "application/json"
+            }
+            payload = {
+                "model": model,
+                "messages": messages
+            }
+            
+            async with session.post(url, headers=headers, json=payload, timeout=30) as resp:
+                data = await resp.json(content_type=None)
+                
+                if resp.status != 200:
+                    err = data.get('error', {}).get('message', str(data))
+                    return f"❌ خطای API (کد {resp.status}):\n{err}"
+                
+                if 'choices' in data and len(data['choices']) > 0:
+                    return data['choices'][0]['message']['content']
+                return f"❌ پاسخ نامعتبر از سرور:\n{str(data)}"
                 
         elif arch == "gemini":
-            # تبدیل ساختار استاندارد به ساختار جمینای
             gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
             contents = []
             for msg in messages:
                 role = "user" if msg["role"] == "user" else "model"
                 contents.append({"role": role, "parts": [{"text": msg["content"]}]})
+            
             payload = {"contents": contents}
             headers = {"Content-Type": "application/json"}
-            async with session.post(gemini_url, headers=headers, json=payload) as resp:
-                data = await resp.json()
-                return data['candidates'][0]['content']['parts'][0]['text']
-    return "خطا در برقراری ارتباط با API."
+            
+            async with session.post(gemini_url, headers=headers, json=payload, timeout=30) as resp:
+                data = await resp.json(content_type=None)
+                
+                if resp.status != 200:
+                    err = data.get('error', {}).get('message', str(data))
+                    return f"❌ خطای Gemini (کد {resp.status}):\n{err}"
+                
+                try:
+                    return data['candidates'][0]['content']['parts'][0]['text']
+                except (KeyError, IndexError):
+                    return f"❌ پاسخ نامعتبر از Gemini:\n{str(data)}"
+
+    return "خطا در برقراری ارتباط."
 
 @router.message(F.text & ~F.text.startswith("/"))
 async def handle_user_message(message: Message):
     user_id = message.from_user.id
     
-    # خواندن تنظیمات کاربر
     async with aiosqlite.connect(DB_PATH) as db:
         async with db.execute("SELECT current_api_id, current_model FROM user_settings WHERE user_id = ?", (user_id,)) as cursor:
             settings = await cursor.fetchone()
@@ -286,20 +310,16 @@ async def handle_user_message(message: Message):
         
     api_id, model = settings
     
-    # خواندن اطلاعات API
     async with aiosqlite.connect(DB_PATH) as db:
         async with db.execute("SELECT architecture, base_url, api_key FROM apis WHERE id = ?", (api_id,)) as cursor:
             api_info = await cursor.fetchone()
             
     if not api_info:
-        return await message.answer("اتصال API منقضی شده است.")
+        return await message.answer("اتصال API یافت نشد یا حذف شده است.")
         
     api_data = {"architecture": api_info[0], "base_url": api_info[1], "api_key": api_info[2]}
     
-    # ذخیره پیام کاربر
     await save_history(user_id, "user", message.text)
-    
-    # دریافت حافظه
     messages = await fetch_history(user_id, limit=10)
     
     wait_msg = await message.answer("درحال پردازش... ⏳")
@@ -309,9 +329,8 @@ async def handle_user_message(message: Message):
         await save_history(user_id, "assistant", response)
         await wait_msg.edit_text(response)
     except Exception as e:
-        await wait_msg.edit_text(f"خطایی رخ داد: {str(e)}")
+        await wait_msg.edit_text(f"خطای غیرمنتظره:\n{str(e)}")
 
-# ================= اجرای ربات =================
 async def main():
     await init_db()
     await dp.start_polling(bot)
