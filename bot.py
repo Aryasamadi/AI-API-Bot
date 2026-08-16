@@ -47,7 +47,8 @@ LANGS = {
         "router_details": "📌 **Router:** {}\n🌐 Base URL: `{}`\n🔑 Token: `{}`\n\n📦 **Models:**",
         "btn_add_mod": "➕ Add Model", "btn_del_router": "🗑 Delete Router", "del_confirm_msg": "⚠️ Are you sure you want to delete this router and its models?",
         "btn_yes": "✅ Yes, Delete", "btn_no": "❌ No, Cancel", "del_success": "✅ Router deleted.",
-        "pls_select_model": "Please select a model first."
+        "pls_select_model": "Please select a model first.",
+        "invalid_command": "❌ Please use valid logical commands."
     },
     "fa": {
         "name": "🇮🇷 فارسی", "welcome_new": "لطفاً زبان خود را انتخاب کنید:", "welcome_back": "خوش برگشتی، {name}!",
@@ -66,7 +67,8 @@ LANGS = {
         "router_details": "📌 **روتر:** {}\n🌐 آدرس: `{}`\n🔑 توکن: `{}`\n\n📦 **مدل‌ها:**",
         "btn_add_mod": "➕ افزودن مدل", "btn_del_router": "🗑 حذف روتر", "del_confirm_msg": "⚠️ آیا از حذف این روتر مطمئن هستید؟",
         "btn_yes": "✅ بله، حذف", "btn_no": "❌ خیر، لغو", "del_success": "✅ روتر حذف شد.",
-        "pls_select_model": "لطفاً یک مدل را انتخاب بکنید."
+        "pls_select_model": "لطفاً یک مدل را انتخاب بکنید.",
+        "invalid_command": "❌ لطفاً از دستورات منطقی استفاده کنید."
     },
     "ru": {
         "name": "🇷🇺 Русский", "welcome_new": "Пожалуйста, выберите язык:", "welcome_back": "С возвращением, {name}!",
@@ -84,7 +86,8 @@ LANGS = {
         "router_details": "📌 **Роутер:** {}\n🌐 URL: `{}`\n🔑 Токен: `{}`\n\n📦 **Модели:**",
         "btn_add_mod": "➕ Добавить модель", "btn_del_router": "🗑 Удалить", "del_confirm_msg": "⚠️ Вы уверены?",
         "btn_yes": "✅ Да", "btn_no": "❌ Нет", "del_success": "✅ Удалено.",
-        "pls_select_model": "Пожалуйста, сначала выберите модель."
+        "pls_select_model": "Пожалуйста, сначала выберите модель.",
+        "invalid_command": "❌ Пожалуйста, используйте правильные команды."
     },
     "ar": {
         "name": "🇸🇦 العربية", "welcome_new": "يرجى اختيار لغتك:", "welcome_back": "أهلاً بك مجدداً، {name}!",
@@ -102,7 +105,8 @@ LANGS = {
         "router_details": "📌 **الموجه:** {}\n🌐 الرابط: `{}`\n🔑 الرمز: `{}`\n\n📦 **النماذج:**",
         "btn_add_mod": "➕ إضافة نموذج", "btn_del_router": "🗑 حذف", "del_confirm_msg": "⚠️ هل أنت متأكد؟",
         "btn_yes": "✅ نعم", "btn_no": "❌ إلغاء", "del_success": "✅ تم الحذف.",
-        "pls_select_model": "يرجى اختيار نموذج أولاً."
+        "pls_select_model": "يرجى اختيار نموذج أولاً.",
+        "invalid_command": "❌ يرجى استخدام أوامر صحيحة."
     },
     "hi": {
         "name": "🇮🇳 हिन्दी", "welcome_new": "कृपया अपनी भाषा चुनें:", "welcome_back": "वापसी पर स्वागत है, {name}!",
@@ -120,7 +124,8 @@ LANGS = {
         "router_details": "📌 **روटर:** {}\n🌐 URL: `{}`\n🔑 टोकन: `{}`\n\n📦 **मॉडल:**",
         "btn_add_mod": "➕ मॉडल जोड़ें", "btn_del_router": "🗑 हटाएं", "del_confirm_msg": "⚠️ क्या आप নিশ্চিত हैं؟",
         "btn_yes": "✅ हाँ", "btn_no": "❌ नहीं", "del_success": "✅ हटा दिया गया।",
-        "pls_select_model": "कृपया पहले एक मॉडल चुनें।"
+        "pls_select_model": "कृपया पहले एक मॉडल चुनें।",
+        "invalid_command": "❌ कृपया मान्य तार्किक कमांड का उपयोग करें।"
     },
     "tr": {
         "name": "🇹🇷 Türkçe", "welcome_new": "Lütfen dilinizi seçin:", "welcome_back": "Tekrar hoş geldiniz, {name}!",
@@ -138,7 +143,8 @@ LANGS = {
         "router_details": "📌 **Router:** {}\n🌐 URL: `{}`\n🔑 Token: `{}`\n\n📦 **Modeller:**",
         "btn_add_mod": "➕ Model Ekle", "btn_del_router": "🗑 Sil", "del_confirm_msg": "⚠️ Emin misiniz?",
         "btn_yes": "✅ Evet", "btn_no": "❌ İptal", "del_success": "✅ Silindi.",
-        "pls_select_model": "Lütfen önce bir model seçin."
+        "pls_select_model": "Lütfen önce bir model seçin.",
+        "invalid_command": "❌ Lütfen geçerli mantıksal komutlar kullanın."
     },
     "fr": {
         "name": "🇫🇷 Français", "welcome_new": "Veuillez choisir votre langue :", "welcome_back": "Bon retour, {name} !",
@@ -156,7 +162,8 @@ LANGS = {
         "router_details": "📌 **Routeur :** {}\n🌐 URL : `{}`\n🔑 Jeton : `{}`\n\n📦 **Modèles :**",
         "btn_add_mod": "➕ Ajouter Modèle", "btn_del_router": "🗑 Supprimer", "del_confirm_msg": "⚠️ Êtes-vous sûr ?",
         "btn_yes": "✅ Oui", "btn_no": "❌ Non", "del_success": "✅ Supprimé.",
-        "pls_select_model": "Veuillez d'abord sélectionner un modèle."
+        "pls_select_model": "Veuillez d'abord sélectionner un modèle.",
+        "invalid_command": "❌ Veuillez utiliser des commandes logiques valides."
     },
     "de": {
         "name": "🇩🇪 Deutsch", "welcome_new": "Bitte wählen Sie Ihre Sprache:", "welcome_back": "Willkommen zurück, {name}!",
@@ -174,7 +181,8 @@ LANGS = {
         "router_details": "📌 **Router:** {}\n🌐 URL: `{}`\n🔑 Token: `{}`\n\n📦 **Modelle:**",
         "btn_add_mod": "➕ Modell hinzufügen", "btn_del_router": "🗑 Löschen", "del_confirm_msg": "⚠️ Sind Sie sicher?",
         "btn_yes": "✅ Ja", "btn_no": "❌ Nein", "del_success": "✅ Gelöscht.",
-        "pls_select_model": "Bitte wählen Sie zuerst ein Modell aus."
+        "pls_select_model": "Bitte wählen Sie zuerst ein Modell aus.",
+        "invalid_command": "❌ Bitte verwenden Sie gültige logische Befehle."
     },
     "zh": {
         "name": "🇨🇳 中文", "welcome_new": "请选择您的语言：", "welcome_back": "欢迎回来，{name}！",
@@ -192,7 +200,8 @@ LANGS = {
         "router_details": "📌 **路由：** {}\n🌐 地址：`{}`\n🔑 密钥：`{}`\n\n📦 **模型：**",
         "btn_add_mod": "➕ 添加模型", "btn_del_router": "🗑 删除", "del_confirm_msg": "⚠️ 您确定吗？",
         "btn_yes": "✅ 是", "btn_no": "❌ 否", "del_success": "✅ 已删除。",
-        "pls_select_model": "请先选择一个模型。"
+        "pls_select_model": "请先选择一个模型。",
+        "invalid_command": "❌ 请使用有效的逻辑命令。"
     }
 }
 
@@ -266,7 +275,7 @@ async def cmd_start(message: Message, state: FSMContext):
         async with aiosqlite.connect(DB_PATH) as db:
             await db.execute("INSERT OR IGNORE INTO users (user_id, lang) VALUES (?, ?)", (message.from_user.id, "en"))
             await db.commit()
-        await message.answer("Please select your language / لطفاً زبان خود را انتخاب کنید:", reply_markup=lang_keyboard())
+        await message.answer("Please select your language:", reply_markup=lang_keyboard())
     else:
         welcome_txt = await get_text(message.from_user.id, "welcome_back")
         await message.answer(welcome_txt.format(name=message.from_user.first_name))
@@ -276,7 +285,7 @@ async def cmd_start(message: Message, state: FSMContext):
 @router.message(F.text.in_({"lang", "/lang"}))
 async def cmd_lang(message: Message, state: FSMContext):
     await state.clear()
-    await message.answer("Please select your language / لطفاً زبان خود را انتخاب کنید:", reply_markup=lang_keyboard())
+    await message.answer("Please select your language:", reply_markup=lang_keyboard())
 
 @router.callback_query(F.data.startswith("setlang_"))
 async def set_language(callback: CallbackQuery):
@@ -680,11 +689,31 @@ async def handle_chat(message: Message, state: FSMContext):
 # ================= هندلر پیام‌های ناشناس / خارج از وضعیت =================
 @router.message()
 async def fallback_unknown(message: Message, state: FSMContext):
-    if message.from_user.id == ADMIN_ID:
-        await message.answer("لطفاً از دستورات منطقی استفاده کنید. / Please use valid logical commands.")
-    else:
-        txt = await get_text(message.from_user.id, "pls_select_model")
+    user_id = message.from_user.id
+    
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute("SELECT id, model_name FROM models") as cursor:
+            models = await cursor.fetchall()
+            
+    if not models:
+        # اگر مدلی وجود نداشت فقط هشدار دستور اشتباه را بفرست
+        txt = await get_text(user_id, "invalid_command")
         await message.answer(txt)
+    else:
+        # اگر مدل وجود داشت، هم هشدار بده و هم دکمه‌های مدل‌ها را ضمیمه کن
+        buttons = []
+        for m_id, m_name in models:
+            buttons.append([InlineKeyboardButton(text=m_name, callback_data=f"selectmodel_{m_id}_{m_name}")])
+            
+        kb = InlineKeyboardMarkup(inline_keyboard=buttons)
+        
+        invalid_txt = await get_text(user_id, "invalid_command")
+        select_txt = await get_text(user_id, "pls_select_model")
+        
+        # ترکیب دو پیغام
+        final_text = f"{invalid_txt}\n\n{select_txt}"
+        
+        await message.answer(final_text, reply_markup=kb)
 
 # ================= اجرای ربات =================
 async def main():
