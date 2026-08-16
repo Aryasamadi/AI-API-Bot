@@ -246,10 +246,8 @@ LANGS = {
 # ================= دیتابیس =================
 async def init_db():
     async with aiosqlite.connect(DB_PATH) as db:
-        # تغییر مهم: فیلد current_model_id به جدول یوزرها اضافه شد تا وضعیت همیشه حفظ شود
         await db.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY, lang TEXT, is_auth INTEGER DEFAULT 0, current_model_id INTEGER)")
         
-        # در صورتی که دیتابیس قبلی وجود داشته باشد، ستون را اضافه میکند (Migrate)
         try:
             await db.execute("ALTER TABLE users ADD COLUMN current_model_id INTEGER")
         except:
@@ -404,6 +402,7 @@ async def show_user_panel(message, user_id):
 
     buttons = []
     async with aiosqlite.connect(DB_PATH) as db:
+        # تغییر مهم: مدل‌ها بر اساس ID نمایش داده می‌شوند
         async with db.execute("SELECT id, model_name FROM models") as cursor:
             models = await cursor.fetchall()
             
@@ -424,7 +423,7 @@ async def select_model(callback: CallbackQuery, state: FSMContext):
     model_id = callback.data.split("_")[1]
     user_id = callback.from_user.id
     
-    # بررسی مدل موجود
+    # بررسی مدل موجود بر اساس ID
     async with aiosqlite.connect(DB_PATH) as db:
         async with db.execute("SELECT model_name FROM models WHERE id = ?", (model_id,)) as cursor:
             row = await cursor.fetchone()
@@ -441,7 +440,7 @@ async def select_model(callback: CallbackQuery, state: FSMContext):
         await state.set_state(BotStates.waiting_for_password)
         return
 
-    # ذخیره در دیتابیس به صورت پایدار و پاک کردن تاریخچه برای چت صفر و تمیز
+    # ذخیره در دیتابیس با current_model_id دقیق
     async with aiosqlite.connect(DB_PATH) as db:
         await db.execute("UPDATE users SET current_model_id = ? WHERE user_id = ?", (model_id, user_id))
         await db.execute("DELETE FROM history WHERE user_id = ?", (user_id,))
@@ -501,14 +500,12 @@ async def admin_back(callback: CallbackQuery, state: FSMContext):
     kb = await admin_panel_keyboard(callback.from_user.id)
     await callback.message.edit_text(admin_text, reply_markup=kb)
 
-# --- منوی تنظیمات (تجمیع شده) ---
 @router.callback_query(F.data == "admin_settings_menu")
 async def admin_settings_menu(callback: CallbackQuery):
     admin_text = await get_text(callback.from_user.id, "btn_settings") + " ⚙️:"
     kb = await admin_settings_keyboard(callback.from_user.id)
     await callback.message.edit_text(admin_text, reply_markup=kb)
 
-# --- مدیریت رمز عبور ---
 @router.callback_query(F.data == "admin_pwd")
 async def admin_pwd_start(callback: CallbackQuery, state: FSMContext):
     txt = await get_text(callback.from_user.id, "send_pwd_prompt")
@@ -535,7 +532,6 @@ async def admin_pwd_save(message: Message, state: FSMContext):
     await state.clear()
     await cmd_admin(message, state)
 
-# --- مدیریت کانال اجباری ---
 @router.callback_query(F.data == "admin_channel")
 async def admin_channel_start(callback: CallbackQuery, state: FSMContext):
     txt = await get_text(callback.from_user.id, "send_channel_prompt")
@@ -562,7 +558,6 @@ async def admin_channel_save(message: Message, state: FSMContext):
     await state.clear()
     await cmd_admin(message, state)
 
-# --- ارسال پیام همگانی ---
 @router.callback_query(F.data == "admin_broadcast")
 async def admin_broadcast_start(callback: CallbackQuery, state: FSMContext):
     txt = await get_text(callback.from_user.id, "send_broadcast")
@@ -587,7 +582,6 @@ async def admin_broadcast_send(message: Message, state: FSMContext):
     await state.clear()
     await cmd_admin(message, state)
 
-# --- مدیریت روترها ---
 @router.callback_query(F.data == "admin_add_router")
 async def add_router_start(callback: CallbackQuery, state: FSMContext):
     txt = await get_text(callback.from_user.id, "send_url")
@@ -695,6 +689,11 @@ async def admin_del_model_execute(message: Message, state: FSMContext):
     async with aiosqlite.connect(DB_PATH) as db:
         cursor = await db.execute("DELETE FROM models WHERE router_id = ? AND model_name = ?", (data['r_id'], model_name))
         deleted_count = cursor.rowcount
+        # به روز رسانی یوزرها تا روی مدلی که وجود ندارد نمانند
+        await db.execute("""
+            UPDATE users SET current_model_id = NULL 
+            WHERE current_model_id NOT IN (SELECT id FROM models)
+        """)
         await db.commit()
         
     if deleted_count > 0:
@@ -725,8 +724,7 @@ async def admin_confirm_delete(callback: CallbackQuery):
     async with aiosqlite.connect(DB_PATH) as db:
         await db.execute("DELETE FROM routers WHERE id = ?", (r_id,))
         await db.execute("DELETE FROM models WHERE router_id = ?", (r_id,))
-        # پاک کردن انتخاب کابرانی که روی این مدل حذف شده بودند
-        await db.execute("UPDATE users SET current_model_id = NULL WHERE current_model_id IN (SELECT id FROM models WHERE router_id = ?)", (r_id,))
+        await db.execute("UPDATE users SET current_model_id = NULL WHERE current_model_id NOT IN (SELECT id FROM models)")
         await db.commit()
         
     msg = await get_text(callback.from_user.id, "del_success")
@@ -757,12 +755,10 @@ async def admin_save_model_only(message: Message, state: FSMContext):
     await cmd_admin(message, state)
 
 # ================= چت و پردازش تمام پیام‌ها =================
-# اینجا دیگر وابستگی به State نداریم، هر پیامی بیاید بررسی می‌شود آیا مدل انتخاب شده یا خیر
 @router.message()
 async def process_user_chat(message: Message, state: FSMContext):
     user_id = message.from_user.id
     
-    # اطمینان از جوین اجباری قبل از ارسال هر پیام (رفع باگ لفت دادن)
     joined, channel = await check_channel_join(user_id)
     if not joined:
         txt = await get_text(user_id, "must_join")
@@ -773,7 +769,7 @@ async def process_user_chat(message: Message, state: FSMContext):
         await message.answer(f"{txt}\n{channel}", reply_markup=kb)
         return
 
-    # بررسی مدل انتخابی معتبر از روی دیتابیس (رفع باگ مدل حذف شده)
+    # استخراج دقیق مشخصات مدلی که کاربر انتخاب کرده بر اساس ID منحصر به فرد مدل
     async with aiosqlite.connect(DB_PATH) as db:
         async with db.execute("""
             SELECT m.model_name, r.base_url, r.api_key 
@@ -784,7 +780,6 @@ async def process_user_chat(message: Message, state: FSMContext):
         """, (user_id,)) as cursor:
             active_model = await cursor.fetchone()
 
-    # اگر کاربر مدلی انتخاب نکرده یا مدلش توسط ادمین حذف شده است:
     if not active_model:
         async with aiosqlite.connect(DB_PATH) as db:
             async with db.execute("SELECT id, model_name FROM models") as cursor:
