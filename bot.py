@@ -13,6 +13,7 @@ from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKe
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.utils.chat_action import ChatActionSender
 
 # ================= تنظیمات اولیه =================
 load_dotenv()
@@ -34,7 +35,7 @@ LANGS = {
         "pwd_none": "🔓 Password requirement removed. Bot is public.", "pwd_set": "✅ New password set: `{}`",
         "exit": "🧹 Chat history cleared. Back to models.", "admin_only": "❌ Admin only.", "type_here": "Type your message...",
         "select_model": "Select an AI model to start:", "no_models_admin": "⚠️ No models found. Use /admin to add one.",
-        "no_models_user": "⚠️ No AI models are currently available.", "chat_started": "✅ Connected to {}. Send your message:\n(Send /model to quit)",
+        "no_models_user": "⚠️ No AI models are currently available.", "chat_started": "✅ Connected to {}. Send your message:",
         "invalid_url": "❌ Invalid URL format. Please send a valid Base URL (http/https):",
         "admin_menu": "⚙️ Admin Panel:", "btn_routers": "🗂 API List", "btn_add_router": "➕ Add Router",
         "btn_set_pwd": "🔐 Set Password", "btn_broadcast": "📢 Broadcast", "btn_back": "🔙 Back",
@@ -52,7 +53,7 @@ LANGS = {
         "pwd_none": "🔓 قفل ربات برداشته شد. استفاده برای همه آزاد است.", "pwd_set": "✅ رمز عبور جدید تنظیم شد: `{}`",
         "exit": "🧹 تاریخچه مکالمه پاک شد. بازگشت به لیست مدل‌ها.", "admin_only": "❌ دسترسی فقط برای مدیریت.", "type_here": "پیام خود را بنویسید...",
         "select_model": "مدل هوش مصنوعی را انتخاب کنید:", "no_models_admin": "⚠️ هیچ مدلی وجود ندارد. با /admin مدل اضافه کنید.",
-        "no_models_user": "⚠️ در حال حاضر هیچ مدلی در دسترس نیست.", "chat_started": "✅ شما به {} متصل شدید:\n(برای خروج /model را بفرستید)",
+        "no_models_user": "⚠️ در حال حاضر هیچ مدلی در دسترس نیست.", "chat_started": "✅ شما به {} متصل شدید:",
         "invalid_url": "❌ فرمت لینک اشتباه است. لطفاً یک URL معتبر بفرستید:",
         "admin_menu": "⚙️ پنل مدیریت:", "btn_routers": "🗂 لیست APIها", "btn_add_router": "➕ افزودن روتر",
         "btn_set_pwd": "🔐 تنظیم رمز عبور", "btn_broadcast": "📢 پیام همگانی", "btn_back": "🔙 بازگشت",
@@ -70,7 +71,7 @@ LANGS = {
         "pwd_none": "🔓 Пароль удален. Бот общедоступен.", "pwd_set": "✅ Новый пароль установлен: `{}`",
         "exit": "🧹 История очищена.", "admin_only": "❌ Только для админа.", "type_here": "Введите сообщение...",
         "select_model": "Выберите модель ИИ:", "no_models_admin": "⚠️ Модели не найдены.",
-        "no_models_user": "⚠️ Нет доступных моделей.", "chat_started": "✅ Подключено к {}. (Отправьте /model для выхода)",
+        "no_models_user": "⚠️ Нет доступных моделей.", "chat_started": "✅ Подключено к {}.",
         "invalid_url": "❌ Неверный URL.", "admin_menu": "⚙️ Панель администратора:", "btn_routers": "🗂 Список API", "btn_add_router": "➕ Добавить роутер",
         "btn_set_pwd": "🔐 Установить пароль", "btn_broadcast": "📢 Рассылка", "btn_back": "🔙 Назад",
         "btn_back_main": "🏠 Главное меню", "send_pwd_prompt": "Введите новый пароль:",
@@ -87,7 +88,7 @@ LANGS = {
         "pwd_none": "🔓 تمت إزالة كلمة المرور. البوت عام.", "pwd_set": "✅ كلمة المرور الجديدة: `{}`",
         "exit": "🧹 تم مسح السجل.", "admin_only": "❌ للمسؤولين فقط.", "type_here": "اكتب رسالتك...",
         "select_model": "اختر نموذج ذكاء اصطناعي:", "no_models_admin": "⚠️ لا توجد نماذج.",
-        "no_models_user": "⚠️ لا توجد نماذج متاحة.", "chat_started": "✅ متصل بـ {}. (أرسل /model للخروج)",
+        "no_models_user": "⚠️ لا توجد نماذج متاحة.", "chat_started": "✅ متصل بـ {}.",
         "invalid_url": "❌ رابط غير صالح.", "admin_menu": "⚙️ لوحة التحكم:", "btn_routers": "🗂 قائمة API", "btn_add_router": "➕ إضافة موجه",
         "btn_set_pwd": "🔐 تعيين كلمة المرور", "btn_broadcast": "📢 إرسال للكل", "btn_back": "🔙 رجوع",
         "btn_back_main": "🏠 القائمة الرئيسية", "send_pwd_prompt": "أدخل كلمة المرور الجديدة:",
@@ -104,15 +105,15 @@ LANGS = {
         "pwd_none": "🔓 पासवर्ड हटा दिया गया है।", "pwd_set": "✅ नया पासवर्ड: `{}`",
         "exit": "🧹 इतिहास साफ़ हो गया।", "admin_only": "❌ केवल व्यवस्थापक।", "type_here": "संदेश लिखें...",
         "select_model": "मॉडल चुनें:", "no_models_admin": "⚠️ कोई मॉडल नहीं।",
-        "no_models_user": "⚠️ कोई मॉडल उपलब्ध नहीं है।", "chat_started": "✅ {} से कनेक्टेड। (/model भेजें)",
-        "invalid_url": "❌ अमान्य URL۔", "admin_menu": "⚙️ व्यवस्थापक पैनल:", "btn_routers": "🗂 API सूची", "btn_add_router": "➕ روटर جوड़ें",
+        "no_models_user": "⚠️ कोई मॉडल उपलब्ध नहीं है।", "chat_started": "✅ {} से कनेक्टेड।",
+        "invalid_url": "❌ अमान्य URL۔", "admin_menu": "⚙️ व्यवस्थापक पैनल:", "btn_routers": "🗂 API सूची", "btn_add_router": "➕ روटर जोड़ें",
         "btn_set_pwd": "🔐 पासवर्ड सेट करें", "btn_broadcast": "📢 प्रसारण", "btn_back": "🔙 पीछे",
         "btn_back_main": "🏠 मुख्य मेनू", "send_pwd_prompt": "नया पासवर्ड भेजें:",
         "send_broadcast": "संदेश भेजें:", "broadcast_done": "✅ {} उपयोगकर्ताओं को भेजा गया।",
         "send_url": "Base URL भेजें:", "url_detected": "डोमेन: {}\nAPI कुंजी भेजें:",
         "send_model": "मॉडल का नाम भेजें:", "router_added": "✅ जोड़ा गया!",
         "router_details": "📌 **روटर:** {}\n🌐 URL: `{}`\n🔑 टोकन: `{}`\n\n📦 **मॉडल:**",
-        "btn_add_mod": "➕ मॉडल جوड़ें", "btn_del_router": "🗑 हटाएं", "del_confirm_msg": "⚠️ क्या आप নিশ্চিত हैं؟",
+        "btn_add_mod": "➕ मॉडल जोड़ें", "btn_del_router": "🗑 हटाएं", "del_confirm_msg": "⚠️ क्या आप নিশ্চিত हैं؟",
         "btn_yes": "✅ हाँ", "btn_no": "❌ नहीं", "del_success": "✅ हटा दिया गया।"
     },
     "tr": {
@@ -121,7 +122,7 @@ LANGS = {
         "pwd_none": "🔓 Şifre kaldırıldı.", "pwd_set": "✅ Yeni şifre: `{}`",
         "exit": "🧹 Geçmiş temizlendi.", "admin_only": "❌ Sadece yönetici.", "type_here": "Mesajınızı yazın...",
         "select_model": "Bir model seçin:", "no_models_admin": "⚠️ Model bulunamadı.",
-        "no_models_user": "⚠️ Kullanılabilir model yok.", "chat_started": "✅ {} bağlanıldı. (/model ile çıkın)",
+        "no_models_user": "⚠️ Kullanılabilir model yok.", "chat_started": "✅ {} bağlanıldı.",
         "invalid_url": "❌ Geçersiz URL.", "admin_menu": "⚙️ Yönetici Paneli:", "btn_routers": "🗂 API Listesi", "btn_add_router": "➕ Router Ekle",
         "btn_set_pwd": "🔐 Şifre Belirle", "btn_broadcast": "📢 Duyuru", "btn_back": "🔙 Geri",
         "btn_back_main": "🏠 Ana Menü", "send_pwd_prompt": "Yeni şifreyi gönderin:",
@@ -138,7 +139,7 @@ LANGS = {
         "pwd_none": "🔓 Mot de passe supprimé.", "pwd_set": "✅ Nouveau mot de passe : `{}`",
         "exit": "🧹 Historique effacé.", "admin_only": "❌ Admin uniquement.", "type_here": "Tapez votre message...",
         "select_model": "Sélectionnez un modèle :", "no_models_admin": "⚠️ Aucun modèle.",
-        "no_models_user": "⚠️ Aucun modèle disponible.", "chat_started": "✅ Connecté à {}. (/model pour quitter)",
+        "no_models_user": "⚠️ Aucun modèle disponible.", "chat_started": "✅ Connecté à {}.",
         "invalid_url": "❌ URL invalide.", "admin_menu": "⚙️ Panneau Admin :", "btn_routers": "🗂 Liste API", "btn_add_router": "➕ Ajouter Routeur",
         "btn_set_pwd": "🔐 Définir MDP", "btn_broadcast": "📢 Diffusion", "btn_back": "🔙 Retour",
         "btn_back_main": "🏠 Menu Principal", "send_pwd_prompt": "Envoyez le nouveau mot de passe :",
@@ -155,7 +156,7 @@ LANGS = {
         "pwd_none": "🔓 Passwort entfernt.", "pwd_set": "✅ Neues Passwort: `{}`",
         "exit": "🧹 Verlauf gelöscht.", "admin_only": "❌ Nur Admin.", "type_here": "Nachricht schreiben...",
         "select_model": "Wählen Sie ein Modell:", "no_models_admin": "⚠️ Keine Modelle.",
-        "no_models_user": "⚠️ Keine Modelle verfügbar.", "chat_started": "✅ Verbunden mit {}. (/model zum Beenden)",
+        "no_models_user": "⚠️ Keine Modelle verfügbar.", "chat_started": "✅ Verbunden mit {}.",
         "invalid_url": "❌ Ungültige URL.", "admin_menu": "⚙️ Admin-Panel:", "btn_routers": "🗂 API-Liste", "btn_add_router": "➕ Router hinzufügen",
         "btn_set_pwd": "🔐 Passwort festlegen", "btn_broadcast": "📢 Broadcast", "btn_back": "🔙 Zurück",
         "btn_back_main": "🏠 Hauptmenü", "send_pwd_prompt": "Neues Passwort senden:",
@@ -172,7 +173,7 @@ LANGS = {
         "pwd_none": "🔓 密码已移除，机器人已公开。", "pwd_set": "✅ 新密码已设置：`{}`",
         "exit": "🧹 聊天记录已清除。", "admin_only": "❌ 仅限管理员。", "type_here": "输入您的消息...",
         "select_model": "请选择 AI 模型：", "no_models_admin": "⚠️ 未找到模型。",
-        "no_models_user": "⚠️ 当前无可用模型。", "chat_started": "{} 已连接。 (发送 /model 退出)",
+        "no_models_user": "⚠️ 当前无可用模型。", "chat_started": "{} 已连接。",
         "invalid_url": "❌ 无效的 URL。", "admin_menu": "⚙️ 管理面板：", "btn_routers": "🗂 API 列表", "btn_add_router": "➕ 添加路由",
         "btn_set_pwd": "🔐 设置密码", "btn_broadcast": "📢 广播消息", "btn_back": "🔙 返回",
         "btn_back_main": "🏠 主菜单", "send_pwd_prompt": "发送新密码：",
@@ -237,7 +238,7 @@ async def admin_panel_keyboard(user_id):
     builder.button(text=await get_text(user_id, "btn_add_router"), callback_data="admin_add_router")
     builder.button(text=await get_text(user_id, "btn_set_pwd"), callback_data="admin_pwd")
     builder.button(text=await get_text(user_id, "btn_broadcast"), callback_data="admin_broadcast")
-    builder.adjust(1)
+    builder.adjust(2) # دکمه‌ها به صورت 2-2 چیده می‌شوند
     return builder.as_markup()
 
 def cancel_admin_keyboard(user_id, text_back):
@@ -271,7 +272,11 @@ async def cmd_lang(message: Message, state: FSMContext):
 async def set_language(callback: CallbackQuery):
     lang = callback.data.split("_")[1]
     async with aiosqlite.connect(DB_PATH) as db:
-        await db.execute("UPDATE users SET lang = ? WHERE user_id = ?", (lang, callback.from_user.id))
+        # تغییر مهم برای اطمینان از ذخیره شدن همیشگی زبان حتی برای یوزرهای جدیدی که استارت نزدند
+        await db.execute("""
+            INSERT INTO users (user_id, lang) VALUES (?, ?)
+            ON CONFLICT(user_id) DO UPDATE SET lang = excluded.lang
+        """, (callback.from_user.id, lang))
         await db.commit()
     
     await callback.message.delete()
@@ -559,15 +564,8 @@ async def admin_save_model_only(message: Message, state: FSMContext):
     await cmd_admin(message, state)
 
 # ================= چت و ارتباط با API =================
-async def typing_action_task(chat_id):
-    try:
-        while True:
-            await bot.send_chat_action(chat_id=chat_id, action="typing")
-            await asyncio.sleep(3)
-    except asyncio.CancelledError:
-        pass
-
-@router.message(BotStates.chatting & F.text)
+# اینجا فیلتر باگ‌دار به شکل درست در Aiogram 3 اصلاح شد 
+@router.message(BotStates.chatting, F.text)
 async def handle_chat(message: Message, state: FSMContext):
     user_id = message.from_user.id
     data = await state.get_data()
@@ -595,25 +593,22 @@ async def handle_chat(message: Message, state: FSMContext):
             rows = await cursor.fetchall()
             messages = [{"role": r[0], "content": r[1]} for r in reversed(rows)]
             
-    # فعال‌سازی وضعیت typing در تلگرام
-    typing_task = asyncio.create_task(typing_action_task(message.chat.id))
-
     headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
     payload = {"model": m_name, "messages": messages}
     
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.post(url, headers=headers, json=payload, timeout=60) as resp:
-                resp_data = await resp.json(content_type=None)
-                if resp.status == 200 and 'choices' in resp_data:
-                    reply_text = resp_data['choices'][0]['message']['content']
-                else:
-                    reply_text = f"❌ Error API: {resp_data.get('error', {}).get('message', 'Unknown')}"
-    except Exception as e:
-        reply_text = f"❌ Server connection failed."
-    finally:
-        typing_task.cancel()
-        
+    # استفاده از ابزار استاندارد برای نمایش مداوم Typing
+    async with ChatActionSender.typing(bot=bot, chat_id=message.chat.id):
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(url, headers=headers, json=payload, timeout=60) as resp:
+                    resp_data = await resp.json(content_type=None)
+                    if resp.status == 200 and 'choices' in resp_data:
+                        reply_text = resp_data['choices'][0]['message']['content']
+                    else:
+                        reply_text = f"❌ Error API: {resp_data.get('error', {}).get('message', 'Unknown')}"
+        except Exception as e:
+            reply_text = f"❌ Server connection failed. Detail: {e}"
+            
     await message.answer(reply_text)
     
     async with aiosqlite.connect(DB_PATH) as db:
