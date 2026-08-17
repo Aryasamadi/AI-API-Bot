@@ -1,110 +1,64 @@
-🤖 Multi-Language AI Router Telegram Bot
-An advanced, multi-language Telegram Bot built with Python (aiogram 3) and SQLite. It allows administrators to dynamically add multiple OpenAI-compatible AI API endpoints (Routers) and models, enabling users to switch between models seamlessly.
+AI-API-Bot – README (Beginner)
 
-🌟 Features
-Multi-Language Support: Fully localized for 9 languages: English, Persian , Russian, Arabic, Hindi, Turkish, French, German, and Chinese.
+This is a Telegram bot that lets you chat with many different AI models (like ChatGPT, DeepSeek, Claude, etc.) all in one place. You can add your own API keys for different models and manage everything through an admin panel.
 
-Dynamic API & Model Management: Add, list, or delete custom API endpoints and models on-the-fly via the Admin Panel.
+What you need to get started:
 
-Global Password Protection: Lock the bot with a master password or set it to none for public access.
+1. A Telegram account.
+2. A bot token from Telegram (talk to @BotFather and create a new bot, then copy the token).
+3. Your own Telegram user ID (you can get it from @userinfobot or similar).
+4. A hosting service like Railway (free tier works) – or you can run it on your own computer (VPS) if you know how.
 
-Broadcast System: Send global announcements to all registered users.
+If you don't have a cloud database, don't worry – the bot uses a local file (SQLite) automatically. That's fine for small use.
 
-Real-time Typing Status: Shows the typing... indicator while waiting for the AI response.
+Step‑by‑step to deploy on Railway (easiest way):
 
-Context Memory: Maintains short-term conversation history per user for contextual responses.
+1. Create a GitHub account (if you don't have one) and fork this repository (click the "Fork" button on the top right of this GitHub page).
+2. Go to Railway.app and sign in with your GitHub account.
+3. Click "New Project" and choose "Deploy from GitHub repo".
+4. Select the repository you just forked.
+5. Railway will automatically start deploying your bot. Wait for it to finish (it takes about 1‑2 minutes).
+6. Now, go to the "Variables" tab in your Railway project dashboard.
+7. Add these two variables (they are required):
+   - BOT_TOKEN = paste the token you got from @BotFather
+   - ADMIN_ID = paste your Telegram user ID
+8. (Optional) If you have a Cloudflare D1 database, add these three variables:
+   - DB_PROVIDER = cloudflare
+   - CLOUDFLARE_ACCOUNT_ID = your Cloudflare account ID
+   - CLOUDFLARE_D1_DATABASE_ID = your D1 database ID
+   - CLOUDFLARE_API_TOKEN = your API token with D1 permission
+   If you don't have these, the bot will work with a local file, so skip this step.
+9. After adding the variables, Railway will automatically redeploy your bot. Wait for it to finish.
 
-📜 Bot Commands
-Configure these commands via @BotFather:
-👤 User Commands
-/start - Select language, check status, or display the main menu.
-/model - Exit current chat, clear conversation history, and return to model selection.
-/lang - Switch the bot's interface language.
+That's it. Your bot is now running. Open Telegram, find your bot (by its username), and send /start. It will ask you to choose a language, then show you a list of models. But wait – there are no models yet! You need to add them.
 
-/user - Quick menu access to available AI models.
+How to add models (admin steps):
 
-⚙️ Admin Commands
-/admin - Open the administrator control panel (Authorized users only).
+1. Send /admin to your bot (only you, the admin, can do this).
+2. Use the "Add Router" button. You will be asked:
+   - Base URL: the API endpoint for the model provider (e.g., https://api.openai.com/v1)
+   - API Key (Token): your secret key for that provider
+   - Model Name: the exact name of the model (e.g., gpt-3.5-turbo)
+3. After you add a router, you can add more models to the same router using the "Add Model" button inside that router's details.
 
-🛠️ Prerequisites & Setup
-1. Requirements
-Python 3.10+
-Telegram Bot Token from @BotFather
-Your Numeric Telegram ID from @userinfobot
-2. Installation
-Clone or download the project files, navigate to the folder, and install dependencies:
-pip install aiogram aiohttp aiosqlite python-dotenv
-3. Environment Configuration
-Create a .env file in the root directory:
-BOT_TOKEN=your_telegram_bot_token_here
-ADMIN_ID=your_numeric_telegram_id_here
-4. Running the Bot
-python bot.py
-☁️ Deployment Options (VPS & Cloud Platforms)
-Standard VPS (Ubuntu / Debian / Systemd): Recommended for 24/7 long-term uptime using systemd or pm2.
+Now users (and you) can select a model and start chatting.
 
-Railway.app / Render / Koyeb / Fly.io: Native Python support. Connect your GitHub repository directly, set Environment Variables (BOT_TOKEN & ADMIN_ID), and deploy.
+If you want to run this on your own computer (VPS) instead of Railway:
 
-PythonAnywhere: Works for lightweight usage. Note that Polling mode requires a paid tier; Webhook conversion is recommended for free tiers.
+1. Install Python 3.9 or newer on your computer.
+2. Download or clone this repository.
+3. Create a file named .env in the project folder and put your BOT_TOKEN and ADMIN_ID in it.
+4. Open a terminal (command prompt) in that folder and run:
+   pip install aiogram aiohttp aiosqlite python-dotenv
+5. Then run:
+   python bot.py
+6. The bot will start and stay running as long as the terminal is open. If you close the terminal, it stops – you can use screen or tmux to keep it running in the background.
 
-Cloudflare Workers: Requires converting the bot from Polling to Webhook architecture and adjusting SQLite storage to an external DB like Supabase/PostgreSQL.
+Troubleshooting:
 
-This project is under active development, and the codebase is updated regularly.
+- If the bot doesn't start, check that BOT_TOKEN and ADMIN_ID are correct.
+- If you see an error about "Cloudflare vars missing" but you don't want to use Cloudflare, just ignore it – the bot uses local SQLite.
+- If you added cloud variables but the bot still uses local SQLite, make sure the variable names are exactly as shown above (case‑sensitive).
+- To see if your bot is connected to the cloud DB, check the logs in Railway – you should see "Cloudflare D1 mode ACTIVE" or "Generic cloud DB mode ACTIVE".
 
-
-
-
-🤖 ربات تلگرام هوش مصنوعی و مدیریت همه API های ارائه شده تاکنون 
-
-یک ربات تلگرام پیشرفته و چندزبانه که با پایتون (aiogram 3) و SQLite توسعه یافته است.
-
-این ربات به مدیران اجازه می‌دهد تا لینک‌های API و مدل‌های مختلف هوش مصنوعی سازگار با OpenAI و Gemini را به صورت دینامیک اضافه کنند و به کاربران امکان می‌دهد با مدل دلخواه خود گفتگو کنند.
-
-🌟 ویژگی‌های کلیدی
-پشتیبانی کامل از ۹ زبان: پشتیبانی از زبان‌های فارسی، انگلیسی، روسی، عربی، هندی، ترکی، فرانسوی، آلمانی و چینی.
-
-مدیریت دینامیک API و مدل‌ها: امکان افزودن و حذف روترها و مدل‌های هوش مصنوعی از طریق پنل مدیریت.
-
-سیستم قفل و رمز عبور: امکان محدود کردن استفاده از ربات با رمز عبور یا عمومی‌سازی آن.
-ارسال پیام همگانی: قابلیت ارسال پیام متنی به تمام کاربران ربات.
-
-نمایش وضعیت Typing: نمایش حالت typing... در پروفایل ربات هنگام دریافت پاسخ از AI.
-
-حافظه مکالمه: حفظ تاریخچه آخرین پیام‌ها برای پاسخ‌دهی دقیق‌تر.
-
-📜 لیست کامل دستورات ربات (Commands)
-این دستورات در سورس ربات فعال هستند و می‌توانید آن‌ها را در @BotFather نیز تنظیم کنید:
-👤 دستورات کاربران
-/start - شروع به کار ربات، انتخاب زبان یا نمایش منوی خوش‌آمدگویی.
-/model - خروج از چت فعلی، پاک‌سازی حافظه مکالمه و بازگشت به منوی انتخاب مدل.
-/lang - تغییر زبان محیط ربات.
-/user - دسترسی سریع به پنل و لیست مدل‌های هوش مصنوعی.
-⚙️ دستورات مدیریت
-/admin - باز کردن پنل اصلی مدیریت (تنها برای آیدی عددی ست‌شده در .env).
-🛠️ پیش‌نیازها و راهنمای نصب
-۱. پیش‌نیازها
-پایتون نسخه ۳.۱۰ یا بالاتر
-توکن ربات تلگرام از @BotFather
-شناسه عددی تلگرام (Admin ID) از @userinfobot
-
-۲. نصب پکیج‌ها
-کد پروژه را دانلود کرده، ترمینال را در پوشه پروژه باز کنید و دستور زیر را اجرا کنید:
-pip install aiogram aiohttp aiosqlite python-dotenv
-
-۳. تنظیم فایل .env
-یک فایل به نام .env در مسیر اصلی پروژه بسازید و اطلاعات خود را قرار دهید:
-BOT_TOKEN=توکن_ربات_تلگرام_شما
-ADMIN_ID=آیدی_عددی_تلگرام_شما
-
-۴. اجرای ربات
-python bot.py
-☁️ روش‌های میزبانی و اجرای ربات (سرور و کلود)
-سرور مجازی اختصاصی (VPS): بهترین گزینه برای اجرای دائمی با استفاده از سرویس‌دهنده‌های systemd یا pm2.
-
-پلاتفرم‌های ابری (Railway.app / Render / Koyeb / Fly.io): می‌توانید پروژه را به گیتهاب متصل کرده و متغیرهای .env را در پنل این سرویس‌ها ست کنید تا ربات به صورت رایگان/آزمایشی ران شود.
-
-PythonAnywhere: برای پلن رایگان بهتر است سورس ربات به حالت Webhook تغییر یابد، اما برای تست‌های اولیه مناسب است.
-
-Cloudflare Workers: نیازمند تغییر ساختار کد از حالت Polling به Webhook و اتصال دیتابیس به یک DB ابری خارجی (مانند Supabase یا PostgreSQL) می‌باشد.
-
-این پروژه در حال توسعه فعال است و کد آن به صورت منظم آپدیت می‌شود
+That's all you need to know. The bot is ready to use. Good luck!
