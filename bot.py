@@ -39,7 +39,7 @@ class DatabaseManager:
         # اگر هر ۳ متغیر کلودفلر مقدار داشته باشند، حالت ابری فعال می‌شود
         self.use_cf = bool(self.cf_account and self.cf_db_id and self.cf_token and self.cf_token.strip())
         if self.use_cf:
-            logging.info("☁️ Cloudflare D1 Database Mode: ENABLED") 
+            logging.info("☁️ Cloudflare D1 Database Mode: ENABLED")
         else:
             logging.info("💾 Local SQLite Mode: ENABLED")
 
