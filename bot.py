@@ -31,7 +31,7 @@ dp.include_router(router)
 DB_PATH = "bot_advanced.db"
 
 # ------------------------------
-# Generic External Database Manager
+# Generic External Database Manager (optimized queries)
 # ------------------------------
 class DatabaseManager:
     def __init__(self):
@@ -101,13 +101,16 @@ class DatabaseManager:
                 async with conn.execute(query, params) as cursor:
                     return await cursor.fetchone()
 
+    async def fetchval(self, query, params=()):
+        """Fetch a single scalar value (optimized)."""
+        row = await self.fetchone(query, params)
+        return row[0] if row else 0
+
     async def clear_history(self):
-        """Delete only chat history (non‑critical data)."""
         await self.execute("DELETE FROM history")
         logging.info("Chat history cleared (cache).")
 
     async def truncate_all_tables(self):
-        """Delete ALL data (critical + non‑critical)."""
         tables = ["users", "settings", "routers", "models", "history"]
         for table in tables:
             await self.execute(f"DELETE FROM {table}")
@@ -115,6 +118,29 @@ class DatabaseManager:
             for table in tables:
                 await self.execute(f"DELETE FROM sqlite_sequence WHERE name='{table}'")
         logging.info("All tables truncated (full wipe).")
+
+    async def get_stats(self):
+        """Fetch all statistics in a single batch."""
+        if self.use_cloud:
+            # For cloud, we do multiple calls but it's still fast
+            users = await self.fetchval("SELECT COUNT(*) FROM users")
+            models = await self.fetchval("SELECT COUNT(*) FROM models")
+            routers = await self.fetchval("SELECT COUNT(*) FROM routers")
+            tokens = await self.fetchval("SELECT COUNT(*) FROM routers WHERE api_key IS NOT NULL AND api_key != ''")
+        else:
+            # For SQLite, use a single query with multiple counts
+            row = await self.fetchone("""
+                SELECT 
+                    (SELECT COUNT(*) FROM users),
+                    (SELECT COUNT(*) FROM models),
+                    (SELECT COUNT(*) FROM routers),
+                    (SELECT COUNT(*) FROM routers WHERE api_key IS NOT NULL AND api_key != '')
+            """)
+            if row:
+                users, models, routers, tokens = row
+            else:
+                users = models = routers = tokens = 0
+        return users, models, routers, tokens
 
 db = DatabaseManager()
 
@@ -162,7 +188,7 @@ def shorten_model_name(name: str, max_len: int = 25) -> str:
     return name[:max_len] + '…'
 
 # ------------------------------
-# Multi‑language dictionary – with new keys for cache vs full wipe
+# Multi‑language dictionary – with new keys for DB & Stats
 # ------------------------------
 LANGS = {
     "en": {
@@ -188,6 +214,8 @@ LANGS = {
         "btn_routers": "🗂 API List",
         "btn_add_router": "➕ Add Router",
         "btn_settings": "⚙️ Settings",
+        "btn_database": "🗄️ Database",
+        "btn_stats": "📊 Stats & Status",
         "btn_set_pwd": "🔐 Set Password",
         "btn_set_channel": "📢 Force Join",
         "btn_broadcast": "📢 Broadcast",
@@ -234,7 +262,8 @@ LANGS = {
         "no_cloud_db": "⚠️ No external cloud database is configured. Using local SQLite.",
         "no_routers": "⚠️ No API routers have been added yet.",
         "help_user": "📖 Available Commands\n\n🚀 /start • start ➜ Start\n🌐 /lang • lang ➜ Language\n🤖 /model • model ➜ Clear chat & select new model\n❓ /help • help ➜ Help\n\n✨ Choose and start 🚀",
-        "help_admin": "🌐 /lang • lang ➜ Language\n👤 /user • user ➜ User mode\n🤖 /model • model ➜ Clear cache & models\n❓ /help • help ➜ Help\n✨ Choose and start 🚀"
+        "help_admin": "🌐 /lang • lang ➜ Language\n👤 /user • user ➜ User mode\n🤖 /model • model ➜ Clear cache & models\n❓ /help • help ➜ Help\n✨ Choose and start 🚀",
+        "stats_text": "📊 **Bot Statistics**\n\n👤 Users: `{users}`\n📢 Force Channel: `{channel}`\n🤖 Models: `{models}`\n🗂️ Routers: `{routers}`\n🔑 Tokens: `{tokens}`\n🔐 Password: `{pwd_status}`"
     },
     "fa": {
         "name": "🇮🇷🇦🇫 فارسی",
@@ -255,10 +284,12 @@ LANGS = {
         "invalid_url": "❌ فرمت لینک اشتباه است. لطفاً یک URL معتبر بفرستید:",
         "admin_menu": "⚙️ پنل مدیریت پیشرفته ربات – از منو زیر استفاده کنید:",
         "title_routers": "🗂 لیست APIهای موجود در ربات :",
-        "title_settings": "⚙️ تنظیمات ربات مدیریت دیتابیس :",
+        "title_settings": "⚙️ تنظیمات ربات و مدیریت دیتابیس :",
         "btn_routers": "🗂 APIها",
         "btn_add_router": "➕ روتر جدید",
         "btn_settings": "⚙️ تنظیمات",
+        "btn_database": "🗄️ دیتابیس",
+        "btn_stats": "📊 آمار و وضعیت",
         "btn_set_pwd": "🔐 رمز عبور",
         "btn_set_channel": "📢 کانال اجباری",
         "btn_broadcast": "📢 پیام همگانی",
@@ -305,7 +336,8 @@ LANGS = {
         "no_cloud_db": "⚠️ هیچ دیتابیس ابری پیکربندی نشده است. از حافظه محلی SQLite استفاده می‌شود.",
         "no_routers": "⚠️ هنوز هیچ API ثبت نشده است.",
         "help_user": "📖 دستورات موجود\n\n🚀 /start • start➜ شروع\n🌐 /lang • lang ➜  زبان\n🤖 /model • model ➜ پاک‌سازی چت و انتخاب مدل جدید\n❓ /help • help ➜  راهنما\n\n✨ انتخاب کن و شروع کن 🚀",
-        "help_admin": "🌐 /lang • lang ➜ زبان\n👤 /user • user ➜ کاربری\n🤖 /model • model ➜ پاک‌سازی کش و مدل‌ها\n❓ /help • help ➜ راهنما\n✨ انتخاب کن و شروع کن 🚀"
+        "help_admin": "🌐 /lang • lang ➜ زبان\n👤 /user • user ➜ کاربری\n🤖 /model • model ➜ پاک‌سازی کش و مدل‌ها\n❓ /help • help ➜ راهنما\n✨ انتخاب کن و شروع کن 🚀",
+        "stats_text": "📊 **آمار ربات**\n\n👤 کاربران: `{users}`\n📢 کانال اجباری: `{channel}`\n🤖 مدل‌ها: `{models}`\n🗂️ روترها: `{routers}`\n🔑 توکن‌ها: `{tokens}`\n🔐 رمز عبور: `{pwd_status}`"
     },
     "ru": {
         "name": "🇷🇺 Русский",
@@ -330,6 +362,8 @@ LANGS = {
         "btn_routers": "🗂 Список API",
         "btn_add_router": "➕ Добавить роутер",
         "btn_settings": "⚙️ Настройки",
+        "btn_database": "🗄️ База данных",
+        "btn_stats": "📊 Статистика и статус",
         "btn_set_pwd": "🔐 Пароль",
         "btn_set_channel": "📢 Канал",
         "btn_broadcast": "📢 Рассылка",
@@ -376,7 +410,8 @@ LANGS = {
         "no_cloud_db": "⚠️ Внешняя облачная БД не настроена. Используется локальный SQLite.",
         "no_routers": "⚠️ API-роутеры ещё не добавлены.",
         "help_user": "📖 Доступные команды\n\n🚀 /start • start ➜ Начать\n🌐 /lang • lang ➜ Язык\n🤖 /model • model ➜ Очистить чат и выбрать модель\n❓ /help • help ➜ Помощь\n\n✨ Выбери и начни 🚀",
-        "help_admin": "🌐 /lang • lang ➜ Язык\n👤 /user • user ➜ Пользовательский режим\n🤖 /model • model ➜ Очистить кэш и модели\n❓ /help • help ➜ Помощь\n✨ Выбери и начни 🚀"
+        "help_admin": "🌐 /lang • lang ➜ Язык\n👤 /user • user ➜ Пользовательский режим\n🤖 /model • model ➜ Очистить кэш и модели\n❓ /help • help ➜ Помощь\n✨ Выбери и начни 🚀",
+        "stats_text": "📊 **Статистика бота**\n\n👤 Пользователи: `{users}`\n📢 Канал: `{channel}`\n🤖 Модели: `{models}`\n🗂️ Роутеры: `{routers}`\n🔑 Токены: `{tokens}`\n🔐 Пароль: `{pwd_status}`"
     },
     "ar": {
         "name": "🇸🇦 العربية",
@@ -401,6 +436,8 @@ LANGS = {
         "btn_routers": "🗂 قائمة API",
         "btn_add_router": "➕ إضافة موجه",
         "btn_settings": "⚙️ الإعدادات",
+        "btn_database": "🗄️ قاعدة البيانات",
+        "btn_stats": "📊 الإحصائيات والحالة",
         "btn_set_pwd": "🔐 كلمة المرور",
         "btn_set_channel": "📢 قناة إجبارية",
         "btn_broadcast": "📢 إرسال للكل",
@@ -447,7 +484,8 @@ LANGS = {
         "no_cloud_db": "⚠️ لم يتم تكوين قاعدة بيانات سحابية خارجية. يتم استخدام SQLite المحلي.",
         "no_routers": "⚠️ لم تتم إضافة أي موجه API بعد.",
         "help_user": "📖 الأوامر المتاحة\n\n🚀 /start • start➜ البدء\n🌐 /lang • lang ➜ اللغة\n🤖 /model • model ➜ مسح المحادثة واختيار نموذج جديد\n❓ /help • help ➜ المساعدة\n\n✨ اختر وابدأ 🚀",
-        "help_admin": "🌐 /lang • lang ➜ اللغة\n👤 /user • user ➜ وضع المستخدم\n🤖 /model • model ➜ مسح الكاش والنماذج\n❓ /help • help ➜ المساعدة\n✨ اختر وابدأ 🚀"
+        "help_admin": "🌐 /lang • lang ➜ اللغة\n👤 /user • user ➜ وضع المستخدم\n🤖 /model • model ➜ مسح الكاش والنماذج\n❓ /help • help ➜ المساعدة\n✨ اختر وابدأ 🚀",
+        "stats_text": "📊 **إحصائيات البوت**\n\n👤 المستخدمون: `{users}`\n📢 القناة الإجبارية: `{channel}`\n🤖 النماذج: `{models}`\n🗂️ الموجهات: `{routers}`\n🔑 الرموز: `{tokens}`\n🔐 كلمة المرور: `{pwd_status}`"
     },
     "hi": {
         "name": "🇮🇳 हिन्दी",
@@ -472,6 +510,8 @@ LANGS = {
         "btn_routers": "🗂 API सूची",
         "btn_add_router": "➕ राउटर जोड़ें",
         "btn_settings": "⚙️ सेटिंग्स",
+        "btn_database": "🗄️ डेटाबेस",
+        "btn_stats": "📊 आँकड़े और स्थिति",
         "btn_set_pwd": "🔐 पासवर्ड",
         "btn_set_channel": "📢 चैनल",
         "btn_broadcast": "📢 प्रसारण",
@@ -518,7 +558,8 @@ LANGS = {
         "no_cloud_db": "⚠️ कोई बाहरी क्लाउड डेटाबेस कॉन्फ़िगर नहीं है। स्थानीय SQLite का उपयोग होगा।",
         "no_routers": "⚠️ अभी तक कोई API राउटर नहीं जोड़ा गया।",
         "help_user": "📖 उपलब्ध कमांड\n\n🚀 /start • start➜ शुरू करें\n🌐 /lang • lang ➜ भाषा\n🤖 /model • model ➜ चैट साफ़ करें और नया मॉडल चुनें\n❓ /help • help ➜ सहायता\n\n✨ चुनें और शुरू करें 🚀",
-        "help_admin": "🌐 /lang • lang ➜ भाषा\n👤 /user • user ➜ उपयोगकर्ता मोड\n🤖 /model • model ➜ कैश और मॉडल साफ़ करें\n❓ /help • help ➜ सहायता\n✨ चुनें और शुरू करें 🚀"
+        "help_admin": "🌐 /lang • lang ➜ भाषा\n👤 /user • user ➜ उपयोगकर्ता मोड\n🤖 /model • model ➜ कैश और मॉडल साफ़ करें\n❓ /help • help ➜ सहायता\n✨ चुनें और शुरू करें 🚀",
+        "stats_text": "📊 **बॉट आँकड़े**\n\n👤 उपयोगकर्ता: `{users}`\n📢 अनिवार्य चैनल: `{channel}`\n🤖 मॉडल: `{models}`\n🗂️ राउटर: `{routers}`\n🔑 टोकन: `{tokens}`\n🔐 पासवर्ड: `{pwd_status}`"
     },
     "tr": {
         "name": "🇹🇷 Türkçe",
@@ -543,6 +584,8 @@ LANGS = {
         "btn_routers": "🗂 API Listesi",
         "btn_add_router": "➕ Yönlendirici",
         "btn_settings": "⚙️ Ayarlar",
+        "btn_database": "🗄️ Veritabanı",
+        "btn_stats": "📊 İstatistik ve Durum",
         "btn_set_pwd": "🔐 Şifre",
         "btn_set_channel": "📢 Kanal",
         "btn_broadcast": "📢 Duyuru",
@@ -589,7 +632,8 @@ LANGS = {
         "no_cloud_db": "⚠️ Harici bulut veritabanı yapılandırılmamış. Yerel SQLite kullanılıyor.",
         "no_routers": "⚠️ Henüz hiç API yönlendiricisi eklenmemiş.",
         "help_user": "📖 Mevcut Komutlar\n\n🚀 /start • start➜ Başlat\n🌐 /lang • lang ➜ Dil\n🤖 /model • model ➜ Sohbeti temizle ve yeni model seç\n❓ /help • help ➜ Yardım\n\n✨ Seç ve başla 🚀",
-        "help_admin": "🌐 /lang • lang ➜ Dil\n👤 /user • user ➜ Kullanıcı modu\n🤖 /model • model ➜ Önbellek ve modelleri temizle\n❓ /help • help ➜ Yardım\n✨ Seç ve başla 🚀"
+        "help_admin": "🌐 /lang • lang ➜ Dil\n👤 /user • user ➜ Kullanıcı modu\n🤖 /model • model ➜ Önbellek ve modelleri temizle\n❓ /help • help ➜ Yardım\n✨ Seç ve başla 🚀",
+        "stats_text": "📊 **Bot İstatistikleri**\n\n👤 Kullanıcılar: `{users}`\n📢 Zorunlu Kanal: `{channel}`\n🤖 Modeller: `{models}`\n🗂️ Yönlendiriciler: `{routers}`\n🔑 Tokenlar: `{tokens}`\n🔐 Şifre: `{pwd_status}`"
     },
     "fr": {
         "name": "🇫🇷 Français",
@@ -614,6 +658,8 @@ LANGS = {
         "btn_routers": "🗂 Liste API",
         "btn_add_router": "➕ Routeur",
         "btn_settings": "⚙️ Paramètres",
+        "btn_database": "🗄️ Base de données",
+        "btn_stats": "📊 Statistiques et statut",
         "btn_set_pwd": "🔐 MDP",
         "btn_set_channel": "📢 Canal",
         "btn_broadcast": "📢 Diffusion",
@@ -660,7 +706,8 @@ LANGS = {
         "no_cloud_db": "⚠️ Aucune base de données cloud externe configurée. Utilisation de SQLite local.",
         "no_routers": "⚠️ Aucun routeur API n'a encore été ajouté.",
         "help_user": "📖 Commandes disponibles\n\n🚀 /start • start➜ Démarrer\n🌐 /lang • lang ➜ Langue\n🤖 /model • model ➜ Effacer le chat et choisir un nouveau modèle\n❓ /help • help ➜ Aide\n\n✨ Choisissez et commencez 🚀",
-        "help_admin": "🌐 /lang • lang ➜ Langue\n👤 /user • user ➜ Mode utilisateur\n🤖 /model • model ➜ Vider le cache et les modèles\n❓ /help • help ➜ Aide\n✨ Choisissez et commencez 🚀"
+        "help_admin": "🌐 /lang • lang ➜ Langue\n👤 /user • user ➜ Mode utilisateur\n🤖 /model • model ➜ Vider le cache et les modèles\n❓ /help • help ➜ Aide\n✨ Choisissez et commencez 🚀",
+        "stats_text": "📊 **Statistiques du bot**\n\n👤 Utilisateurs : `{users}`\n📢 Canal obligatoire : `{channel}`\n🤖 Modèles : `{models}`\n🗂️ Routeurs : `{routers}`\n🔑 Jetons : `{tokens}`\n🔐 Mot de passe : `{pwd_status}`"
     },
     "de": {
         "name": "🇩🇪 Deutsch",
@@ -685,6 +732,8 @@ LANGS = {
         "btn_routers": "🗂 API-Liste",
         "btn_add_router": "➕ Router",
         "btn_settings": "⚙️ Einstellungen",
+        "btn_database": "🗄️ Datenbank",
+        "btn_stats": "📊 Statistiken und Status",
         "btn_set_pwd": "🔐 Passwort",
         "btn_set_channel": "📢 Kanal",
         "btn_broadcast": "📢 Broadcast",
@@ -731,7 +780,8 @@ LANGS = {
         "no_cloud_db": "⚠️ Keine externe Cloud-DB konfiguriert. Lokale SQLite wird verwendet.",
         "no_routers": "⚠️ Es wurden noch keine API-Router hinzugefügt.",
         "help_user": "📖 Verfügbare Befehle\n\n🚀 /start • start➜ Start\n🌐 /lang • lang ➜ Sprache\n🤖 /model • model ➜ Chat löschen und neues Modell wählen\n❓ /help • help ➜ Hilfe\n\n✨ Wähle und starte 🚀",
-        "help_admin": "🌐 /lang • lang ➜ Sprache\n👤 /user • user ➜ Benutzermodus\n🤖 /model • model ➜ Cache und Modelle löschen\n❓ /help • help ➜ Hilfe\n✨ Wähle und starte 🚀"
+        "help_admin": "🌐 /lang • lang ➜ Sprache\n👤 /user • user ➜ Benutzermodus\n🤖 /model • model ➜ Cache und Modelle löschen\n❓ /help • help ➜ Hilfe\n✨ Wähle und starte 🚀",
+        "stats_text": "📊 **Bot-Statistiken**\n\n👤 Benutzer: `{users}`\n📢 Pflichtkanal: `{channel}`\n🤖 Modelle: `{models}`\n🗂️ Router: `{routers}`\n🔑 Tokens: `{tokens}`\n🔐 Passwort: `{pwd_status}`"
     },
     "zh": {
         "name": "🇨🇳 中文",
@@ -756,6 +806,8 @@ LANGS = {
         "btn_routers": "🗂 API 列表",
         "btn_add_router": "➕ 添加路由",
         "btn_settings": "⚙️ 设置",
+        "btn_database": "🗄️ 数据库",
+        "btn_stats": "📊 统计与状态",
         "btn_set_pwd": "🔐 密码",
         "btn_set_channel": "📢 频道",
         "btn_broadcast": "📢 广播",
@@ -802,7 +854,8 @@ LANGS = {
         "no_cloud_db": "⚠️ 未配置外部云数据库。使用本地 SQLite。",
         "no_routers": "⚠️ 尚未添加任何 API 路由器。",
         "help_user": "📖 可用命令\n\n🚀 /start • start➜ 开始\n🌐 /lang • lang ➜ 语言\n🤖 /model • model ➜ 清除聊天并选择新模型\n❓ /help • help ➜ 帮助\n\n✨ 选择并开始 🚀",
-        "help_admin": "🌐 /lang • lang ➜ 语言\n👤 /user • user ➜ 用户模式\n🤖 /model • model ➜ 清除缓存和模型\n❓ /help • help ➜ 帮助\n✨ 选择并开始 🚀"
+        "help_admin": "🌐 /lang • lang ➜ 语言\n👤 /user • user ➜ 用户模式\n🤖 /model • model ➜ 清除缓存和模型\n❓ /help • help ➜ 帮助\n✨ 选择并开始 🚀",
+        "stats_text": "📊 **机器人统计**\n\n👤 用户：`{users}`\n📢 强制频道：`{channel}`\n🤖 模型：`{models}`\n🗂️ 路由器：`{routers}`\n🔑 令牌：`{tokens}`\n🔐 密码：`{pwd_status}`"
     }
 }
 
@@ -886,13 +939,21 @@ async def admin_panel_keyboard(user_id):
 
 async def admin_settings_keyboard(user_id):
     builder = InlineKeyboardBuilder()
+    builder.button(text=await get_text(user_id, "btn_database"), callback_data="admin_database_menu")
+    builder.button(text=await get_text(user_id, "btn_stats"), callback_data="admin_stats")
     builder.button(text=await get_text(user_id, "btn_set_pwd"), callback_data="admin_pwd")
     builder.button(text=await get_text(user_id, "btn_set_channel"), callback_data="admin_channel")
     builder.button(text=await get_text(user_id, "btn_broadcast"), callback_data="admin_broadcast")
-    builder.button(text=await get_text(user_id, "btn_clear_cache"), callback_data="admin_clear_cache")
-    builder.button(text=await get_text(user_id, "btn_clear_all"), callback_data="admin_clear_all")
     builder.button(text=await get_text(user_id, "btn_back_main"), callback_data="admin_back")
     builder.adjust(2, 2, 1, 1)  # 2-2-1-1 layout
+    return builder.as_markup()
+
+async def admin_database_keyboard(user_id):
+    builder = InlineKeyboardBuilder()
+    builder.button(text=await get_text(user_id, "btn_clear_cache"), callback_data="admin_clear_cache")
+    builder.button(text=await get_text(user_id, "btn_clear_all"), callback_data="admin_clear_all")
+    builder.button(text=await get_text(user_id, "btn_back"), callback_data="admin_settings_menu")
+    builder.adjust(1, 1, 1)
     return builder.as_markup()
 
 def cancel_admin_keyboard(user_id, text_back):
@@ -1100,6 +1161,62 @@ async def admin_settings_menu(callback: CallbackQuery):
     kb = await admin_settings_keyboard(callback.from_user.id)
     await callback.message.edit_text(title, reply_markup=kb)
 
+@router.callback_query(F.data == "admin_database_menu")
+async def admin_database_menu(callback: CallbackQuery):
+    title = "🗄️ " + await get_text(callback.from_user.id, "btn_database")
+    kb = await admin_database_keyboard(callback.from_user.id)
+    await callback.message.edit_text(title, reply_markup=kb)
+
+@router.callback_query(F.data == "admin_stats")
+async def admin_stats(callback: CallbackQuery):
+    users, models, routers, tokens = await db.get_stats()
+    pwd_row = await db.fetchone("SELECT value FROM settings WHERE key = 'global_password'")
+    has_pwd = pwd_row and pwd_row[0] and pwd_row[0].lower() != 'none'
+    pwd_status = "✅ Active" if has_pwd else "❌ Inactive"
+    channel_row = await db.fetchone("SELECT value FROM settings WHERE key = 'force_channel'")
+    channel = channel_row[0] if channel_row and channel_row[0] and channel_row[0].lower() != 'none' else "❌ Not set"
+    # Translate channel status based on language
+    lang = await db.fetchone("SELECT lang FROM users WHERE user_id = ?", (callback.from_user.id,))
+    lang_code = lang[0] if lang and lang[0] in LANGS else "en"
+    if lang_code == "fa":
+        pwd_status = "✅ فعال" if has_pwd else "❌ غیرفعال"
+        channel = channel if channel != "❌ Not set" else "❌ تنظیم نشده"
+    elif lang_code == "ru":
+        pwd_status = "✅ Активен" if has_pwd else "❌ Неактивен"
+        channel = channel if channel != "❌ Not set" else "❌ Не установлен"
+    elif lang_code == "ar":
+        pwd_status = "✅ نشط" if has_pwd else "❌ غير نشط"
+        channel = channel if channel != "❌ Not set" else "❌ لم يتم تعيينه"
+    elif lang_code == "hi":
+        pwd_status = "✅ सक्रिय" if has_pwd else "❌ निष्क्रिय"
+        channel = channel if channel != "❌ Not set" else "❌ सेट नहीं"
+    elif lang_code == "tr":
+        pwd_status = "✅ Aktif" if has_pwd else "❌ Pasif"
+        channel = channel if channel != "❌ Not set" else "❌ Ayarlanmamış"
+    elif lang_code == "fr":
+        pwd_status = "✅ Actif" if has_pwd else "❌ Inactif"
+        channel = channel if channel != "❌ Not set" else "❌ Non défini"
+    elif lang_code == "de":
+        pwd_status = "✅ Aktiv" if has_pwd else "❌ Inaktiv"
+        channel = channel if channel != "❌ Not set" else "❌ Nicht gesetzt"
+    elif lang_code == "zh":
+        pwd_status = "✅ 已启用" if has_pwd else "❌ 已禁用"
+        channel = channel if channel != "❌ Not set" else "❌ 未设置"
+    else:
+        pass  # English already set
+    stats_text = await get_text(callback.from_user.id, "stats_text")
+    stats_text = stats_text.format(
+        users=users,
+        channel=channel,
+        models=models,
+        routers=routers,
+        tokens=tokens,
+        pwd_status=pwd_status
+    )
+    btn_back = await get_text(callback.from_user.id, "btn_back")
+    kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=btn_back, callback_data="admin_settings_menu")]])
+    await callback.message.edit_text(stats_text, parse_mode="Markdown", reply_markup=kb)
+
 @router.callback_query(F.data == "admin_switch_user")
 async def admin_switch_user(callback: CallbackQuery):
     await callback.message.delete()
@@ -1211,14 +1328,14 @@ async def clear_cache_yes(callback: CallbackQuery, state: FSMContext):
     done_txt = await get_text(callback.from_user.id, "clear_cache_done")
     await callback.answer(done_txt, show_alert=True)
     await state.clear()
-    await admin_settings_menu(callback)
+    await admin_database_menu(callback)
 
 @router.callback_query(F.data == "clear_cache_no")
 async def clear_cache_no(callback: CallbackQuery, state: FSMContext):
     cancel_txt = await get_text(callback.from_user.id, "clear_cancelled")
     await callback.answer(cancel_txt, show_alert=True)
     await state.clear()
-    await admin_settings_menu(callback)
+    await admin_database_menu(callback)
 
 # ------------------------------
 # Admin: Clear All Data (full wipe)
@@ -1245,14 +1362,14 @@ async def clear_all_yes(callback: CallbackQuery, state: FSMContext):
     done_txt = await get_text(callback.from_user.id, "clear_all_done")
     await callback.answer(done_txt, show_alert=True)
     await state.clear()
-    await admin_settings_menu(callback)
+    await admin_database_menu(callback)
 
 @router.callback_query(F.data == "clear_all_no")
 async def clear_all_no(callback: CallbackQuery, state: FSMContext):
     cancel_txt = await get_text(callback.from_user.id, "clear_cancelled")
     await callback.answer(cancel_txt, show_alert=True)
     await state.clear()
-    await admin_settings_menu(callback)
+    await admin_database_menu(callback)
 
 # ------------------------------
 # Admin: Routers and Models
