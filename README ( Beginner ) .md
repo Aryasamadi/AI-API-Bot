@@ -61,4 +61,5 @@ Now users (and you) can select a model and start chatting.
 - If you added cloud variables but the bot still uses local SQLite, make sure the variable names are exactly as shown above (case‑sensitive).
 - To see if your bot is connected to the cloud DB, check the logs in Railway – you should see "Cloudflare D1 mode ACTIVE" or "Generic cloud DB mode ACTIVE".
 
-🎉 That's all you need to know. The bot is ready to use. Good luck!
+🎉 That's all you need to know. The bot is ready to use. Good luck! 
+telegram :@ariasamadi
