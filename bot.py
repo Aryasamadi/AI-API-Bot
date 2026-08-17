@@ -31,27 +31,21 @@ dp.include_router(router)
 DB_PATH = "bot_advanced.db"
 
 # ------------------------------
-# Generic External Database Manager (Cloudflare D1 by default)
+# Generic External Database Manager
 # ------------------------------
 class DatabaseManager:
     def __init__(self):
         self.db_path = DB_PATH
-        # Use your custom variable names from the image
         self.cloud_account = os.getenv("CLOUD_ACCOUNT_ID")
         self.cloud_db_id = os.getenv("CLOUD_DB_ID")
         self.cloud_token = os.getenv("CLOUD_API_TOKEN")
         self.use_cloud = bool(self.cloud_account and self.cloud_db_id and self.cloud_token and self.cloud_token.strip())
         if self.use_cloud:
-            logging.info("☁️ External cloud database mode ACTIVE (Cloudflare D1)")
+            logging.info("☁️ External cloud database mode ACTIVE")
         else:
             logging.info("💾 Local SQLite mode ACTIVE")
 
     async def _cloud_request(self, query, params=()):
-        """
-        Generic method for external cloud DB.
-        Currently uses Cloudflare D1 API.
-        For other services, replace the URL and headers here.
-        """
         url = f"https://api.cloudflare.com/client/v4/accounts/{self.cloud_account}/d1/database/{self.cloud_db_id}/query"
         headers = {
             "Authorization": f"Bearer {self.cloud_token}",
@@ -105,7 +99,7 @@ class DatabaseManager:
         else:
             async with aiosqlite.connect(self.db_path) as conn:
                 async with conn.execute(query, params) as cursor:
-                    return await cursor.fetchone() 
+                    return await cursor.fetchone()
 
     async def truncate_all_tables(self):
         tables = ["users", "settings", "routers", "models", "history"]
@@ -130,8 +124,27 @@ MODEL_EMOJIS = [
 def get_model_emoji(model_id: int) -> str:
     return MODEL_EMOJIS[model_id % len(MODEL_EMOJIS)]
 
+def shorten_model_name(name: str, max_len: int = 25) -> str:
+    """Trim long model names intelligently for button display."""
+    if len(name) <= max_len:
+        return name
+    # Try to remove prefix before last '/'
+    if '/' in name:
+        parts = name.split('/')
+        short = parts[-1]
+        if len(short) <= max_len:
+            return short
+    # Try to remove suffix after last '-' or '.'
+    for sep in ('-', '.'):
+        if sep in name:
+            base = name.split(sep)[0]
+            if len(base) <= max_len:
+                return base
+    # Fallback: truncate with ellipsis
+    return name[:max_len] + '…'
+
 # ------------------------------
-# Multi‑language dictionary (all changes applied)
+# Multi‑language dictionary (titles expanded, button texts unchanged)
 # ------------------------------
 LANGS = {
     "en": {
@@ -150,10 +163,12 @@ LANGS = {
         "no_models_user": "⚠️ No AI models are currently available.",
         "chat_started": "✅ Connected to {}.\nSend your message:",
         "invalid_url": "❌ Invalid URL format. Please send a valid Base URL (http/https):",
-        "admin_menu": "⚙️ Admin Panel, use the menu below.",
-        "btn_routers": "🗂 API List",
+        "admin_menu": "⚙️ Advanced Admin Panel – use the menu below:",
+        "title_routers": "🗂 List of all available API routers:",
+        "title_settings": "⚙️ Bot technical settings:",
+        "btn_routers": "🗂 API List",          # unchanged – button text
         "btn_add_router": "➕ Add Router",
-        "btn_settings": "⚙️ Settings",
+        "btn_settings": "⚙️ Settings",         # unchanged – button text
         "btn_set_pwd": "🔐 Set Password",
         "btn_set_channel": "📢 Force Join",
         "btn_broadcast": "📢 Broadcast",
@@ -166,7 +181,7 @@ LANGS = {
         "url_detected": "Domain: {}\nNow send the API Key (Token):",
         "send_model": "API Key saved.\nNow send the exact Model Name:",
         "router_added": "✅ Router and Model added successfully!",
-        "router_details": "📌 **Router:** {}\n🌐 Base URL: `{}`\n🔑 Token: `{}`\n\n📦 **Models (copy any name):**\n```\n{}\n```",
+        "router_details": "📌 **Router:** {}\n🌐 Base URL: `{}`\n🔑 Token: `{}`\n\n```\n{}\n```",
         "btn_add_mod": "➕ Add Model",
         "btn_del_mod": "🗑 Delete Model",
         "btn_del_router": "🗑 Delete Router",
@@ -210,10 +225,12 @@ LANGS = {
         "no_models_user": "⚠️ در حال حاضر هیچ مدلی در دسترس نیست.",
         "chat_started": "✅ شما به {} متصل شدید.\nپیام خود را بفرستید:",
         "invalid_url": "❌ فرمت لینک اشتباه است. لطفاً یک URL معتبر بفرستید:",
-        "admin_menu": "⚙️ پنل مدیریت، از منو پایین استفاده کنید.",
-        "btn_routers": "🗂 APIها",
+        "admin_menu": "⚙️ پنل مدیریت پیشرفته ربات – از منو زیر استفاده کنید:",
+        "title_routers": "🗂 لیست APIهای موجود در ربات :",
+        "title_settings": "⚙️ تنظیمات فنی ربات :",
+        "btn_routers": "🗂 APIها",              # unchanged
         "btn_add_router": "➕ روتر جدید",
-        "btn_settings": "⚙️ تنظیمات",
+        "btn_settings": "⚙️ تنظیمات",           # unchanged
         "btn_set_pwd": "🔐 رمز عبور",
         "btn_set_channel": "📢 کانال اجباری",
         "btn_broadcast": "📢 پیام همگانی",
@@ -226,7 +243,7 @@ LANGS = {
         "url_detected": "دامنه: {}\nحالا کلید API (توکن) را بفرستید:",
         "send_model": "توکن ذخیره شد.\nحالا نام دقیق مدل را بفرستید:",
         "router_added": "✅ روتر و مدل با موفقیت اضافه شدند!",
-        "router_details": "📌 **روتر:** {}\n🌐 آدرس: `{}`\n🔑 توکن: `{}`\n\n📦 **مدل‌ها (برای کپی کردن):**\n```\n{}\n```",
+        "router_details": "📌 **روتر:** {}\n🌐 آدرس: `{}`\n🔑 توکن: `{}`\n\n```\n{}\n```",
         "btn_add_mod": "➕ مدل",
         "btn_del_mod": "🗑 حذف مدل",
         "btn_del_router": "🗑 حذف روتر",
@@ -270,7 +287,9 @@ LANGS = {
         "no_models_user": "⚠️ Нет доступных моделей.",
         "chat_started": "✅ Подключено к {}.\nОтправьте сообщение:",
         "invalid_url": "❌ Неверный URL.",
-        "admin_menu": "⚙️ Панель администратора.",
+        "admin_menu": "⚙️ Расширенная панель администратора – используйте меню:",
+        "title_routers": "🗂 Список всех доступных API-роутеров:",
+        "title_settings": "⚙️ Технические настройки бота:",
         "btn_routers": "🗂 Список API",
         "btn_add_router": "➕ Добавить роутер",
         "btn_settings": "⚙️ Настройки",
@@ -286,7 +305,7 @@ LANGS = {
         "url_detected": "Домен: {}\nВведите API ключ:",
         "send_model": "Введите название модели:",
         "router_added": "✅ Успешно!",
-        "router_details": "📌 **Роутер:** {}\n🌐 URL: `{}`\n🔑 Токен: `{}`\n\n📦 **Модели (копируйте):**\n```\n{}\n```",
+        "router_details": "📌 **Роутер:** {}\n🌐 URL: `{}`\n🔑 Токен: `{}`\n\n```\n{}\n```",
         "btn_add_mod": "➕ Модель",
         "btn_del_mod": "🗑 Удалить",
         "btn_del_router": "🗑 Роутер",
@@ -330,7 +349,9 @@ LANGS = {
         "no_models_user": "⚠️ لا توجد نماذج متاحة.",
         "chat_started": "✅ متصل بـ {}.\nأرسل رسالتك:",
         "invalid_url": "❌ رابط غير صالح.",
-        "admin_menu": "⚙️ لوحة الإدارة.",
+        "admin_menu": "⚙️ لوحة إدارة متقدمة – استخدم القائمة أدناه:",
+        "title_routers": "🗂 قائمة جميع موجهات API المتاحة:",
+        "title_settings": "⚙️ الإعدادات التقنية للبوت:",
         "btn_routers": "🗂 قائمة API",
         "btn_add_router": "➕ إضافة موجه",
         "btn_settings": "⚙️ الإعدادات",
@@ -346,7 +367,7 @@ LANGS = {
         "url_detected": "النطاق: {}\nأدخل مفتاح API:",
         "send_model": "أدخل اسم النموذج:",
         "router_added": "✅ تمت الإضافة!",
-        "router_details": "📌 **الموجه:** {}\n🌐 الرابط: `{}`\n🔑 الرمز: `{}`\n\n📦 **النماذج (انسخ):**\n```\n{}\n```",
+        "router_details": "📌 **الموجه:** {}\n🌐 الرابط: `{}`\n🔑 الرمز: `{}`\n\n```\n{}\n```",
         "btn_add_mod": "➕ إضافة نموذج",
         "btn_del_mod": "🗑 حذف نموذج",
         "btn_del_router": "🗑 حذف الموجه",
@@ -390,7 +411,9 @@ LANGS = {
         "no_models_user": "⚠️ कोई मॉडल उपलब्ध नहीं।",
         "chat_started": "✅ {} से कनेक्टेड।\nसंदेश भेजें:",
         "invalid_url": "❌ अमान्य URL۔",
-        "admin_menu": "⚙️ एडमिन पैनल।",
+        "admin_menu": "⚙️ उन्नत व्यवस्थापक पैनल – नीचे मेनू का उपयोग करें:",
+        "title_routers": "🗂 सभी उपलब्ध API राउटरों की सूची:",
+        "title_settings": "⚙️ बॉट की तकनीकी सेटिंग्स:",
         "btn_routers": "🗂 API सूची",
         "btn_add_router": "➕ राउटर जोड़ें",
         "btn_settings": "⚙️ सेटिंग्स",
@@ -406,7 +429,7 @@ LANGS = {
         "url_detected": "डोमेन: {}\nAPI कुंजी भेजें:",
         "send_model": "मॉडल का नाम भेजें:",
         "router_added": "✅ जोड़ा गया!",
-        "router_details": "📌 **राउटर:** {}\n🌐 URL: `{}`\n🔑 टोकन: `{}`\n\n📦 **मॉडल (कॉपी करें):**\n```\n{}\n```",
+        "router_details": "📌 **राउटर:** {}\n🌐 URL: `{}`\n🔑 टोकन: `{}`\n\n```\n{}\n```",
         "btn_add_mod": "➕ मॉडल",
         "btn_del_mod": "🗑 मॉडल हटाएं",
         "btn_del_router": "🗑 राउटर हटाएं",
@@ -450,7 +473,9 @@ LANGS = {
         "no_models_user": "⚠️ Model yok.",
         "chat_started": "✅ {} bağlanıldı.\nMesajınızı gönderin:",
         "invalid_url": "❌ Geçersiz URL.",
-        "admin_menu": "⚙️ Yönetici Paneli.",
+        "admin_menu": "⚙️ Gelişmiş Yönetici Paneli – menüyü kullanın:",
+        "title_routers": "🗂 Mevcut tüm API yönlendiricilerinin listesi:",
+        "title_settings": "⚙️ Bot teknik ayarları:",
         "btn_routers": "🗂 API Listesi",
         "btn_add_router": "➕ Yönlendirici",
         "btn_settings": "⚙️ Ayarlar",
@@ -466,7 +491,7 @@ LANGS = {
         "url_detected": "Alan adı: {}\nAPI Anahtarı:",
         "send_model": "Model adını gönderin:",
         "router_added": "✅ Eklendi!",
-        "router_details": "📌 **Yönlendirici:** {}\n🌐 URL: `{}`\n🔑 Token: `{}`\n\n📦 **Modeller (kopyala):**\n```\n{}\n```",
+        "router_details": "📌 **Yönlendirici:** {}\n🌐 URL: `{}`\n🔑 Token: `{}`\n\n```\n{}\n```",
         "btn_add_mod": "➕ Model",
         "btn_del_mod": "🗑 Model Sil",
         "btn_del_router": "🗑 Yönlendirici Sil",
@@ -510,7 +535,9 @@ LANGS = {
         "no_models_user": "⚠️ Aucun modèle.",
         "chat_started": "✅ Connecté à {}.\nEnvoyez votre message :",
         "invalid_url": "❌ URL invalide.",
-        "admin_menu": "⚙️ Panneau d'administration.",
+        "admin_menu": "⚙️ Panneau d'administration avancé – utilisez le menu ci-dessous :",
+        "title_routers": "🗂 Liste de tous les routeurs API disponibles :",
+        "title_settings": "⚙️ Paramètres techniques du bot :",
         "btn_routers": "🗂 Liste API",
         "btn_add_router": "➕ Routeur",
         "btn_settings": "⚙️ Paramètres",
@@ -526,7 +553,7 @@ LANGS = {
         "url_detected": "Domaine : {}\nClé API :",
         "send_model": "Nom du modèle :",
         "router_added": "✅ Ajouté !",
-        "router_details": "📌 **Routeur :** {}\n🌐 URL : `{}`\n🔑 Jeton : `{}`\n\n📦 **Modèles (copier) :**\n```\n{}\n```",
+        "router_details": "📌 **Routeur :** {}\n🌐 URL : `{}`\n🔑 Jeton : `{}`\n\n```\n{}\n```",
         "btn_add_mod": "➕ Modèle",
         "btn_del_mod": "🗑 Supprimer",
         "btn_del_router": "🗑 Supprimer Routeur",
@@ -570,7 +597,9 @@ LANGS = {
         "no_models_user": "⚠️ Keine Modelle.",
         "chat_started": "✅ Verbunden mit {}.\nNachricht senden:",
         "invalid_url": "❌ Ungültige URL.",
-        "admin_menu": "⚙️ Admin-Panel.",
+        "admin_menu": "⚙️ Erweitertes Admin-Panel – Menü unten:",
+        "title_routers": "🗂 Liste aller verfügbaren API-Router:",
+        "title_settings": "⚙️ Technische Bot-Einstellungen:",
         "btn_routers": "🗂 API-Liste",
         "btn_add_router": "➕ Router",
         "btn_settings": "⚙️ Einstellungen",
@@ -586,7 +615,7 @@ LANGS = {
         "url_detected": "Domain: {}\nAPI-Key:",
         "send_model": "Modellname:",
         "router_added": "✅ Hinzugefügt!",
-        "router_details": "📌 **Router:** {}\n🌐 URL: `{}`\n🔑 Token: `{}`\n\n📦 **Modelle (kopieren):**\n```\n{}\n```",
+        "router_details": "📌 **Router:** {}\n🌐 URL: `{}`\n🔑 Token: `{}`\n\n```\n{}\n```",
         "btn_add_mod": "➕ Modell",
         "btn_del_mod": "🗑 Modell löschen",
         "btn_del_router": "🗑 Router löschen",
@@ -630,7 +659,9 @@ LANGS = {
         "no_models_user": "⚠️ 无可用模型。",
         "chat_started": "✅ 连接到 {}。\n发送您的消息：",
         "invalid_url": "❌ 无效 URL。",
-        "admin_menu": "⚙️ 管理面板。",
+        "admin_menu": "⚙️ 高级管理面板 – 使用下方菜单：",
+        "title_routers": "🗂 所有可用 API 路由器列表：",
+        "title_settings": "⚙️ 机器人技术设置：",
         "btn_routers": "🗂 API 列表",
         "btn_add_router": "➕ 添加路由",
         "btn_settings": "⚙️ 设置",
@@ -646,7 +677,7 @@ LANGS = {
         "url_detected": "域：{}\nAPI 密钥：",
         "send_model": "模型名称：",
         "router_added": "✅ 添加成功！",
-        "router_details": "📌 **路由：** {}\n🌐 地址：`{}`\n🔑 密钥：`{}`\n\n📦 **模型（复制）：**\n```\n{}\n```",
+        "router_details": "📌 **路由：** {}\n🌐 地址：`{}`\n🔑 密钥：`{}`\n\n```\n{}\n```",
         "btn_add_mod": "➕ 模型",
         "btn_del_mod": "🗑 删除模型",
         "btn_del_router": "🗑 删除路由",
@@ -760,14 +791,14 @@ async def admin_settings_keyboard(user_id):
     builder.button(text=await get_text(user_id, "btn_broadcast"), callback_data="admin_broadcast")
     builder.button(text=await get_text(user_id, "btn_clear_remote"), callback_data="admin_clear_remote")
     builder.button(text=await get_text(user_id, "btn_back_main"), callback_data="admin_back")
-    builder.adjust(2, 2, 1)  # 2-2-1 layout
+    builder.adjust(2, 2, 1)
     return builder.as_markup()
 
 def cancel_admin_keyboard(user_id, text_back):
     return InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=text_back, callback_data="admin_back")]])
 
 # ------------------------------
-# User panel with pagination & admin button
+# User panel with pagination, shortened model names, admin button
 # ------------------------------
 async def show_user_panel(message, user_id, page=0, is_admin_view=False):
     joined, channel = await check_channel_join(user_id)
@@ -798,7 +829,8 @@ async def show_user_panel(message, user_id, page=0, is_admin_view=False):
         row = []
         for m_id, m_name in page_models[i:i+2]:
             emoji = get_model_emoji(m_id)
-            row.append(InlineKeyboardButton(text=f"{emoji} {m_name}", callback_data=f"selmod_{m_id}"))
+            short_name = shorten_model_name(m_name)
+            row.append(InlineKeyboardButton(text=f"{emoji} {short_name}", callback_data=f"selmod_{m_id}"))
         buttons.append(row)
 
     nav_buttons = []
@@ -809,12 +841,10 @@ async def show_user_panel(message, user_id, page=0, is_admin_view=False):
     if nav_buttons:
         buttons.append(nav_buttons)
 
-    # If admin is viewing, add a back button
     if is_admin_view:
         back_text = await get_text(user_id, "btn_back_main")
         buttons.append([InlineKeyboardButton(text=back_text, callback_data="admin_back")])
     else:
-        # If user is admin, add an admin panel button at the bottom
         if user_id == ADMIN_ID:
             admin_btn_text = await get_text(user_id, "btn_admin_panel")
             buttons.append([InlineKeyboardButton(text=admin_btn_text, callback_data="go_admin_panel")])
@@ -857,7 +887,7 @@ async def set_language(callback: CallbackQuery):
     await show_user_panel(callback.message, callback.from_user.id)
 
 # ------------------------------
-# User commands (case-insensitive)
+# User commands
 # ------------------------------
 @router.message(Command("user"))
 @router.message(F.text.lower().in_({"user", "/user"}))
@@ -866,7 +896,7 @@ async def cmd_user(message: Message, state: FSMContext):
     await show_user_panel(message, message.from_user.id)
 
 # ------------------------------
-# Check join callback
+# Check join
 # ------------------------------
 @router.callback_query(F.data == "check_join_channel")
 async def check_join_callback(callback: CallbackQuery):
@@ -916,11 +946,9 @@ async def select_model(callback: CallbackQuery, state: FSMContext):
         await state.set_state(BotStates.waiting_for_password)
         return
 
-    # Silently clear history and set new model
     await db.execute("UPDATE users SET current_model_id = ? WHERE user_id = ?", (model_id, user_id))
     await db.execute("DELETE FROM history WHERE user_id = ?", (user_id,))
 
-    # Only notify about connection, not about clearing
     chat_start_txt = await get_text(user_id, "chat_started")
     await callback.message.answer(chat_start_txt.format(model_name))
     await callback.answer()
@@ -940,18 +968,17 @@ async def check_password_input(message: Message, state: FSMContext):
         await message.answer(err_text)
 
 # ------------------------------
-# Model exit – no message, just clear and show panel
+# Model exit – silent clear, no notification
 # ------------------------------
 @router.message(Command("model"))
 @router.message(F.text.lower().in_({"model", "/model"}))
 async def cmd_model_exit(message: Message, state: FSMContext):
     await state.clear()
     await db.execute("DELETE FROM history WHERE user_id = ?", (message.from_user.id,))
-    # Do NOT send any "cleared" message; just show the model list
     await show_user_panel(message, message.from_user.id)
 
 # ------------------------------
-# Admin commands (case-insensitive)
+# Admin commands
 # ------------------------------
 @router.message(Command("admin"))
 @router.message(F.text.lower().in_({"admin", "/admin"}))
@@ -976,9 +1003,9 @@ async def admin_back(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data == "admin_settings_menu")
 async def admin_settings_menu(callback: CallbackQuery):
-    admin_text = await get_text(callback.from_user.id, "btn_settings") + " ⚙️:"
+    title = await get_text(callback.from_user.id, "title_settings")
     kb = await admin_settings_keyboard(callback.from_user.id)
-    await callback.message.edit_text(admin_text, reply_markup=kb)
+    await callback.message.edit_text(title, reply_markup=kb)
 
 @router.callback_query(F.data == "admin_switch_user")
 async def admin_switch_user(callback: CallbackQuery):
@@ -1071,7 +1098,7 @@ async def admin_broadcast_send(message: Message, state: FSMContext):
     await cmd_admin(message, state)
 
 # ------------------------------
-# Admin: Clear Remote Cache (external DB)
+# Admin: Clear Remote Cache
 # ------------------------------
 @router.callback_query(F.data == "admin_clear_remote")
 async def admin_clear_remote_start(callback: CallbackQuery, state: FSMContext):
@@ -1104,7 +1131,7 @@ async def clear_remote_no(callback: CallbackQuery, state: FSMContext):
     await admin_settings_menu(callback)
 
 # ------------------------------
-# Admin: Routers and Models (monospace)
+# Admin: Routers and Models (monospace, no extra hints)
 # ------------------------------
 @router.callback_query(F.data == "admin_routers")
 async def admin_routers_list(callback: CallbackQuery):
@@ -1114,8 +1141,8 @@ async def admin_routers_list(callback: CallbackQuery):
         buttons.append([InlineKeyboardButton(text=domain, callback_data=f"router_{r_id}")])
     btn_back = await get_text(callback.from_user.id, "btn_back_main")
     buttons.append([InlineKeyboardButton(text=btn_back, callback_data="admin_back")])
-    txt = await get_text(callback.from_user.id, "btn_routers")
-    await callback.message.edit_text(txt + ":", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+    title = await get_text(callback.from_user.id, "title_routers")
+    await callback.message.edit_text(title, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
 @router.callback_query(F.data.startswith("router_"))
 async def admin_router_details(callback: CallbackQuery):
