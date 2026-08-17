@@ -125,26 +125,22 @@ def get_model_emoji(model_id: int) -> str:
     return MODEL_EMOJIS[model_id % len(MODEL_EMOJIS)]
 
 def shorten_model_name(name: str, max_len: int = 25) -> str:
-    """Trim long model names intelligently for button display."""
     if len(name) <= max_len:
         return name
-    # Try to remove prefix before last '/'
     if '/' in name:
         parts = name.split('/')
         short = parts[-1]
         if len(short) <= max_len:
             return short
-    # Try to remove suffix after last '-' or '.'
     for sep in ('-', '.'):
         if sep in name:
             base = name.split(sep)[0]
             if len(base) <= max_len:
                 return base
-    # Fallback: truncate with ellipsis
     return name[:max_len] + '…'
 
 # ------------------------------
-# Multi‑language dictionary (titles expanded, button texts unchanged)
+# Multi‑language dictionary – all keys updated for all languages
 # ------------------------------
 LANGS = {
     "en": {
@@ -166,9 +162,9 @@ LANGS = {
         "admin_menu": "⚙️ Advanced Admin Panel – use the menu below:",
         "title_routers": "🗂 List of all available API routers:",
         "title_settings": "⚙️ Bot technical settings:",
-        "btn_routers": "🗂 API List",          # unchanged – button text
+        "btn_routers": "🗂 API List",
         "btn_add_router": "➕ Add Router",
-        "btn_settings": "⚙️ Settings",         # unchanged – button text
+        "btn_settings": "⚙️ Settings",
         "btn_set_pwd": "🔐 Set Password",
         "btn_set_channel": "📢 Force Join",
         "btn_broadcast": "📢 Broadcast",
@@ -180,8 +176,9 @@ LANGS = {
         "send_url": "Send the Base URL (e.g., https://api.openai.com/v1):",
         "url_detected": "Domain: {}\nNow send the API Key (Token):",
         "send_model": "API Key saved.\nNow send the exact Model Name:",
+        "send_model_for_router": "Send the exact Model Name to add to this router:",
         "router_added": "✅ Router and Model added successfully!",
-        "router_details": "📌 **Router:** {}\n🌐 Base URL: `{}`\n🔑 Token: `{}`\n\n```\n{}\n```",
+        "router_details": "📌 **Router:** {}\n\n🌐 Base URL: `{}`\n\n🔑 Token: `{}`\n\n```\n{}\n```",
         "btn_add_mod": "➕ Add Model",
         "btn_del_mod": "🗑 Delete Model",
         "btn_del_router": "🗑 Delete Router",
@@ -204,10 +201,11 @@ LANGS = {
         "model_not_found": "❌ Model not found.",
         "btn_user_mode": "👤 User Mode",
         "btn_clear_remote": "🧹 Clear Cache",
-        "clear_confirm": "⚠️ This will delete ALL data from the external database (users, settings, routers, models, history). Are you sure?",
+        "clear_confirm": "⚠️ This will delete ALL data from the external database:\n- Users\n- Settings\n- Routers\n- Models\n- Chat history\n\nAre you sure?",
         "clear_done": "✅ All remote data has been cleared.",
         "clear_cancelled": "❌ Operation cancelled.",
-        "btn_admin_panel": "⚙️ Admin Panel"
+        "btn_admin_panel": "⚙️ Admin Panel",
+        "no_cloud_db": "⚠️ No external cloud database is configured. Using local SQLite."
     },
     "fa": {
         "name": "🇮🇷🇦🇫 فارسی",
@@ -228,9 +226,9 @@ LANGS = {
         "admin_menu": "⚙️ پنل مدیریت پیشرفته ربات – از منو زیر استفاده کنید:",
         "title_routers": "🗂 لیست APIهای موجود در ربات :",
         "title_settings": "⚙️ تنظیمات فنی ربات :",
-        "btn_routers": "🗂 APIها",              # unchanged
+        "btn_routers": "🗂 APIها",
         "btn_add_router": "➕ روتر جدید",
-        "btn_settings": "⚙️ تنظیمات",           # unchanged
+        "btn_settings": "⚙️ تنظیمات",
         "btn_set_pwd": "🔐 رمز عبور",
         "btn_set_channel": "📢 کانال اجباری",
         "btn_broadcast": "📢 پیام همگانی",
@@ -242,8 +240,9 @@ LANGS = {
         "send_url": "آدرس Base URL را بفرستید:",
         "url_detected": "دامنه: {}\nحالا کلید API (توکن) را بفرستید:",
         "send_model": "توکن ذخیره شد.\nحالا نام دقیق مدل را بفرستید:",
+        "send_model_for_router": "نام دقیق مدل را برای افزودن به این روتر بفرستید:",
         "router_added": "✅ روتر و مدل با موفقیت اضافه شدند!",
-        "router_details": "📌 **روتر:** {}\n🌐 آدرس: `{}`\n🔑 توکن: `{}`\n\n```\n{}\n```",
+        "router_details": "📌 **روتر:** {}\n\n🌐 آدرس: `{}`\n\n🔑 توکن: `{}`\n\n```\n{}\n```",
         "btn_add_mod": "➕ مدل",
         "btn_del_mod": "🗑 حذف مدل",
         "btn_del_router": "🗑 حذف روتر",
@@ -266,10 +265,11 @@ LANGS = {
         "model_not_found": "❌ مدلی با این نام یافت نشد.",
         "btn_user_mode": "👤 حالت کاربری",
         "btn_clear_remote": "🧹 پاک‌سازی کش",
-        "clear_confirm": "⚠️ این کار تمام داده‌های دیتابیس خارجی (کاربران، تنظیمات، روترها، مدل‌ها و تاریخچه) را حذف می‌کند. مطمئن هستید؟",
+        "clear_confirm": "⚠️ این کار تمام داده‌های دیتابیس خارجی:\n- کاربران\n- تنظیمات\n- روترها\n- مدل‌ها\n- تاریخچه چت\nرا حذف می‌کند.\n\nمطمئن هستید؟",
         "clear_done": "✅ تمام داده‌های خارجی پاک شدند.",
         "clear_cancelled": "❌ عملیات لغو شد.",
-        "btn_admin_panel": "⚙️ پنل مدیریت"
+        "btn_admin_panel": "⚙️ پنل مدیریت",
+        "no_cloud_db": "⚠️ هیچ دیتابیس ابری پیکربندی نشده است. از حافظه محلی SQLite استفاده می‌شود."
     },
     "ru": {
         "name": "🇷🇺 Русский",
@@ -304,8 +304,9 @@ LANGS = {
         "send_url": "Введите Base URL:",
         "url_detected": "Домен: {}\nВведите API ключ:",
         "send_model": "Введите название модели:",
+        "send_model_for_router": "Отправьте точное имя модели для добавления к этому роутеру:",
         "router_added": "✅ Успешно!",
-        "router_details": "📌 **Роутер:** {}\n🌐 URL: `{}`\n🔑 Токен: `{}`\n\n```\n{}\n```",
+        "router_details": "📌 **Роутер:** {}\n\n🌐 URL: `{}`\n\n🔑 Токен: `{}`\n\n```\n{}\n```",
         "btn_add_mod": "➕ Модель",
         "btn_del_mod": "🗑 Удалить",
         "btn_del_router": "🗑 Роутер",
@@ -328,10 +329,11 @@ LANGS = {
         "model_not_found": "❌ Не найдена.",
         "btn_user_mode": "👤 Режим пользователя",
         "btn_clear_remote": "🧹 Очистить кэш",
-        "clear_confirm": "⚠️ Это удалит все данные из внешней БД. Уверены?",
+        "clear_confirm": "⚠️ Это удалит все данные из внешней БД:\n- Пользователи\n- Настройки\n- Роутеры\n- Модели\n- История чатов\n\nВы уверены?",
         "clear_done": "✅ Готово.",
         "clear_cancelled": "❌ Отменено.",
-        "btn_admin_panel": "⚙️ Панель администратора"
+        "btn_admin_panel": "⚙️ Панель администратора",
+        "no_cloud_db": "⚠️ Внешняя облачная БД не настроена. Используется локальный SQLite."
     },
     "ar": {
         "name": "🇸🇦 العربية",
@@ -366,8 +368,9 @@ LANGS = {
         "send_url": "أدخل Base URL:",
         "url_detected": "النطاق: {}\nأدخل مفتاح API:",
         "send_model": "أدخل اسم النموذج:",
+        "send_model_for_router": "أرسل الاسم الدقيق للنموذج لإضافته إلى هذا الموجه:",
         "router_added": "✅ تمت الإضافة!",
-        "router_details": "📌 **الموجه:** {}\n🌐 الرابط: `{}`\n🔑 الرمز: `{}`\n\n```\n{}\n```",
+        "router_details": "📌 **الموجه:** {}\n\n🌐 الرابط: `{}`\n\n🔑 الرمز: `{}`\n\n```\n{}\n```",
         "btn_add_mod": "➕ إضافة نموذج",
         "btn_del_mod": "🗑 حذف نموذج",
         "btn_del_router": "🗑 حذف الموجه",
@@ -390,10 +393,11 @@ LANGS = {
         "model_not_found": "❌ غير موجود.",
         "btn_user_mode": "👤 وضع المستخدم",
         "btn_clear_remote": "🧹 مسح الكاش",
-        "clear_confirm": "⚠️ سيتم حذف جميع البيانات. متأكد؟",
+        "clear_confirm": "⚠️ سيتم حذف جميع البيانات من قاعدة البيانات الخارجية:\n- المستخدمين\n- الإعدادات\n- الموجهات\n- النماذج\n- سجل المحادثات\n\nهل أنت متأكد؟",
         "clear_done": "✅ تم المسح.",
         "clear_cancelled": "❌ ألغي.",
-        "btn_admin_panel": "⚙️ لوحة الإدارة"
+        "btn_admin_panel": "⚙️ لوحة الإدارة",
+        "no_cloud_db": "⚠️ لم يتم تكوين قاعدة بيانات سحابية خارجية. يتم استخدام SQLite المحلي."
     },
     "hi": {
         "name": "🇮🇳 हिन्दी",
@@ -428,8 +432,9 @@ LANGS = {
         "send_url": "Base URL भेजें:",
         "url_detected": "डोमेन: {}\nAPI कुंजी भेजें:",
         "send_model": "मॉडल का नाम भेजें:",
+        "send_model_for_router": "इस राउटर में जोड़ने के लिए सटीक मॉडल नाम भेजें:",
         "router_added": "✅ जोड़ा गया!",
-        "router_details": "📌 **राउटर:** {}\n🌐 URL: `{}`\n🔑 टोकन: `{}`\n\n```\n{}\n```",
+        "router_details": "📌 **राउटर:** {}\n\n🌐 URL: `{}`\n\n🔑 टोकन: `{}`\n\n```\n{}\n```",
         "btn_add_mod": "➕ मॉडल",
         "btn_del_mod": "🗑 मॉडल हटाएं",
         "btn_del_router": "🗑 राउटर हटाएं",
@@ -452,10 +457,11 @@ LANGS = {
         "model_not_found": "❌ नहीं मिला।",
         "btn_user_mode": "👤 उपयोगकर्ता मोड",
         "btn_clear_remote": "🧹 कैश साफ़ करें",
-        "clear_confirm": "⚠️ सारा डेटा डिलीट हो जाएगा। क्या आप निश्चित हैं?",
+        "clear_confirm": "⚠️ यह बाहरी डेटाबेस से सभी डेटा हटा देगा:\n- उपयोगकर्ता\n- सेटिंग्स\n- राउटर\n- मॉडल\n- चैट इतिहास\n\nक्या आप निश्चित हैं?",
         "clear_done": "✅ साफ़ हो गया।",
         "clear_cancelled": "❌ रद्द।",
-        "btn_admin_panel": "⚙️ व्यवस्थापक पैनल"
+        "btn_admin_panel": "⚙️ व्यवस्थापक पैनल",
+        "no_cloud_db": "⚠️ कोई बाहरी क्लाउड डेटाबेस कॉन्फ़िगर नहीं है। स्थानीय SQLite का उपयोग होगा।"
     },
     "tr": {
         "name": "🇹🇷 Türkçe",
@@ -490,8 +496,9 @@ LANGS = {
         "send_url": "Base URL:",
         "url_detected": "Alan adı: {}\nAPI Anahtarı:",
         "send_model": "Model adını gönderin:",
+        "send_model_for_router": "Bu yönlendiriciye eklemek için tam model adını gönderin:",
         "router_added": "✅ Eklendi!",
-        "router_details": "📌 **Yönlendirici:** {}\n🌐 URL: `{}`\n🔑 Token: `{}`\n\n```\n{}\n```",
+        "router_details": "📌 **Yönlendirici:** {}\n\n🌐 URL: `{}`\n\n🔑 Token: `{}`\n\n```\n{}\n```",
         "btn_add_mod": "➕ Model",
         "btn_del_mod": "🗑 Model Sil",
         "btn_del_router": "🗑 Yönlendirici Sil",
@@ -514,10 +521,11 @@ LANGS = {
         "model_not_found": "❌ Bulunamadı.",
         "btn_user_mode": "👤 Kullanıcı Modu",
         "btn_clear_remote": "🧹 Önbelleği Temizle",
-        "clear_confirm": "⚠️ Tüm veriler silinecek. Emin misiniz?",
+        "clear_confirm": "⚠️ Bu, harici veritabanındaki tüm verileri silecektir:\n- Kullanıcılar\n- Ayarlar\n- Yönlendiriciler\n- Modeller\n- Sohbet geçmişi\n\nEmin misiniz?",
         "clear_done": "✅ Temizlendi.",
         "clear_cancelled": "❌ İptal.",
-        "btn_admin_panel": "⚙️ Yönetici Paneli"
+        "btn_admin_panel": "⚙️ Yönetici Paneli",
+        "no_cloud_db": "⚠️ Harici bulut veritabanı yapılandırılmamış. Yerel SQLite kullanılıyor."
     },
     "fr": {
         "name": "🇫🇷 Français",
@@ -552,8 +560,9 @@ LANGS = {
         "send_url": "URL de base :",
         "url_detected": "Domaine : {}\nClé API :",
         "send_model": "Nom du modèle :",
+        "send_model_for_router": "Envoyez le nom exact du modèle à ajouter à ce routeur :",
         "router_added": "✅ Ajouté !",
-        "router_details": "📌 **Routeur :** {}\n🌐 URL : `{}`\n🔑 Jeton : `{}`\n\n```\n{}\n```",
+        "router_details": "📌 **Routeur :** {}\n\n🌐 URL : `{}`\n\n🔑 Jeton : `{}`\n\n```\n{}\n```",
         "btn_add_mod": "➕ Modèle",
         "btn_del_mod": "🗑 Supprimer",
         "btn_del_router": "🗑 Supprimer Routeur",
@@ -576,10 +585,11 @@ LANGS = {
         "model_not_found": "❌ Introuvable.",
         "btn_user_mode": "👤 Mode utilisateur",
         "btn_clear_remote": "🧹 Vider le cache",
-        "clear_confirm": "⚠️ Supprimer toutes les données ?",
+        "clear_confirm": "⚠️ Cela supprimera toutes les données de la base externe :\n- Utilisateurs\n- Paramètres\n- Routeurs\n- Modèles\n- Historique des chats\n\nÊtes-vous sûr ?",
         "clear_done": "✅ Fait.",
         "clear_cancelled": "❌ Annulé.",
-        "btn_admin_panel": "⚙️ Panneau d'administration"
+        "btn_admin_panel": "⚙️ Panneau d'administration",
+        "no_cloud_db": "⚠️ Aucune base de données cloud externe configurée. Utilisation de SQLite local."
     },
     "de": {
         "name": "🇩🇪 Deutsch",
@@ -614,8 +624,9 @@ LANGS = {
         "send_url": "Base URL:",
         "url_detected": "Domain: {}\nAPI-Key:",
         "send_model": "Modellname:",
+        "send_model_for_router": "Senden Sie den genauen Modellnamen, um ihn zu diesem Router hinzuzufügen:",
         "router_added": "✅ Hinzugefügt!",
-        "router_details": "📌 **Router:** {}\n🌐 URL: `{}`\n🔑 Token: `{}`\n\n```\n{}\n```",
+        "router_details": "📌 **Router:** {}\n\n🌐 URL: `{}`\n\n🔑 Token: `{}`\n\n```\n{}\n```",
         "btn_add_mod": "➕ Modell",
         "btn_del_mod": "🗑 Modell löschen",
         "btn_del_router": "🗑 Router löschen",
@@ -638,10 +649,11 @@ LANGS = {
         "model_not_found": "❌ Nicht gefunden.",
         "btn_user_mode": "👤 Benutzermodus",
         "btn_clear_remote": "🧹 Cache leeren",
-        "clear_confirm": "⚠️ Alle Daten löschen? Sicher?",
+        "clear_confirm": "⚠️ Dies löscht alle Daten aus der externen DB:\n- Benutzer\n- Einstellungen\n- Router\n- Modelle\n- Chatverlauf\n\nSicher?",
         "clear_done": "✅ Erledigt.",
         "clear_cancelled": "❌ Abgebrochen.",
-        "btn_admin_panel": "⚙️ Admin-Panel"
+        "btn_admin_panel": "⚙️ Admin-Panel",
+        "no_cloud_db": "⚠️ Keine externe Cloud-DB konfiguriert. Lokale SQLite wird verwendet."
     },
     "zh": {
         "name": "🇨🇳 中文",
@@ -676,8 +688,9 @@ LANGS = {
         "send_url": "Base URL：",
         "url_detected": "域：{}\nAPI 密钥：",
         "send_model": "模型名称：",
+        "send_model_for_router": "发送要添加到此路由器的确切模型名称：",
         "router_added": "✅ 添加成功！",
-        "router_details": "📌 **路由：** {}\n🌐 地址：`{}`\n🔑 密钥：`{}`\n\n```\n{}\n```",
+        "router_details": "📌 **路由：** {}\n\n🌐 地址：`{}`\n\n🔑 密钥：`{}`\n\n```\n{}\n```",
         "btn_add_mod": "➕ 模型",
         "btn_del_mod": "🗑 删除模型",
         "btn_del_router": "🗑 删除路由",
@@ -700,10 +713,11 @@ LANGS = {
         "model_not_found": "❌ 找不到模型。",
         "btn_user_mode": "👤 用户模式",
         "btn_clear_remote": "🧹 清除缓存",
-        "clear_confirm": "⚠️ 将删除所有数据。确定吗？",
+        "clear_confirm": "⚠️ 将删除外部数据库中的所有数据：\n- 用户\n- 设置\n- 路由器\n- 模型\n- 聊天记录\n\n您确定吗？",
         "clear_done": "✅ 已清除。",
         "clear_cancelled": "❌ 已取消。",
-        "btn_admin_panel": "⚙️ 管理面板"
+        "btn_admin_panel": "⚙️ 管理面板",
+        "no_cloud_db": "⚠️ 未配置外部云数据库。使用本地 SQLite。"
     }
 }
 
@@ -798,7 +812,7 @@ def cancel_admin_keyboard(user_id, text_back):
     return InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=text_back, callback_data="admin_back")]])
 
 # ------------------------------
-# User panel with pagination, shortened model names, admin button
+# User panel
 # ------------------------------
 async def show_user_panel(message, user_id, page=0, is_admin_view=False):
     joined, channel = await check_channel_join(user_id)
@@ -856,7 +870,7 @@ async def show_user_panel(message, user_id, page=0, is_admin_view=False):
     await message.answer(select_text, reply_markup=kb)
 
 # ------------------------------
-# Language & Start Handlers
+# Handlers
 # ------------------------------
 @router.message(Command("start"))
 async def cmd_start(message: Message, state: FSMContext):
@@ -886,18 +900,12 @@ async def set_language(callback: CallbackQuery):
     await callback.message.delete()
     await show_user_panel(callback.message, callback.from_user.id)
 
-# ------------------------------
-# User commands
-# ------------------------------
 @router.message(Command("user"))
 @router.message(F.text.lower().in_({"user", "/user"}))
 async def cmd_user(message: Message, state: FSMContext):
     await state.clear()
     await show_user_panel(message, message.from_user.id)
 
-# ------------------------------
-# Check join
-# ------------------------------
 @router.callback_query(F.data == "check_join_channel")
 async def check_join_callback(callback: CallbackQuery):
     joined, channel = await check_channel_join(callback.from_user.id)
@@ -910,9 +918,6 @@ async def check_join_callback(callback: CallbackQuery):
         fail_txt = await get_text(callback.from_user.id, "join_fail")
         await callback.answer(fail_txt, show_alert=True)
 
-# ------------------------------
-# Go to admin panel from user view
-# ------------------------------
 @router.callback_query(F.data == "go_admin_panel")
 async def go_admin_panel(callback: CallbackQuery, state: FSMContext):
     if callback.from_user.id != ADMIN_ID:
@@ -924,9 +929,6 @@ async def go_admin_panel(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text(admin_text, reply_markup=kb)
     await callback.answer()
 
-# ------------------------------
-# Model selection (silent clear)
-# ------------------------------
 @router.callback_query(F.data.startswith("selmod_"))
 async def select_model(callback: CallbackQuery, state: FSMContext):
     model_id = callback.data.split("_")[1]
@@ -967,9 +969,6 @@ async def check_password_input(message: Message, state: FSMContext):
         err_text = await get_text(message.from_user.id, "pwd_err")
         await message.answer(err_text)
 
-# ------------------------------
-# Model exit – silent clear, no notification
-# ------------------------------
 @router.message(Command("model"))
 @router.message(F.text.lower().in_({"model", "/model"}))
 async def cmd_model_exit(message: Message, state: FSMContext):
@@ -977,9 +976,6 @@ async def cmd_model_exit(message: Message, state: FSMContext):
     await db.execute("DELETE FROM history WHERE user_id = ?", (message.from_user.id,))
     await show_user_panel(message, message.from_user.id)
 
-# ------------------------------
-# Admin commands
-# ------------------------------
 @router.message(Command("admin"))
 @router.message(F.text.lower().in_({"admin", "/admin"}))
 async def cmd_admin(message: Message, state: FSMContext):
@@ -991,9 +987,6 @@ async def cmd_admin(message: Message, state: FSMContext):
     kb = await admin_panel_keyboard(message.from_user.id)
     await message.answer(admin_text, reply_markup=kb)
 
-# ------------------------------
-# Admin navigation
-# ------------------------------
 @router.callback_query(F.data == "admin_back")
 async def admin_back(callback: CallbackQuery, state: FSMContext):
     await state.clear()
@@ -1098,12 +1091,13 @@ async def admin_broadcast_send(message: Message, state: FSMContext):
     await cmd_admin(message, state)
 
 # ------------------------------
-# Admin: Clear Remote Cache
+# Admin: Clear Remote Cache (localized)
 # ------------------------------
 @router.callback_query(F.data == "admin_clear_remote")
 async def admin_clear_remote_start(callback: CallbackQuery, state: FSMContext):
     if not db.use_cloud:
-        await callback.answer("⚠️ No external cloud DB configured.", show_alert=True)
+        no_cloud_msg = await get_text(callback.from_user.id, "no_cloud_db")
+        await callback.answer(no_cloud_msg, show_alert=True)
         return
     confirm_txt = await get_text(callback.from_user.id, "clear_confirm")
     btn_yes = await get_text(callback.from_user.id, "btn_yes")
@@ -1131,7 +1125,7 @@ async def clear_remote_no(callback: CallbackQuery, state: FSMContext):
     await admin_settings_menu(callback)
 
 # ------------------------------
-# Admin: Routers and Models (monospace, no extra hints)
+# Admin: Routers and Models (monospace, copyable)
 # ------------------------------
 @router.callback_query(F.data == "admin_routers")
 async def admin_routers_list(callback: CallbackQuery):
@@ -1221,7 +1215,8 @@ async def admin_confirm_delete(callback: CallbackQuery):
 async def admin_add_model_only(callback: CallbackQuery, state: FSMContext):
     r_id = callback.data.split("_")[1]
     await state.update_data(r_id=r_id)
-    txt = await get_text(callback.from_user.id, "send_model")
+    # Use dedicated prompt for adding model to existing router
+    txt = await get_text(callback.from_user.id, "send_model_for_router")
     btn_back = await get_text(callback.from_user.id, "btn_back")
     buttons = [[InlineKeyboardButton(text=btn_back, callback_data=f"router_{r_id}")]]
     await callback.message.edit_text(txt, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
