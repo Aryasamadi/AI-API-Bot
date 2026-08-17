@@ -76,4 +76,4 @@ C) 🧪 Local testing (without cloud DB):
 - If you use the generic DB provider, you may need to adjust the _cloud_request method in the code to match your API's response format – but the default works for most JSON‑based APIs that return a "results" or "data" array.
 - All texts are stored in the LANGS dictionary inside the code – you can add or modify languages easily.
 
-✅ That's it. The bot is ready to serve multiple AI models through a single Telegram interface with full admin control and multi‑language support.
+✅ That's it. The bot is ready to serve multiple AI models through a single Telegram interface with full admin control and multi‑language support. telegram :@ariasamadi
