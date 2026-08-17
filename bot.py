@@ -105,7 +105,7 @@ class DatabaseManager:
         else:
             async with aiosqlite.connect(self.db_path) as conn:
                 async with conn.execute(query, params) as cursor:
-                    return await cursor.fetchone()
+                    return await cursor.fetchone() 
 
     async def truncate_all_tables(self):
         tables = ["users", "settings", "routers", "models", "history"]
