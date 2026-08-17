@@ -101,14 +101,20 @@ class DatabaseManager:
                 async with conn.execute(query, params) as cursor:
                     return await cursor.fetchone()
 
+    async def clear_history(self):
+        """Delete only chat history (non‑critical data)."""
+        await self.execute("DELETE FROM history")
+        logging.info("Chat history cleared (cache).")
+
     async def truncate_all_tables(self):
+        """Delete ALL data (critical + non‑critical)."""
         tables = ["users", "settings", "routers", "models", "history"]
         for table in tables:
             await self.execute(f"DELETE FROM {table}")
         if not self.use_cloud:
             for table in tables:
                 await self.execute(f"DELETE FROM sqlite_sequence WHERE name='{table}'")
-        logging.info("All tables truncated (cache cleared).")
+        logging.info("All tables truncated (full wipe).")
 
 db = DatabaseManager()
 
@@ -156,7 +162,7 @@ def shorten_model_name(name: str, max_len: int = 25) -> str:
     return name[:max_len] + '…'
 
 # ------------------------------
-# Multi‑language dictionary (fully localized)
+# Multi‑language dictionary – with new keys for cache vs full wipe
 # ------------------------------
 LANGS = {
     "en": {
@@ -172,13 +178,13 @@ LANGS = {
         "admin_only": "❌ Admin only.",
         "type_here": "Type your message...",
         "select_model": "Select an AI model to start a NEW chat:",
-        "no_models_admin": "⚠️ No models found. Send /admin to manage.",
-        "no_models_user": "⚠️ No AI models are currently available.",
+        "no_models_admin": "⚠️ No models available.",
+        "no_models_user": "⚠️ No models available.",
         "chat_started": "✅ Connected to {}.\nSend your message:",
         "invalid_url": "❌ Invalid URL format. Please send a valid Base URL (http/https):",
         "admin_menu": "⚙️ Advanced Admin Panel – use the menu below:",
         "title_routers": "🗂 List of all available API routers:",
-        "title_settings": "⚙️ Bot technical settings:",
+        "title_settings": "⚙️ Bot settings & database management :",
         "btn_routers": "🗂 API List",
         "btn_add_router": "➕ Add Router",
         "btn_settings": "⚙️ Settings",
@@ -217,14 +223,18 @@ LANGS = {
         "model_deleted": "✅ Model deleted successfully.",
         "model_not_found": "❌ Model not found.",
         "btn_user_mode": "👤 User Mode",
-        "btn_clear_remote": "🧹 Clear Cache",
-        "clear_confirm": "⚠️ This will delete ALL data from the external database:\n- Users\n- Settings\n- Routers\n- Models\n- Chat history\n\nAre you sure?",
-        "clear_done": "✅ All remote data has been cleared.",
+        "btn_clear_cache": "🧹 Clear Cache (history only)",
+        "btn_clear_all": "🗑️ Full Database Wipe",
+        "clear_cache_confirm": "🧹 This will delete all chat history (messages) from all users.\n❓ Are you sure?",
+        "clear_cache_done": "✅ Chat history cleared.",
+        "clear_all_confirm": "🗑️ This will delete ALL data:\n- Users\n- Settings\n- Routers\n- Models\n- Chat history\n\n❓ Are you sure?",
+        "clear_all_done": "✅ All data has been wiped.",
         "clear_cancelled": "❌ Operation cancelled.",
         "btn_admin_panel": "⚙️ Admin Panel",
         "no_cloud_db": "⚠️ No external cloud database is configured. Using local SQLite.",
-        "help_user": "📖 **Available Commands (User)**\n\n/start – Show main menu\n/lang – Change language\n/user – Show model list\n/model – Clear history & go to model list\n/help – Show this help\n\nSelect a model from the list to start chatting.",
-        "help_admin": "📖 **All Commands (Admin)**\n\n/start – Show main menu\n/lang – Change language\n/user – Show model list\n/model – Clear history & go to model list\n/admin – Open admin panel\n/help – Show this help\n\nUse the admin panel for full management."
+        "no_routers": "⚠️ No API routers have been added yet.",
+        "help_user": "📖 Available Commands\n\n🚀 /start • start ➜ Start\n🌐 /lang • lang ➜ Language\n🤖 /model • model ➜ Clear chat & select new model\n❓ /help • help ➜ Help\n\n✨ Choose and start 🚀",
+        "help_admin": "🌐 /lang • lang ➜ Language\n👤 /user • user ➜ User mode\n🤖 /model • model ➜ Clear cache & models\n❓ /help • help ➜ Help\n✨ Choose and start 🚀"
     },
     "fa": {
         "name": "🇮🇷🇦🇫 فارسی",
@@ -239,13 +249,13 @@ LANGS = {
         "admin_only": "❌ دسترسی فقط برای مدیریت.",
         "type_here": "پیام خود را بنویسید...",
         "select_model": "برای شروع یک چت جدید، مدل را انتخاب کنید:",
-        "no_models_admin": "⚠️ هیچ مدلی وجود ندارد. برای مدیریت /admin را ارسال کنید.",
-        "no_models_user": "⚠️ در حال حاضر هیچ مدلی در دسترس نیست.",
+        "no_models_admin": "⚠️ هنوز هیچ مدلی وجود ندارد.",
+        "no_models_user": "⚠️ هنوز هیچ مدلی وجود ندارد.",
         "chat_started": "✅ شما به {} متصل شدید.\nپیام خود را بفرستید:",
         "invalid_url": "❌ فرمت لینک اشتباه است. لطفاً یک URL معتبر بفرستید:",
         "admin_menu": "⚙️ پنل مدیریت پیشرفته ربات – از منو زیر استفاده کنید:",
         "title_routers": "🗂 لیست APIهای موجود در ربات :",
-        "title_settings": "⚙️ تنظیمات فنی ربات :",
+        "title_settings": "⚙️ تنظیمات ربات مدیریت دیتابیس :",
         "btn_routers": "🗂 APIها",
         "btn_add_router": "➕ روتر جدید",
         "btn_settings": "⚙️ تنظیمات",
@@ -284,14 +294,18 @@ LANGS = {
         "model_deleted": "✅ مدل با موفقیت حذف شد.",
         "model_not_found": "❌ مدلی با این نام یافت نشد.",
         "btn_user_mode": "👤 حالت کاربری",
-        "btn_clear_remote": "🧹 پاک‌سازی کش",
-        "clear_confirm": "⚠️ این کار تمام داده‌های دیتابیس خارجی:\n- کاربران\n- تنظیمات\n- روترها\n- مدل‌ها\n- تاریخچه چت\nرا حذف می‌کند.\n\nمطمئن هستید؟",
-        "clear_done": "✅ تمام داده‌های خارجی پاک شدند.",
+        "btn_clear_cache": "🧹 پاک‌سازی کش (فقط تاریخچه)",
+        "btn_clear_all": "🗑️ پاک‌سازی کامل دیتابیس",
+        "clear_cache_confirm": "🧹 این کار تمام تاریخچه چت (پیام‌ها) را از همه کاربران حذف می‌کند.\n❓ مطمئن هستید؟",
+        "clear_cache_done": "✅ تاریخچه چت پاک شد.",
+        "clear_all_confirm": "🗑️ این کار تمام داده‌ها را حذف می‌کند:\n- کاربران\n- تنظیمات\n- روترها\n- مدل‌ها\n- تاریخچه چت\n\n❓ مطمئن هستید؟",
+        "clear_all_done": "✅ تمام داده‌ها پاک شدند.",
         "clear_cancelled": "❌ عملیات لغو شد.",
         "btn_admin_panel": "⚙️ پنل مدیریت",
         "no_cloud_db": "⚠️ هیچ دیتابیس ابری پیکربندی نشده است. از حافظه محلی SQLite استفاده می‌شود.",
-        "help_user": "📖 **دستورات موجود (کاربری)**\n\n/start – نمایش منوی اصلی\n/lang – تغییر زبان\n/user – نمایش لیست مدل‌ها\n/model – پاک کردن تاریخچه و رفتن به لیست مدل‌ها\n/help – نمایش همین راهنما\n\nاز لیست مدل‌ها انتخاب کنید تا چت شروع شود.",
-        "help_admin": "📖 **همه دستورات (مدیریت)**\n\n/start – منوی اصلی\n/lang – تغییر زبان\n/user – لیست مدل‌ها\n/model – پاک‌سازی تاریخچه\n/admin – پنل مدیریت\n/help – نمایش راهنما\n\nاز پنل مدیریت برای تنظیمات کامل استفاده کنید."
+        "no_routers": "⚠️ هنوز هیچ API ثبت نشده است.",
+        "help_user": "📖 دستورات موجود\n\n🚀 /start • start➜ شروع\n🌐 /lang • lang ➜  زبان\n🤖 /model • model ➜ پاک‌سازی چت و انتخاب مدل جدید\n❓ /help • help ➜  راهنما\n\n✨ انتخاب کن و شروع کن 🚀",
+        "help_admin": "🌐 /lang • lang ➜ زبان\n👤 /user • user ➜ کاربری\n🤖 /model • model ➜ پاک‌سازی کش و مدل‌ها\n❓ /help • help ➜ راهنما\n✨ انتخاب کن و شروع کن 🚀"
     },
     "ru": {
         "name": "🇷🇺 Русский",
@@ -306,13 +320,13 @@ LANGS = {
         "admin_only": "❌ Только для админа.",
         "type_here": "Введите сообщение...",
         "select_model": "Выберите модель для нового чата:",
-        "no_models_admin": "⚠️ Модели не найдены. /admin",
+        "no_models_admin": "⚠️ Нет доступных моделей.",
         "no_models_user": "⚠️ Нет доступных моделей.",
         "chat_started": "✅ Подключено к {}.\nОтправьте сообщение:",
         "invalid_url": "❌ Неверный URL.",
         "admin_menu": "⚙️ Расширенная панель администратора – используйте меню:",
         "title_routers": "🗂 Список всех доступных API-роутеров:",
-        "title_settings": "⚙️ Технические настройки бота:",
+        "title_settings": "⚙️ Настройки бота и управление базой данных :",
         "btn_routers": "🗂 Список API",
         "btn_add_router": "➕ Добавить роутер",
         "btn_settings": "⚙️ Настройки",
@@ -351,14 +365,18 @@ LANGS = {
         "model_deleted": "✅ Удалена.",
         "model_not_found": "❌ Не найдена.",
         "btn_user_mode": "👤 Режим пользователя",
-        "btn_clear_remote": "🧹 Очистить кэш",
-        "clear_confirm": "⚠️ Это удалит все данные из внешней БД:\n- Пользователи\n- Настройки\n- Роутеры\n- Модели\n- История чатов\n\nВы уверены?",
-        "clear_done": "✅ Готово.",
+        "btn_clear_cache": "🧹 Очистить кэш (только историю)",
+        "btn_clear_all": "🗑️ Полная очистка БД",
+        "clear_cache_confirm": "🧹 Это удалит всю историю чатов (сообщения) всех пользователей.\n❓ Вы уверены?",
+        "clear_cache_done": "✅ История чатов очищена.",
+        "clear_all_confirm": "🗑️ Это удалит ВСЕ данные:\n- Пользователи\n- Настройки\n- Роутеры\n- Модели\n- История чатов\n\n❓ Вы уверены?",
+        "clear_all_done": "✅ Все данные удалены.",
         "clear_cancelled": "❌ Отменено.",
         "btn_admin_panel": "⚙️ Панель администратора",
         "no_cloud_db": "⚠️ Внешняя облачная БД не настроена. Используется локальный SQLite.",
-        "help_user": "📖 **Доступные команды (пользователь)**\n\n/start – Главное меню\n/lang – Сменить язык\n/user – Список моделей\n/model – Очистить историю\n/help – Эта справка\n\nВыберите модель из списка для чата.",
-        "help_admin": "📖 **Все команды (админ)**\n\n/start – Главное меню\n/lang – Язык\n/user – Модели\n/model – Очистка\n/admin – Панель админа\n/help – Справка\n\nИспользуйте панель для управления."
+        "no_routers": "⚠️ API-роутеры ещё не добавлены.",
+        "help_user": "📖 Доступные команды\n\n🚀 /start • start ➜ Начать\n🌐 /lang • lang ➜ Язык\n🤖 /model • model ➜ Очистить чат и выбрать модель\n❓ /help • help ➜ Помощь\n\n✨ Выбери и начни 🚀",
+        "help_admin": "🌐 /lang • lang ➜ Язык\n👤 /user • user ➜ Пользовательский режим\n🤖 /model • model ➜ Очистить кэш и модели\n❓ /help • help ➜ Помощь\n✨ Выбери и начни 🚀"
     },
     "ar": {
         "name": "🇸🇦 العربية",
@@ -373,13 +391,13 @@ LANGS = {
         "admin_only": "❌ للمسؤولين فقط.",
         "type_here": "اكتب رسالتك...",
         "select_model": "اختر نموذج لبدء محادثة جديدة:",
-        "no_models_admin": "⚠️ لا توجد نماذج. أرسل /admin",
+        "no_models_admin": "⚠️ لا توجد نماذج متاحة.",
         "no_models_user": "⚠️ لا توجد نماذج متاحة.",
         "chat_started": "✅ متصل بـ {}.\nأرسل رسالتك:",
         "invalid_url": "❌ رابط غير صالح.",
         "admin_menu": "⚙️ لوحة إدارة متقدمة – استخدم القائمة أدناه:",
         "title_routers": "🗂 قائمة جميع موجهات API المتاحة:",
-        "title_settings": "⚙️ الإعدادات التقنية للبوت:",
+        "title_settings": "⚙️ إعدادات البوت وإدارة قاعدة البيانات :",
         "btn_routers": "🗂 قائمة API",
         "btn_add_router": "➕ إضافة موجه",
         "btn_settings": "⚙️ الإعدادات",
@@ -418,14 +436,18 @@ LANGS = {
         "model_deleted": "✅ تم الحذف.",
         "model_not_found": "❌ غير موجود.",
         "btn_user_mode": "👤 وضع المستخدم",
-        "btn_clear_remote": "🧹 مسح الكاش",
-        "clear_confirm": "⚠️ سيتم حذف جميع البيانات من قاعدة البيانات الخارجية:\n- المستخدمين\n- الإعدادات\n- الموجهات\n- النماذج\n- سجل المحادثات\n\nهل أنت متأكد؟",
-        "clear_done": "✅ تم المسح.",
+        "btn_clear_cache": "🧹 مسح الكاش (التاريخ فقط)",
+        "btn_clear_all": "🗑️ مسح قاعدة البيانات بالكامل",
+        "clear_cache_confirm": "🧹 سيتم حذف كل سجل المحادثات (الرسائل) من جميع المستخدمين.\n❓ هل أنت متأكد؟",
+        "clear_cache_done": "✅ تم مسح تاريخ المحادثات.",
+        "clear_all_confirm": "🗑️ سيتم حذف كل البيانات:\n- المستخدمين\n- الإعدادات\n- الموجهات\n- النماذج\n- سجل المحادثات\n\n❓ هل أنت متأكد؟",
+        "clear_all_done": "✅ تم مسح كل البيانات.",
         "clear_cancelled": "❌ ألغي.",
         "btn_admin_panel": "⚙️ لوحة الإدارة",
         "no_cloud_db": "⚠️ لم يتم تكوين قاعدة بيانات سحابية خارجية. يتم استخدام SQLite المحلي.",
-        "help_user": "📖 **الأوامر المتاحة (مستخدم)**\n\n/start – القائمة الرئيسية\n/lang – تغيير اللغة\n/user – قائمة النماذج\n/model – مسح السجل\n/help – هذه المساعدة\n\nاختر نموذجاً للبدء.",
-        "help_admin": "📖 **جميع الأوامر (مدير)**\n\n/start – القائمة الرئيسية\n/lang – اللغة\n/user – النماذج\n/model – المسح\n/admin – لوحة الإدارة\n/help – المساعدة\n\nاستخدم اللوحة للإدارة الكاملة."
+        "no_routers": "⚠️ لم تتم إضافة أي موجه API بعد.",
+        "help_user": "📖 الأوامر المتاحة\n\n🚀 /start • start➜ البدء\n🌐 /lang • lang ➜ اللغة\n🤖 /model • model ➜ مسح المحادثة واختيار نموذج جديد\n❓ /help • help ➜ المساعدة\n\n✨ اختر وابدأ 🚀",
+        "help_admin": "🌐 /lang • lang ➜ اللغة\n👤 /user • user ➜ وضع المستخدم\n🤖 /model • model ➜ مسح الكاش والنماذج\n❓ /help • help ➜ المساعدة\n✨ اختر وابدأ 🚀"
     },
     "hi": {
         "name": "🇮🇳 हिन्दी",
@@ -440,13 +462,13 @@ LANGS = {
         "admin_only": "❌ केवल व्यवस्थापक।",
         "type_here": "संदेश लिखें...",
         "select_model": "नया चैट शुरू करने के लिए मॉडल चुनें:",
-        "no_models_admin": "⚠️ कोई मॉडल नहीं। /admin भेजें।",
+        "no_models_admin": "⚠️ कोई मॉडल उपलब्ध नहीं।",
         "no_models_user": "⚠️ कोई मॉडल उपलब्ध नहीं।",
         "chat_started": "✅ {} से कनेक्टेड।\nसंदेश भेजें:",
         "invalid_url": "❌ अमान्य URL۔",
         "admin_menu": "⚙️ उन्नत व्यवस्थापक पैनल – नीचे मेनू का उपयोग करें:",
         "title_routers": "🗂 सभी उपलब्ध API राउटरों की सूची:",
-        "title_settings": "⚙️ बॉट की तकनीकी सेटिंग्स:",
+        "title_settings": "⚙️ बॉट सेटिंग्स और डेटाबेस प्रबंधन :",
         "btn_routers": "🗂 API सूची",
         "btn_add_router": "➕ राउटर जोड़ें",
         "btn_settings": "⚙️ सेटिंग्स",
@@ -485,14 +507,18 @@ LANGS = {
         "model_deleted": "✅ हटाया गया।",
         "model_not_found": "❌ नहीं मिला।",
         "btn_user_mode": "👤 उपयोगकर्ता मोड",
-        "btn_clear_remote": "🧹 कैश साफ़ करें",
-        "clear_confirm": "⚠️ यह बाहरी डेटाबेस से सभी डेटा हटा देगा:\n- उपयोगकर्ता\n- सेटिंग्स\n- राउटर\n- मॉडल\n- चैट इतिहास\n\nक्या आप निश्चित हैं?",
-        "clear_done": "✅ साफ़ हो गया।",
+        "btn_clear_cache": "🧹 कैश साफ़ करें (केवल इतिहास)",
+        "btn_clear_all": "🗑️ पूर्ण डेटाबेस साफ़ करें",
+        "clear_cache_confirm": "🧹 यह सभी उपयोगकर्ताओं की चैट इतिहास (संदेश) हटा देगा।\n❓ क्या आप निश्चित हैं?",
+        "clear_cache_done": "✅ चैट इतिहास साफ़ हो गया।",
+        "clear_all_confirm": "🗑️ यह सभी डेटा हटा देगा:\n- उपयोगकर्ता\n- सेटिंग्स\n- राउटर\n- मॉडल\n- चैट इतिहास\n\n❓ क्या आप निश्चित हैं?",
+        "clear_all_done": "✅ सभी डेटा साफ़ हो गए।",
         "clear_cancelled": "❌ रद्द।",
         "btn_admin_panel": "⚙️ व्यवस्थापक पैनल",
         "no_cloud_db": "⚠️ कोई बाहरी क्लाउड डेटाबेस कॉन्फ़िगर नहीं है। स्थानीय SQLite का उपयोग होगा।",
-        "help_user": "📖 **उपलब्ध कमांड (उपयोगकर्ता)**\n\n/start – मुख्य मेनू\n/lang – भाषा बदलें\n/user – मॉडल सूची\n/model – इतिहास साफ़ करें\n/help – यह सहायता\n\nसूची से मॉडल चुनें।",
-        "help_admin": "📖 **सभी कमांड (व्यवस्थापक)**\n\n/start – मुख्य मेनू\n/lang – भाषा\n/user – मॉडल\n/model – साफ़ करें\n/admin – पैनल\n/help – सहायता\n\nपूर्ण प्रबंधन के लिए पैनल का उपयोग करें।"
+        "no_routers": "⚠️ अभी तक कोई API राउटर नहीं जोड़ा गया।",
+        "help_user": "📖 उपलब्ध कमांड\n\n🚀 /start • start➜ शुरू करें\n🌐 /lang • lang ➜ भाषा\n🤖 /model • model ➜ चैट साफ़ करें और नया मॉडल चुनें\n❓ /help • help ➜ सहायता\n\n✨ चुनें और शुरू करें 🚀",
+        "help_admin": "🌐 /lang • lang ➜ भाषा\n👤 /user • user ➜ उपयोगकर्ता मोड\n🤖 /model • model ➜ कैश और मॉडल साफ़ करें\n❓ /help • help ➜ सहायता\n✨ चुनें और शुरू करें 🚀"
     },
     "tr": {
         "name": "🇹🇷 Türkçe",
@@ -507,13 +533,13 @@ LANGS = {
         "admin_only": "❌ Sadece yönetici.",
         "type_here": "Mesajınızı yazın...",
         "select_model": "Yeni bir sohbet için model seçin:",
-        "no_models_admin": "⚠️ Model yok. /admin",
-        "no_models_user": "⚠️ Model yok.",
+        "no_models_admin": "⚠️ Mevcut model yok.",
+        "no_models_user": "⚠️ Mevcut model yok.",
         "chat_started": "✅ {} bağlanıldı.\nMesajınızı gönderin:",
         "invalid_url": "❌ Geçersiz URL.",
         "admin_menu": "⚙️ Gelişmiş Yönetici Paneli – menüyü kullanın:",
         "title_routers": "🗂 Mevcut tüm API yönlendiricilerinin listesi:",
-        "title_settings": "⚙️ Bot teknik ayarları:",
+        "title_settings": "⚙️ Bot ayarları ve veritabanı yönetimi :",
         "btn_routers": "🗂 API Listesi",
         "btn_add_router": "➕ Yönlendirici",
         "btn_settings": "⚙️ Ayarlar",
@@ -552,14 +578,18 @@ LANGS = {
         "model_deleted": "✅ Silindi.",
         "model_not_found": "❌ Bulunamadı.",
         "btn_user_mode": "👤 Kullanıcı Modu",
-        "btn_clear_remote": "🧹 Önbelleği Temizle",
-        "clear_confirm": "⚠️ Bu, harici veritabanındaki tüm verileri silecektir:\n- Kullanıcılar\n- Ayarlar\n- Yönlendiriciler\n- Modeller\n- Sohbet geçmişi\n\nEmin misiniz?",
-        "clear_done": "✅ Temizlendi.",
+        "btn_clear_cache": "🧹 Önbelleği temizle (sadece geçmiş)",
+        "btn_clear_all": "🗑️ Veritabanını tamamen temizle",
+        "clear_cache_confirm": "🧹 Bu, tüm kullanıcıların sohbet geçmişini (mesajlar) siler.\n❓ Emin misiniz?",
+        "clear_cache_done": "✅ Sohbet geçmişi temizlendi.",
+        "clear_all_confirm": "🗑️ Bu, TÜM verileri siler:\n- Kullanıcılar\n- Ayarlar\n- Yönlendiriciler\n- Modeller\n- Sohbet geçmişi\n\n❓ Emin misiniz?",
+        "clear_all_done": "✅ Tüm veriler temizlendi.",
         "clear_cancelled": "❌ İptal.",
         "btn_admin_panel": "⚙️ Yönetici Paneli",
         "no_cloud_db": "⚠️ Harici bulut veritabanı yapılandırılmamış. Yerel SQLite kullanılıyor.",
-        "help_user": "📖 **Kullanılabilir Komutlar (Kullanıcı)**\n\n/start – Ana menü\n/lang – Dil değiştir\n/user – Model listesi\n/model – Geçmişi temizle\n/help – Bu yardım\n\nListeden bir model seçin.",
-        "help_admin": "📖 **Tüm Komutlar (Admin)**\n\n/start – Ana menü\n/lang – Dil\n/user – Modeller\n/model – Temizle\n/admin – Yönetim paneli\n/help – Yardım\n\nTam yönetim için paneli kullanın."
+        "no_routers": "⚠️ Henüz hiç API yönlendiricisi eklenmemiş.",
+        "help_user": "📖 Mevcut Komutlar\n\n🚀 /start • start➜ Başlat\n🌐 /lang • lang ➜ Dil\n🤖 /model • model ➜ Sohbeti temizle ve yeni model seç\n❓ /help • help ➜ Yardım\n\n✨ Seç ve başla 🚀",
+        "help_admin": "🌐 /lang • lang ➜ Dil\n👤 /user • user ➜ Kullanıcı modu\n🤖 /model • model ➜ Önbellek ve modelleri temizle\n❓ /help • help ➜ Yardım\n✨ Seç ve başla 🚀"
     },
     "fr": {
         "name": "🇫🇷 Français",
@@ -574,13 +604,13 @@ LANGS = {
         "admin_only": "❌ Admin uniquement.",
         "type_here": "Tapez votre message...",
         "select_model": "Sélectionnez un modèle pour commencer :",
-        "no_models_admin": "⚠️ Aucun modèle. /admin",
-        "no_models_user": "⚠️ Aucun modèle.",
+        "no_models_admin": "⚠️ Aucun modèle disponible.",
+        "no_models_user": "⚠️ Aucun modèle disponible.",
         "chat_started": "✅ Connecté à {}.\nEnvoyez votre message :",
         "invalid_url": "❌ URL invalide.",
         "admin_menu": "⚙️ Panneau d'administration avancé – utilisez le menu ci-dessous :",
         "title_routers": "🗂 Liste de tous les routeurs API disponibles :",
-        "title_settings": "⚙️ Paramètres techniques du bot :",
+        "title_settings": "⚙️ Paramètres du bot et gestion de la base de données :",
         "btn_routers": "🗂 Liste API",
         "btn_add_router": "➕ Routeur",
         "btn_settings": "⚙️ Paramètres",
@@ -619,14 +649,18 @@ LANGS = {
         "model_deleted": "✅ Supprimé.",
         "model_not_found": "❌ Introuvable.",
         "btn_user_mode": "👤 Mode utilisateur",
-        "btn_clear_remote": "🧹 Vider le cache",
-        "clear_confirm": "⚠️ Cela supprimera toutes les données de la base externe :\n- Utilisateurs\n- Paramètres\n- Routeurs\n- Modèles\n- Historique des chats\n\nÊtes-vous sûr ?",
-        "clear_done": "✅ Fait.",
+        "btn_clear_cache": "🧹 Vider le cache (historique uniquement)",
+        "btn_clear_all": "🗑️ Nettoyage complet de la base",
+        "clear_cache_confirm": "🧹 Cela supprimera tout l'historique des conversations (messages) de tous les utilisateurs.\n❓ Êtes-vous sûr ?",
+        "clear_cache_done": "✅ Historique des conversations effacé.",
+        "clear_all_confirm": "🗑️ Cela supprimera TOUTES les données :\n- Utilisateurs\n- Paramètres\n- Routeurs\n- Modèles\n- Historique des chats\n\n❓ Êtes-vous sûr ?",
+        "clear_all_done": "✅ Toutes les données ont été effacées.",
         "clear_cancelled": "❌ Annulé.",
         "btn_admin_panel": "⚙️ Panneau d'administration",
         "no_cloud_db": "⚠️ Aucune base de données cloud externe configurée. Utilisation de SQLite local.",
-        "help_user": "📖 **Commandes disponibles (Utilisateur)**\n\n/start – Menu principal\n/lang – Changer langue\n/user – Liste des modèles\n/model – Effacer historique\n/help – Cette aide\n\nChoisissez un modèle dans la liste.",
-        "help_admin": "📖 **Toutes les commandes (Admin)**\n\n/start – Menu\n/lang – Langue\n/user – Modèles\n/model – Effacer\n/admin – Panneau\n/help – Aide\n\nUtilisez le panneau pour la gestion complète."
+        "no_routers": "⚠️ Aucun routeur API n'a encore été ajouté.",
+        "help_user": "📖 Commandes disponibles\n\n🚀 /start • start➜ Démarrer\n🌐 /lang • lang ➜ Langue\n🤖 /model • model ➜ Effacer le chat et choisir un nouveau modèle\n❓ /help • help ➜ Aide\n\n✨ Choisissez et commencez 🚀",
+        "help_admin": "🌐 /lang • lang ➜ Langue\n👤 /user • user ➜ Mode utilisateur\n🤖 /model • model ➜ Vider le cache et les modèles\n❓ /help • help ➜ Aide\n✨ Choisissez et commencez 🚀"
     },
     "de": {
         "name": "🇩🇪 Deutsch",
@@ -641,13 +675,13 @@ LANGS = {
         "admin_only": "❌ Nur Admin.",
         "type_here": "Nachricht...",
         "select_model": "Modell für neuen Chat wählen:",
-        "no_models_admin": "⚠️ Keine Modelle. /admin",
-        "no_models_user": "⚠️ Keine Modelle.",
+        "no_models_admin": "⚠️ Keine Modelle verfügbar.",
+        "no_models_user": "⚠️ Keine Modelle verfügbar.",
         "chat_started": "✅ Verbunden mit {}.\nNachricht senden:",
         "invalid_url": "❌ Ungültige URL.",
         "admin_menu": "⚙️ Erweitertes Admin-Panel – Menü unten:",
         "title_routers": "🗂 Liste aller verfügbaren API-Router:",
-        "title_settings": "⚙️ Technische Bot-Einstellungen:",
+        "title_settings": "⚙️ Bot-Einstellungen und Datenbankverwaltung :",
         "btn_routers": "🗂 API-Liste",
         "btn_add_router": "➕ Router",
         "btn_settings": "⚙️ Einstellungen",
@@ -686,14 +720,18 @@ LANGS = {
         "model_deleted": "✅ Gelöscht.",
         "model_not_found": "❌ Nicht gefunden.",
         "btn_user_mode": "👤 Benutzermodus",
-        "btn_clear_remote": "🧹 Cache leeren",
-        "clear_confirm": "⚠️ Dies löscht alle Daten aus der externen DB:\n- Benutzer\n- Einstellungen\n- Router\n- Modelle\n- Chatverlauf\n\nSicher?",
-        "clear_done": "✅ Erledigt.",
+        "btn_clear_cache": "🧹 Cache leeren (nur Verlauf)",
+        "btn_clear_all": "🗑️ Vollständige Datenbanklöschung",
+        "clear_cache_confirm": "🧹 Dies löscht den gesamten Chatverlauf (Nachrichten) aller Benutzer.\n❓ Sicher?",
+        "clear_cache_done": "✅ Chatverlauf gelöscht.",
+        "clear_all_confirm": "🗑️ Dies löscht ALLE Daten:\n- Benutzer\n- Einstellungen\n- Router\n- Modelle\n- Chatverlauf\n\n❓ Sicher?",
+        "clear_all_done": "✅ Alle Daten gelöscht.",
         "clear_cancelled": "❌ Abgebrochen.",
         "btn_admin_panel": "⚙️ Admin-Panel",
         "no_cloud_db": "⚠️ Keine externe Cloud-DB konfiguriert. Lokale SQLite wird verwendet.",
-        "help_user": "📖 **Verfügbare Befehle (Benutzer)**\n\n/start – Hauptmenü\n/lang – Sprache ändern\n/user – Modellliste\n/model – Verlauf löschen\n/help – Diese Hilfe\n\nWähle ein Modell aus der Liste.",
-        "help_admin": "📖 **Alle Befehle (Admin)**\n\n/start – Hauptmenü\n/lang – Sprache\n/user – Modelle\n/model – Löschen\n/admin – Admin-Panel\n/help – Hilfe\n\nNutze das Panel für volle Kontrolle."
+        "no_routers": "⚠️ Es wurden noch keine API-Router hinzugefügt.",
+        "help_user": "📖 Verfügbare Befehle\n\n🚀 /start • start➜ Start\n🌐 /lang • lang ➜ Sprache\n🤖 /model • model ➜ Chat löschen und neues Modell wählen\n❓ /help • help ➜ Hilfe\n\n✨ Wähle und starte 🚀",
+        "help_admin": "🌐 /lang • lang ➜ Sprache\n👤 /user • user ➜ Benutzermodus\n🤖 /model • model ➜ Cache und Modelle löschen\n❓ /help • help ➜ Hilfe\n✨ Wähle und starte 🚀"
     },
     "zh": {
         "name": "🇨🇳 中文",
@@ -708,13 +746,13 @@ LANGS = {
         "admin_only": "❌ 仅限管理员。",
         "type_here": "输入消息...",
         "select_model": "选择模型以开始新聊天：",
-        "no_models_admin": "⚠️ 无模型。发送 /admin",
-        "no_models_user": "⚠️ 无可用模型。",
+        "no_models_admin": "⚠️ 没有可用模型。",
+        "no_models_user": "⚠️ 没有可用模型。",
         "chat_started": "✅ 连接到 {}。\n发送您的消息：",
         "invalid_url": "❌ 无效 URL。",
         "admin_menu": "⚙️ 高级管理面板 – 使用下方菜单：",
         "title_routers": "🗂 所有可用 API 路由器列表：",
-        "title_settings": "⚙️ 机器人技术设置：",
+        "title_settings": "⚙️ 机器人设置与数据库管理 :",
         "btn_routers": "🗂 API 列表",
         "btn_add_router": "➕ 添加路由",
         "btn_settings": "⚙️ 设置",
@@ -753,14 +791,18 @@ LANGS = {
         "model_deleted": "✅ 已删除。",
         "model_not_found": "❌ 找不到模型。",
         "btn_user_mode": "👤 用户模式",
-        "btn_clear_remote": "🧹 清除缓存",
-        "clear_confirm": "⚠️ 将删除外部数据库中的所有数据：\n- 用户\n- 设置\n- 路由器\n- 模型\n- 聊天记录\n\n您确定吗？",
-        "clear_done": "✅ 已清除。",
+        "btn_clear_cache": "🧹 清除缓存（仅历史）",
+        "btn_clear_all": "🗑️ 完全清除数据库",
+        "clear_cache_confirm": "🧹 这将删除所有用户的聊天历史（消息）。\n❓ 您确定吗？",
+        "clear_cache_done": "✅ 聊天历史已清除。",
+        "clear_all_confirm": "🗑️ 这将删除所有数据：\n- 用户\n- 设置\n- 路由器\n- 模型\n- 聊天记录\n\n❓ 您确定吗？",
+        "clear_all_done": "✅ 所有数据已清除。",
         "clear_cancelled": "❌ 已取消。",
         "btn_admin_panel": "⚙️ 管理面板",
         "no_cloud_db": "⚠️ 未配置外部云数据库。使用本地 SQLite。",
-        "help_user": "📖 **可用命令（用户）**\n\n/start – 主菜单\n/lang – 切换语言\n/user – 模型列表\n/model – 清除历史\n/help – 本帮助\n\n从列表中选择模型开始聊天。",
-        "help_admin": "📖 **所有命令（管理员）**\n\n/start – 主菜单\n/lang – 语言\n/user – 模型\n/model – 清除\n/admin – 管理面板\n/help – 帮助\n\n使用面板进行全面管理。"
+        "no_routers": "⚠️ 尚未添加任何 API 路由器。",
+        "help_user": "📖 可用命令\n\n🚀 /start • start➜ 开始\n🌐 /lang • lang ➜ 语言\n🤖 /model • model ➜ 清除聊天并选择新模型\n❓ /help • help ➜ 帮助\n\n✨ 选择并开始 🚀",
+        "help_admin": "🌐 /lang • lang ➜ 语言\n👤 /user • user ➜ 用户模式\n🤖 /model • model ➜ 清除缓存和模型\n❓ /help • help ➜ 帮助\n✨ 选择并开始 🚀"
     }
 }
 
@@ -820,7 +862,8 @@ class BotStates(StatesGroup):
     admin_set_password = State()
     admin_set_channel = State()
     admin_broadcast = State()
-    admin_clear_remote_confirm = State()
+    admin_clear_cache_confirm = State()
+    admin_clear_all_confirm = State()
 
 # ------------------------------
 # Keyboard builders
@@ -846,9 +889,10 @@ async def admin_settings_keyboard(user_id):
     builder.button(text=await get_text(user_id, "btn_set_pwd"), callback_data="admin_pwd")
     builder.button(text=await get_text(user_id, "btn_set_channel"), callback_data="admin_channel")
     builder.button(text=await get_text(user_id, "btn_broadcast"), callback_data="admin_broadcast")
-    builder.button(text=await get_text(user_id, "btn_clear_remote"), callback_data="admin_clear_remote")
+    builder.button(text=await get_text(user_id, "btn_clear_cache"), callback_data="admin_clear_cache")
+    builder.button(text=await get_text(user_id, "btn_clear_all"), callback_data="admin_clear_all")
     builder.button(text=await get_text(user_id, "btn_back_main"), callback_data="admin_back")
-    builder.adjust(2, 2, 1)
+    builder.adjust(2, 2, 1, 1)  # 2-2-1-1 layout
     return builder.as_markup()
 
 def cancel_admin_keyboard(user_id, text_back):
@@ -913,9 +957,10 @@ async def show_user_panel(message, user_id, page=0, is_admin_view=False):
     await message.answer(select_text, reply_markup=kb)
 
 # ------------------------------
-# Handlers
+# Handlers for commands (with and without slash)
 # ------------------------------
 @router.message(Command("start"))
+@router.message(F.text.lower().in_({"start", "/start"}))
 async def cmd_start(message: Message, state: FSMContext):
     await state.clear()
     user_exists = await db.fetchone("SELECT lang FROM users WHERE user_id = ?", (message.from_user.id,))
@@ -1146,46 +1191,82 @@ async def admin_broadcast_send(message: Message, state: FSMContext):
     await cmd_admin(message, state)
 
 # ------------------------------
-# Admin: Clear Remote Cache
+# Admin: Clear Cache (history only)
 # ------------------------------
-@router.callback_query(F.data == "admin_clear_remote")
-async def admin_clear_remote_start(callback: CallbackQuery, state: FSMContext):
-    if not db.use_cloud:
-        no_cloud_msg = await get_text(callback.from_user.id, "no_cloud_db")
-        await callback.answer(no_cloud_msg, show_alert=True)
-        return
-    confirm_txt = await get_text(callback.from_user.id, "clear_confirm")
+@router.callback_query(F.data == "admin_clear_cache")
+async def admin_clear_cache_start(callback: CallbackQuery, state: FSMContext):
+    confirm_txt = await get_text(callback.from_user.id, "clear_cache_confirm")
     btn_yes = await get_text(callback.from_user.id, "btn_yes")
     btn_no = await get_text(callback.from_user.id, "btn_no")
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=btn_yes, callback_data="clear_remote_yes")],
-        [InlineKeyboardButton(text=btn_no, callback_data="clear_remote_no")]
+        [InlineKeyboardButton(text=btn_yes, callback_data="clear_cache_yes")],
+        [InlineKeyboardButton(text=btn_no, callback_data="clear_cache_no")]
     ])
     await callback.message.edit_text(confirm_txt, reply_markup=kb)
-    await state.set_state(BotStates.admin_clear_remote_confirm)
+    await state.set_state(BotStates.admin_clear_cache_confirm)
 
-@router.callback_query(F.data == "clear_remote_yes")
-async def clear_remote_yes(callback: CallbackQuery, state: FSMContext):
-    await db.truncate_all_tables()
-    done_txt = await get_text(callback.from_user.id, "clear_done")
+@router.callback_query(F.data == "clear_cache_yes")
+async def clear_cache_yes(callback: CallbackQuery, state: FSMContext):
+    await db.clear_history()
+    done_txt = await get_text(callback.from_user.id, "clear_cache_done")
     await callback.answer(done_txt, show_alert=True)
     await state.clear()
     await admin_settings_menu(callback)
 
-@router.callback_query(F.data == "clear_remote_no")
-async def clear_remote_no(callback: CallbackQuery, state: FSMContext):
+@router.callback_query(F.data == "clear_cache_no")
+async def clear_cache_no(callback: CallbackQuery, state: FSMContext):
     cancel_txt = await get_text(callback.from_user.id, "clear_cancelled")
     await callback.answer(cancel_txt, show_alert=True)
     await state.clear()
     await admin_settings_menu(callback)
 
 # ------------------------------
-# Admin: Routers and Models (copyable with inline code)
+# Admin: Clear All Data (full wipe)
+# ------------------------------
+@router.callback_query(F.data == "admin_clear_all")
+async def admin_clear_all_start(callback: CallbackQuery, state: FSMContext):
+    if not db.use_cloud:
+        no_cloud_msg = await get_text(callback.from_user.id, "no_cloud_db")
+        await callback.answer(no_cloud_msg, show_alert=True)
+        return
+    confirm_txt = await get_text(callback.from_user.id, "clear_all_confirm")
+    btn_yes = await get_text(callback.from_user.id, "btn_yes")
+    btn_no = await get_text(callback.from_user.id, "btn_no")
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=btn_yes, callback_data="clear_all_yes")],
+        [InlineKeyboardButton(text=btn_no, callback_data="clear_all_no")]
+    ])
+    await callback.message.edit_text(confirm_txt, reply_markup=kb)
+    await state.set_state(BotStates.admin_clear_all_confirm)
+
+@router.callback_query(F.data == "clear_all_yes")
+async def clear_all_yes(callback: CallbackQuery, state: FSMContext):
+    await db.truncate_all_tables()
+    done_txt = await get_text(callback.from_user.id, "clear_all_done")
+    await callback.answer(done_txt, show_alert=True)
+    await state.clear()
+    await admin_settings_menu(callback)
+
+@router.callback_query(F.data == "clear_all_no")
+async def clear_all_no(callback: CallbackQuery, state: FSMContext):
+    cancel_txt = await get_text(callback.from_user.id, "clear_cancelled")
+    await callback.answer(cancel_txt, show_alert=True)
+    await state.clear()
+    await admin_settings_menu(callback)
+
+# ------------------------------
+# Admin: Routers and Models
 # ------------------------------
 @router.callback_query(F.data == "admin_routers")
 async def admin_routers_list(callback: CallbackQuery):
-    buttons = []
     routers = await db.fetchall("SELECT id, domain FROM routers")
+    if not routers:
+        no_routers_text = await get_text(callback.from_user.id, "no_routers")
+        btn_back = await get_text(callback.from_user.id, "btn_back_main")
+        kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=btn_back, callback_data="admin_back")]])
+        await callback.message.edit_text(no_routers_text, reply_markup=kb)
+        return
+    buttons = []
     for r_id, domain in routers:
         buttons.append([InlineKeyboardButton(text=domain, callback_data=f"router_{r_id}")])
     btn_back = await get_text(callback.from_user.id, "btn_back_main")
@@ -1200,7 +1281,6 @@ async def admin_router_details(callback: CallbackQuery):
     models = await db.fetchall("SELECT id, model_name FROM models WHERE router_id = ?", (r_id,))
     if not r:
         return
-    # Build copyable model list with inline code formatting
     model_lines = []
     for m_id, m_name in models:
         emoji = get_model_emoji(m_name, m_id)
