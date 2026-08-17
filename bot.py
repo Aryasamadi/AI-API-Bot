@@ -113,16 +113,32 @@ class DatabaseManager:
 db = DatabaseManager()
 
 # ------------------------------
-# Emoji pool for models
+# Emoji mapping for models (keyword‑based)
 # ------------------------------
-MODEL_EMOJIS = [
+MODEL_EMOJI_MAP = {
+    "gpt": "🧠",
+    "deepseek": "🐟",
+    "claude": "🤖",
+    "gemini": "🌟",
+    "llama": "🦙",
+    "mistral": "🌪️",
+    "qwen": "🐉",
+    "command": "⚡",
+    "dalle": "🎨",
+    "whisper": "🎤",
+}
+FALLBACK_EMOJIS = [
     "🧠", "🤖", "🚀", "💡", "⚡", "🔥", "🌟", "💎",
     "📡", "🛸", "🧩", "🎯", "🏆", "🎓", "🧬", "🔮",
     "🌀", "🌈", "💫", "🎨", "🦾", "🧿", "⚙️", "📊"
 ]
 
-def get_model_emoji(model_id: int) -> str:
-    return MODEL_EMOJIS[model_id % len(MODEL_EMOJIS)]
+def get_model_emoji(model_name: str, model_id: int) -> str:
+    name_lower = model_name.lower()
+    for key, emoji in MODEL_EMOJI_MAP.items():
+        if key in name_lower:
+            return emoji
+    return FALLBACK_EMOJIS[model_id % len(FALLBACK_EMOJIS)]
 
 def shorten_model_name(name: str, max_len: int = 25) -> str:
     if len(name) <= max_len:
@@ -140,13 +156,14 @@ def shorten_model_name(name: str, max_len: int = 25) -> str:
     return name[:max_len] + '…'
 
 # ------------------------------
-# Multi‑language dictionary – all keys updated for all languages
+# Multi‑language dictionary (fully localized)
 # ------------------------------
 LANGS = {
     "en": {
         "name": "🇬🇧 English",
         "welcome_new": "Please select your language:",
         "welcome_back": "Welcome back, {name}!",
+        "welcome_first": "👋 Welcome! Use /help to see available commands.",
         "locked": "⛔ Unauthorized. Please enter the password:",
         "pwd_ok": "✅ Password accepted!",
         "pwd_err": "❌ Incorrect password.",
@@ -178,7 +195,7 @@ LANGS = {
         "send_model": "API Key saved.\nNow send the exact Model Name:",
         "send_model_for_router": "Send the exact Model Name to add to this router:",
         "router_added": "✅ Router and Model added successfully!",
-        "router_details": "📌 **Router:** {}\n\n🌐 Base URL: `{}`\n\n🔑 Token: `{}`\n\n```\n{}\n```",
+        "router_details": "📌 **Router:** {}\n\n🌐 Base URL: `{}`\n\n🔑 Token: `{}`\n\n📦 **Models (tap to copy):**\n{}",
         "btn_add_mod": "➕ Add Model",
         "btn_del_mod": "🗑 Delete Model",
         "btn_del_router": "🗑 Delete Router",
@@ -205,12 +222,15 @@ LANGS = {
         "clear_done": "✅ All remote data has been cleared.",
         "clear_cancelled": "❌ Operation cancelled.",
         "btn_admin_panel": "⚙️ Admin Panel",
-        "no_cloud_db": "⚠️ No external cloud database is configured. Using local SQLite."
+        "no_cloud_db": "⚠️ No external cloud database is configured. Using local SQLite.",
+        "help_user": "📖 **Available Commands (User)**\n\n/start – Show main menu\n/lang – Change language\n/user – Show model list\n/model – Clear history & go to model list\n/help – Show this help\n\nSelect a model from the list to start chatting.",
+        "help_admin": "📖 **All Commands (Admin)**\n\n/start – Show main menu\n/lang – Change language\n/user – Show model list\n/model – Clear history & go to model list\n/admin – Open admin panel\n/help – Show this help\n\nUse the admin panel for full management."
     },
     "fa": {
         "name": "🇮🇷🇦🇫 فارسی",
         "welcome_new": "لطفاً زبان خود را انتخاب کنید:",
         "welcome_back": "خوش برگشتی، {name}!",
+        "welcome_first": "👋 خوش آمدی! برای دیدن راهنما از دستور /help استفاده کن.",
         "locked": "⛔ شما کاربر غیرمجاز هستید. لطفاً رمز عبور را وارد کنید:",
         "pwd_ok": "✅ رمز عبور تایید شد!",
         "pwd_err": "❌ رمز اشتباه است.",
@@ -242,7 +262,7 @@ LANGS = {
         "send_model": "توکن ذخیره شد.\nحالا نام دقیق مدل را بفرستید:",
         "send_model_for_router": "نام دقیق مدل را برای افزودن به این روتر بفرستید:",
         "router_added": "✅ روتر و مدل با موفقیت اضافه شدند!",
-        "router_details": "📌 **روتر:** {}\n\n🌐 آدرس: `{}`\n\n🔑 توکن: `{}`\n\n```\n{}\n```",
+        "router_details": "📌 **روتر:** {}\n\n🌐 آدرس: `{}`\n\n🔑 توکن: `{}`\n\n📦 **مدل‌ها (برای کپی، روی هر کدام بزنید):**\n{}",
         "btn_add_mod": "➕ مدل",
         "btn_del_mod": "🗑 حذف مدل",
         "btn_del_router": "🗑 حذف روتر",
@@ -269,12 +289,15 @@ LANGS = {
         "clear_done": "✅ تمام داده‌های خارجی پاک شدند.",
         "clear_cancelled": "❌ عملیات لغو شد.",
         "btn_admin_panel": "⚙️ پنل مدیریت",
-        "no_cloud_db": "⚠️ هیچ دیتابیس ابری پیکربندی نشده است. از حافظه محلی SQLite استفاده می‌شود."
+        "no_cloud_db": "⚠️ هیچ دیتابیس ابری پیکربندی نشده است. از حافظه محلی SQLite استفاده می‌شود.",
+        "help_user": "📖 **دستورات موجود (کاربری)**\n\n/start – نمایش منوی اصلی\n/lang – تغییر زبان\n/user – نمایش لیست مدل‌ها\n/model – پاک کردن تاریخچه و رفتن به لیست مدل‌ها\n/help – نمایش همین راهنما\n\nاز لیست مدل‌ها انتخاب کنید تا چت شروع شود.",
+        "help_admin": "📖 **همه دستورات (مدیریت)**\n\n/start – منوی اصلی\n/lang – تغییر زبان\n/user – لیست مدل‌ها\n/model – پاک‌سازی تاریخچه\n/admin – پنل مدیریت\n/help – نمایش راهنما\n\nاز پنل مدیریت برای تنظیمات کامل استفاده کنید."
     },
     "ru": {
         "name": "🇷🇺 Русский",
         "welcome_new": "Пожалуйста, выберите язык:",
         "welcome_back": "С возвращением, {name}!",
+        "welcome_first": "👋 Добро пожаловать! Используйте /help для списка команд.",
         "locked": "⛔ Доступ ограничен. Введите пароль:",
         "pwd_ok": "✅ Пароль принят!",
         "pwd_err": "❌ Неверный пароль.",
@@ -306,7 +329,7 @@ LANGS = {
         "send_model": "Введите название модели:",
         "send_model_for_router": "Отправьте точное имя модели для добавления к этому роутеру:",
         "router_added": "✅ Успешно!",
-        "router_details": "📌 **Роутер:** {}\n\n🌐 URL: `{}`\n\n🔑 Токен: `{}`\n\n```\n{}\n```",
+        "router_details": "📌 **Роутер:** {}\n\n🌐 URL: `{}`\n\n🔑 Токен: `{}`\n\n📦 **Модели (нажмите для копирования):**\n{}",
         "btn_add_mod": "➕ Модель",
         "btn_del_mod": "🗑 Удалить",
         "btn_del_router": "🗑 Роутер",
@@ -333,12 +356,15 @@ LANGS = {
         "clear_done": "✅ Готово.",
         "clear_cancelled": "❌ Отменено.",
         "btn_admin_panel": "⚙️ Панель администратора",
-        "no_cloud_db": "⚠️ Внешняя облачная БД не настроена. Используется локальный SQLite."
+        "no_cloud_db": "⚠️ Внешняя облачная БД не настроена. Используется локальный SQLite.",
+        "help_user": "📖 **Доступные команды (пользователь)**\n\n/start – Главное меню\n/lang – Сменить язык\n/user – Список моделей\n/model – Очистить историю\n/help – Эта справка\n\nВыберите модель из списка для чата.",
+        "help_admin": "📖 **Все команды (админ)**\n\n/start – Главное меню\n/lang – Язык\n/user – Модели\n/model – Очистка\n/admin – Панель админа\n/help – Справка\n\nИспользуйте панель для управления."
     },
     "ar": {
         "name": "🇸🇦 العربية",
         "welcome_new": "يرجى اختيار لغتك:",
         "welcome_back": "أهلاً بك مجدداً، {name}!",
+        "welcome_first": "👋 مرحباً! استخدم /help لعرض الأوامر.",
         "locked": "⛔ غير مصرح. أدخل كلمة المرور:",
         "pwd_ok": "✅ تم القبول!",
         "pwd_err": "❌ خطأ.",
@@ -370,7 +396,7 @@ LANGS = {
         "send_model": "أدخل اسم النموذج:",
         "send_model_for_router": "أرسل الاسم الدقيق للنموذج لإضافته إلى هذا الموجه:",
         "router_added": "✅ تمت الإضافة!",
-        "router_details": "📌 **الموجه:** {}\n\n🌐 الرابط: `{}`\n\n🔑 الرمز: `{}`\n\n```\n{}\n```",
+        "router_details": "📌 **الموجه:** {}\n\n🌐 الرابط: `{}`\n\n🔑 الرمز: `{}`\n\n📦 **النماذج (انقر للنسخ):**\n{}",
         "btn_add_mod": "➕ إضافة نموذج",
         "btn_del_mod": "🗑 حذف نموذج",
         "btn_del_router": "🗑 حذف الموجه",
@@ -397,12 +423,15 @@ LANGS = {
         "clear_done": "✅ تم المسح.",
         "clear_cancelled": "❌ ألغي.",
         "btn_admin_panel": "⚙️ لوحة الإدارة",
-        "no_cloud_db": "⚠️ لم يتم تكوين قاعدة بيانات سحابية خارجية. يتم استخدام SQLite المحلي."
+        "no_cloud_db": "⚠️ لم يتم تكوين قاعدة بيانات سحابية خارجية. يتم استخدام SQLite المحلي.",
+        "help_user": "📖 **الأوامر المتاحة (مستخدم)**\n\n/start – القائمة الرئيسية\n/lang – تغيير اللغة\n/user – قائمة النماذج\n/model – مسح السجل\n/help – هذه المساعدة\n\nاختر نموذجاً للبدء.",
+        "help_admin": "📖 **جميع الأوامر (مدير)**\n\n/start – القائمة الرئيسية\n/lang – اللغة\n/user – النماذج\n/model – المسح\n/admin – لوحة الإدارة\n/help – المساعدة\n\nاستخدم اللوحة للإدارة الكاملة."
     },
     "hi": {
         "name": "🇮🇳 हिन्दी",
         "welcome_new": "कृपया अपनी भाषा चुनें:",
         "welcome_back": "वापसी पर स्वागत है, {name}!",
+        "welcome_first": "👋 स्वागत है! कमांड देखने के लिए /help का उपयोग करें।",
         "locked": "🔑 पासवर्ड दर्ज करें:",
         "pwd_ok": "✅ स्वीकृत!",
         "pwd_err": "❌ गलत।",
@@ -434,7 +463,7 @@ LANGS = {
         "send_model": "मॉडल का नाम भेजें:",
         "send_model_for_router": "इस राउटर में जोड़ने के लिए सटीक मॉडल नाम भेजें:",
         "router_added": "✅ जोड़ा गया!",
-        "router_details": "📌 **राउटर:** {}\n\n🌐 URL: `{}`\n\n🔑 टोकन: `{}`\n\n```\n{}\n```",
+        "router_details": "📌 **राउटर:** {}\n\n🌐 URL: `{}`\n\n🔑 टोकन: `{}`\n\n📦 **मॉडल (कॉपी करने के लिए टैप करें):**\n{}",
         "btn_add_mod": "➕ मॉडल",
         "btn_del_mod": "🗑 मॉडल हटाएं",
         "btn_del_router": "🗑 राउटर हटाएं",
@@ -461,12 +490,15 @@ LANGS = {
         "clear_done": "✅ साफ़ हो गया।",
         "clear_cancelled": "❌ रद्द।",
         "btn_admin_panel": "⚙️ व्यवस्थापक पैनल",
-        "no_cloud_db": "⚠️ कोई बाहरी क्लाउड डेटाबेस कॉन्फ़िगर नहीं है। स्थानीय SQLite का उपयोग होगा।"
+        "no_cloud_db": "⚠️ कोई बाहरी क्लाउड डेटाबेस कॉन्फ़िगर नहीं है। स्थानीय SQLite का उपयोग होगा।",
+        "help_user": "📖 **उपलब्ध कमांड (उपयोगकर्ता)**\n\n/start – मुख्य मेनू\n/lang – भाषा बदलें\n/user – मॉडल सूची\n/model – इतिहास साफ़ करें\n/help – यह सहायता\n\nसूची से मॉडल चुनें।",
+        "help_admin": "📖 **सभी कमांड (व्यवस्थापक)**\n\n/start – मुख्य मेनू\n/lang – भाषा\n/user – मॉडल\n/model – साफ़ करें\n/admin – पैनल\n/help – सहायता\n\nपूर्ण प्रबंधन के लिए पैनल का उपयोग करें।"
     },
     "tr": {
         "name": "🇹🇷 Türkçe",
         "welcome_new": "Lütfen dilinizi seçin:",
         "welcome_back": "Tekrar hoş geldiniz, {name}!",
+        "welcome_first": "👋 Hoş geldiniz! Komutları görmek için /help kullanın.",
         "locked": "⛔ Şifreyi girin:",
         "pwd_ok": "✅ Kabul edildi!",
         "pwd_err": "❌ Yanlış.",
@@ -498,7 +530,7 @@ LANGS = {
         "send_model": "Model adını gönderin:",
         "send_model_for_router": "Bu yönlendiriciye eklemek için tam model adını gönderin:",
         "router_added": "✅ Eklendi!",
-        "router_details": "📌 **Yönlendirici:** {}\n\n🌐 URL: `{}`\n\n🔑 Token: `{}`\n\n```\n{}\n```",
+        "router_details": "📌 **Yönlendirici:** {}\n\n🌐 URL: `{}`\n\n🔑 Token: `{}`\n\n📦 **Modeller (kopyalamak için tıklayın):**\n{}",
         "btn_add_mod": "➕ Model",
         "btn_del_mod": "🗑 Model Sil",
         "btn_del_router": "🗑 Yönlendirici Sil",
@@ -525,12 +557,15 @@ LANGS = {
         "clear_done": "✅ Temizlendi.",
         "clear_cancelled": "❌ İptal.",
         "btn_admin_panel": "⚙️ Yönetici Paneli",
-        "no_cloud_db": "⚠️ Harici bulut veritabanı yapılandırılmamış. Yerel SQLite kullanılıyor."
+        "no_cloud_db": "⚠️ Harici bulut veritabanı yapılandırılmamış. Yerel SQLite kullanılıyor.",
+        "help_user": "📖 **Kullanılabilir Komutlar (Kullanıcı)**\n\n/start – Ana menü\n/lang – Dil değiştir\n/user – Model listesi\n/model – Geçmişi temizle\n/help – Bu yardım\n\nListeden bir model seçin.",
+        "help_admin": "📖 **Tüm Komutlar (Admin)**\n\n/start – Ana menü\n/lang – Dil\n/user – Modeller\n/model – Temizle\n/admin – Yönetim paneli\n/help – Yardım\n\nTam yönetim için paneli kullanın."
     },
     "fr": {
         "name": "🇫🇷 Français",
         "welcome_new": "Choisissez votre langue :",
         "welcome_back": "Bon retour, {name} !",
+        "welcome_first": "👋 Bienvenue ! Utilisez /help pour voir les commandes.",
         "locked": "⛔ Entrez le mot de passe :",
         "pwd_ok": "✅ Accepté !",
         "pwd_err": "❌ Erreur.",
@@ -562,7 +597,7 @@ LANGS = {
         "send_model": "Nom du modèle :",
         "send_model_for_router": "Envoyez le nom exact du modèle à ajouter à ce routeur :",
         "router_added": "✅ Ajouté !",
-        "router_details": "📌 **Routeur :** {}\n\n🌐 URL : `{}`\n\n🔑 Jeton : `{}`\n\n```\n{}\n```",
+        "router_details": "📌 **Routeur :** {}\n\n🌐 URL : `{}`\n\n🔑 Jeton : `{}`\n\n📦 **Modèles (appuyez pour copier) :**\n{}",
         "btn_add_mod": "➕ Modèle",
         "btn_del_mod": "🗑 Supprimer",
         "btn_del_router": "🗑 Supprimer Routeur",
@@ -589,12 +624,15 @@ LANGS = {
         "clear_done": "✅ Fait.",
         "clear_cancelled": "❌ Annulé.",
         "btn_admin_panel": "⚙️ Panneau d'administration",
-        "no_cloud_db": "⚠️ Aucune base de données cloud externe configurée. Utilisation de SQLite local."
+        "no_cloud_db": "⚠️ Aucune base de données cloud externe configurée. Utilisation de SQLite local.",
+        "help_user": "📖 **Commandes disponibles (Utilisateur)**\n\n/start – Menu principal\n/lang – Changer langue\n/user – Liste des modèles\n/model – Effacer historique\n/help – Cette aide\n\nChoisissez un modèle dans la liste.",
+        "help_admin": "📖 **Toutes les commandes (Admin)**\n\n/start – Menu\n/lang – Langue\n/user – Modèles\n/model – Effacer\n/admin – Panneau\n/help – Aide\n\nUtilisez le panneau pour la gestion complète."
     },
     "de": {
         "name": "🇩🇪 Deutsch",
         "welcome_new": "Sprache wählen:",
         "welcome_back": "Willkommen, {name}!",
+        "welcome_first": "👋 Willkommen! Nutze /help für Befehle.",
         "locked": "⛔ Passwort eingeben:",
         "pwd_ok": "✅ Akzeptiert!",
         "pwd_err": "❌ Falsch.",
@@ -626,7 +664,7 @@ LANGS = {
         "send_model": "Modellname:",
         "send_model_for_router": "Senden Sie den genauen Modellnamen, um ihn zu diesem Router hinzuzufügen:",
         "router_added": "✅ Hinzugefügt!",
-        "router_details": "📌 **Router:** {}\n\n🌐 URL: `{}`\n\n🔑 Token: `{}`\n\n```\n{}\n```",
+        "router_details": "📌 **Router:** {}\n\n🌐 URL: `{}`\n\n🔑 Token: `{}`\n\n📦 **Modelle (zum Kopieren tippen):**\n{}",
         "btn_add_mod": "➕ Modell",
         "btn_del_mod": "🗑 Modell löschen",
         "btn_del_router": "🗑 Router löschen",
@@ -653,12 +691,15 @@ LANGS = {
         "clear_done": "✅ Erledigt.",
         "clear_cancelled": "❌ Abgebrochen.",
         "btn_admin_panel": "⚙️ Admin-Panel",
-        "no_cloud_db": "⚠️ Keine externe Cloud-DB konfiguriert. Lokale SQLite wird verwendet."
+        "no_cloud_db": "⚠️ Keine externe Cloud-DB konfiguriert. Lokale SQLite wird verwendet.",
+        "help_user": "📖 **Verfügbare Befehle (Benutzer)**\n\n/start – Hauptmenü\n/lang – Sprache ändern\n/user – Modellliste\n/model – Verlauf löschen\n/help – Diese Hilfe\n\nWähle ein Modell aus der Liste.",
+        "help_admin": "📖 **Alle Befehle (Admin)**\n\n/start – Hauptmenü\n/lang – Sprache\n/user – Modelle\n/model – Löschen\n/admin – Admin-Panel\n/help – Hilfe\n\nNutze das Panel für volle Kontrolle."
     },
     "zh": {
         "name": "🇨🇳 中文",
         "welcome_new": "请选择语言：",
         "welcome_back": "欢迎，{name}！",
+        "welcome_first": "👋 欢迎！使用 /help 查看命令。",
         "locked": "⛔ 请输入密码：",
         "pwd_ok": "✅ 密码正确！",
         "pwd_err": "❌ 密码错误。",
@@ -690,7 +731,7 @@ LANGS = {
         "send_model": "模型名称：",
         "send_model_for_router": "发送要添加到此路由器的确切模型名称：",
         "router_added": "✅ 添加成功！",
-        "router_details": "📌 **路由：** {}\n\n🌐 地址：`{}`\n\n🔑 密钥：`{}`\n\n```\n{}\n```",
+        "router_details": "📌 **路由：** {}\n\n🌐 地址：`{}`\n\n🔑 密钥：`{}`\n\n📦 **模型（点击复制）：**\n{}",
         "btn_add_mod": "➕ 模型",
         "btn_del_mod": "🗑 删除模型",
         "btn_del_router": "🗑 删除路由",
@@ -717,12 +758,14 @@ LANGS = {
         "clear_done": "✅ 已清除。",
         "clear_cancelled": "❌ 已取消。",
         "btn_admin_panel": "⚙️ 管理面板",
-        "no_cloud_db": "⚠️ 未配置外部云数据库。使用本地 SQLite。"
+        "no_cloud_db": "⚠️ 未配置外部云数据库。使用本地 SQLite。",
+        "help_user": "📖 **可用命令（用户）**\n\n/start – 主菜单\n/lang – 切换语言\n/user – 模型列表\n/model – 清除历史\n/help – 本帮助\n\n从列表中选择模型开始聊天。",
+        "help_admin": "📖 **所有命令（管理员）**\n\n/start – 主菜单\n/lang – 语言\n/user – 模型\n/model – 清除\n/admin – 管理面板\n/help – 帮助\n\n使用面板进行全面管理。"
     }
 }
 
 # ------------------------------
-# Database initialization
+# Database init
 # ------------------------------
 async def init_db():
     await db.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY, lang TEXT, is_auth INTEGER DEFAULT 0, current_model_id INTEGER)")
@@ -842,7 +885,7 @@ async def show_user_panel(message, user_id, page=0, is_admin_view=False):
     for i in range(0, len(page_models), 2):
         row = []
         for m_id, m_name in page_models[i:i+2]:
-            emoji = get_model_emoji(m_id)
+            emoji = get_model_emoji(m_name, m_id)
             short_name = shorten_model_name(m_name)
             row.append(InlineKeyboardButton(text=f"{emoji} {short_name}", callback_data=f"selmod_{m_id}"))
         buttons.append(row)
@@ -878,6 +921,8 @@ async def cmd_start(message: Message, state: FSMContext):
     user_exists = await db.fetchone("SELECT lang FROM users WHERE user_id = ?", (message.from_user.id,))
     if not user_exists:
         await db.execute("INSERT OR IGNORE INTO users (user_id, lang) VALUES (?, ?)", (message.from_user.id, "en"))
+        welcome_first = await get_text(message.from_user.id, "welcome_first")
+        await message.answer(welcome_first)
         await message.answer("Please select your language:", reply_markup=lang_keyboard())
     else:
         welcome_txt = await get_text(message.from_user.id, "welcome_back")
@@ -987,6 +1032,16 @@ async def cmd_admin(message: Message, state: FSMContext):
     kb = await admin_panel_keyboard(message.from_user.id)
     await message.answer(admin_text, reply_markup=kb)
 
+@router.message(Command("help"))
+@router.message(F.text.lower().in_({"help", "/help"}))
+async def cmd_help(message: Message, state: FSMContext):
+    await state.clear()
+    if message.from_user.id == ADMIN_ID:
+        help_text = await get_text(message.from_user.id, "help_admin")
+    else:
+        help_text = await get_text(message.from_user.id, "help_user")
+    await message.answer(help_text, parse_mode="Markdown")
+
 @router.callback_query(F.data == "admin_back")
 async def admin_back(callback: CallbackQuery, state: FSMContext):
     await state.clear()
@@ -1091,7 +1146,7 @@ async def admin_broadcast_send(message: Message, state: FSMContext):
     await cmd_admin(message, state)
 
 # ------------------------------
-# Admin: Clear Remote Cache (localized)
+# Admin: Clear Remote Cache
 # ------------------------------
 @router.callback_query(F.data == "admin_clear_remote")
 async def admin_clear_remote_start(callback: CallbackQuery, state: FSMContext):
@@ -1125,7 +1180,7 @@ async def clear_remote_no(callback: CallbackQuery, state: FSMContext):
     await admin_settings_menu(callback)
 
 # ------------------------------
-# Admin: Routers and Models (monospace, copyable)
+# Admin: Routers and Models (copyable with inline code)
 # ------------------------------
 @router.callback_query(F.data == "admin_routers")
 async def admin_routers_list(callback: CallbackQuery):
@@ -1145,9 +1200,14 @@ async def admin_router_details(callback: CallbackQuery):
     models = await db.fetchall("SELECT id, model_name FROM models WHERE router_id = ?", (r_id,))
     if not r:
         return
-    model_names = "\n".join([m[1] for m in models]) if models else "(no models)"
+    # Build copyable model list with inline code formatting
+    model_lines = []
+    for m_id, m_name in models:
+        emoji = get_model_emoji(m_name, m_id)
+        model_lines.append(f"`{m_name}`  {emoji}")
+    model_text = "\n".join(model_lines) if model_lines else "(no models)"
     txt_template = await get_text(callback.from_user.id, "router_details")
-    msg = txt_template.format(r[0], r[1], r[2], model_names)
+    msg = txt_template.format(r[0], r[1], r[2], model_text)
 
     btn_add = await get_text(callback.from_user.id, "btn_add_mod")
     btn_del_mod = await get_text(callback.from_user.id, "btn_del_mod")
@@ -1215,7 +1275,6 @@ async def admin_confirm_delete(callback: CallbackQuery):
 async def admin_add_model_only(callback: CallbackQuery, state: FSMContext):
     r_id = callback.data.split("_")[1]
     await state.update_data(r_id=r_id)
-    # Use dedicated prompt for adding model to existing router
     txt = await get_text(callback.from_user.id, "send_model_for_router")
     btn_back = await get_text(callback.from_user.id, "btn_back")
     buttons = [[InlineKeyboardButton(text=btn_back, callback_data=f"router_{r_id}")]]
