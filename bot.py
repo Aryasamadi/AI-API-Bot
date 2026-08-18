@@ -16,22 +16,14 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.utils.chat_action import ChatActionSender
 
-# ------------------------------
-# Load environment
-# ------------------------------
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = int(os.getenv("ADMIN_ID", 0))
 
-# New: Database provider selection
-DB_PROVIDER = os.getenv("DB_PROVIDER", "cloudflare").lower()   # "cloudflare" or "generic"
-
-# Cloudflare specific (used when DB_PROVIDER=cloudflare)
+DB_PROVIDER = os.getenv("DB_PROVIDER", "cloudflare").lower()
 CLOUDFLARE_ACCOUNT_ID = os.getenv("CLOUDFLARE_ACCOUNT_ID")
 CLOUDFLARE_D1_DATABASE_ID = os.getenv("CLOUDFLARE_D1_DATABASE_ID")
 CLOUDFLARE_API_TOKEN = os.getenv("CLOUDFLARE_API_TOKEN")
-
-# Generic cloud (used when DB_PROVIDER=generic)
 CLOUD_API_URL = os.getenv("CLOUD_API_URL")
 CLOUD_API_TOKEN = os.getenv("CLOUD_API_TOKEN")
 CLOUD_QUERY_BODY = os.getenv("CLOUD_QUERY_BODY", '{"sql": "query", "params": []}')
@@ -43,68 +35,47 @@ router = Router()
 dp.include_router(router)
 DB_PATH = "bot_advanced.db"
 
-# ------------------------------
-# Generic External Database Manager (now supports multiple providers)
-# ------------------------------
 class DatabaseManager:
     def __init__(self):
         self.db_path = DB_PATH
-        self.provider = DB_PROVIDER  # "cloudflare" or "generic"
-
-        # Determine if cloud mode is active based on provider and required variables
+        self.provider = DB_PROVIDER
         if self.provider == "cloudflare":
-            self.use_cloud = bool(
-                CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_D1_DATABASE_ID and CLOUDFLARE_API_TOKEN
-            )
+            self.use_cloud = bool(CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_D1_DATABASE_ID and CLOUDFLARE_API_TOKEN)
             if self.use_cloud:
                 logging.info("☁️ Cloudflare D1 mode ACTIVE")
             else:
-                logging.info("💾 Local SQLite mode (Cloudflare vars missing)")
-
+                logging.info("💾 Local SQLite mode")
         elif self.provider == "generic":
             self.use_cloud = bool(CLOUD_API_URL and CLOUD_API_TOKEN)
             if self.use_cloud:
                 logging.info(f"☁️ Generic cloud DB mode ACTIVE ({CLOUD_API_URL})")
             else:
-                logging.info("💾 Local SQLite mode (generic cloud vars missing)")
-
+                logging.info("💾 Local SQLite mode")
         else:
             self.use_cloud = False
-            logging.info("💾 Local SQLite mode (invalid or no DB_PROVIDER)")
+            logging.info("💾 Local SQLite mode")
 
     async def _cloud_request(self, query, params=()):
-        """Send query to the selected cloud provider."""
         if self.provider == "cloudflare":
             url = f"https://api.cloudflare.com/client/v4/accounts/{CLOUDFLARE_ACCOUNT_ID}/d1/database/{CLOUDFLARE_D1_DATABASE_ID}/query"
-            headers = {
-                "Authorization": f"Bearer {CLOUDFLARE_API_TOKEN}",
-                "Content-Type": "application/json"
-            }
+            headers = {"Authorization": f"Bearer {CLOUDFLARE_API_TOKEN}", "Content-Type": "application/json"}
             payload = {"sql": query, "params": list(params)}
-
         elif self.provider == "generic":
             if not CLOUD_API_URL:
-                raise Exception("CLOUD_API_URL is not set in .env")
+                raise Exception("CLOUD_API_URL not set")
             url = CLOUD_API_URL
-            headers = {
-                "Authorization": f"Bearer {CLOUD_API_TOKEN}",
-                "Content-Type": "application/json"
-            }
-            # Parse the template body; replace 'query' and 'params' placeholders
+            headers = {"Authorization": f"Bearer {CLOUD_API_TOKEN}", "Content-Type": "application/json"}
             try:
                 template = json.loads(CLOUD_QUERY_BODY)
             except:
                 template = {"sql": "query", "params": []}
             payload = template
-            # Simple substitution – you can adapt to your API format
             payload_str = json.dumps(payload)
             payload_str = payload_str.replace("'query'", json.dumps(query))
             payload_str = payload_str.replace("'params'", json.dumps(list(params)))
             payload = json.loads(payload_str)
-
         else:
-            raise Exception("Unsupported DB_PROVIDER. Use 'cloudflare' or 'generic'.")
-
+            raise Exception("Unsupported DB_PROVIDER")
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.post(url, headers=headers, json=payload, timeout=10) as resp:
@@ -116,13 +87,11 @@ class DatabaseManager:
                             logging.error(f"Cloudflare error: {data.get('errors')}")
                             return None
                     else:
-                        # For generic, we assume a response like { "results": [ ... ] } or { "data": [ ... ] }
                         if "results" in data:
                             return data
                         elif "data" in data:
                             return data
                         else:
-                            # If neither, return the whole response as is (user must adapt)
                             return data
         except Exception as e:
             logging.error(f"Cloud request failed: {e}")
@@ -163,13 +132,11 @@ class DatabaseManager:
                     return await cursor.fetchone()
 
     async def fetchval(self, query, params=()):
-        """Fetch a single scalar value (optimized)."""
         row = await self.fetchone(query, params)
         return row[0] if row else 0
 
     async def clear_history(self):
         await self.execute("DELETE FROM history")
-        logging.info("Chat history cleared (cache).")
 
     async def truncate_all_tables(self):
         tables = ["users", "settings", "routers", "models", "history"]
@@ -178,18 +145,14 @@ class DatabaseManager:
         if not self.use_cloud:
             for table in tables:
                 await self.execute(f"DELETE FROM sqlite_sequence WHERE name='{table}'")
-        logging.info("All tables truncated (full wipe).")
 
     async def get_stats(self):
-        """Fetch all statistics in a single batch."""
         if self.use_cloud:
-            # For cloud, we do multiple calls but it's still fast
             users = await self.fetchval("SELECT COUNT(*) FROM users")
             models = await self.fetchval("SELECT COUNT(*) FROM models")
             routers = await self.fetchval("SELECT COUNT(*) FROM routers")
             tokens = await self.fetchval("SELECT COUNT(*) FROM routers WHERE api_key IS NOT NULL AND api_key != ''")
         else:
-            # For SQLite, use a single query with multiple counts
             row = await self.fetchone("""
                 SELECT 
                     (SELECT COUNT(*) FROM users),
@@ -203,28 +166,32 @@ class DatabaseManager:
                 users = models = routers = tokens = 0
         return users, models, routers, tokens
 
+    async def get_all_data(self):
+        """Fetch all routers with their models and tokens for display."""
+        routers = await self.fetchall("SELECT id, domain, base_url, api_key FROM routers ORDER BY id")
+        result = []
+        for r in routers:
+            r_id, domain, base_url, api_key = r
+            models = await self.fetchall("SELECT id, model_name FROM models WHERE router_id = ? ORDER BY id", (r_id,))
+            result.append({
+                "id": r_id,
+                "domain": domain,
+                "base_url": base_url,
+                "api_key": api_key,
+                "models": models
+            })
+        return result
+
 db = DatabaseManager()
 
-# ------------------------------
-# Emoji mapping for models (keyword‑based)
-# ------------------------------
 MODEL_EMOJI_MAP = {
-    "gpt": "🧠",
-    "deepseek": "🐟",
-    "claude": "🤖",
-    "gemini": "🌟",
-    "llama": "🦙",
-    "mistral": "🌪️",
-    "qwen": "🐉",
-    "command": "⚡",
-    "dalle": "🎨",
-    "whisper": "🎤",
+    "gpt": "🧠", "deepseek": "🐟", "claude": "🤖", "gemini": "🌟",
+    "llama": "🦙", "mistral": "🌪️", "qwen": "🐉", "command": "⚡",
+    "dalle": "🎨", "whisper": "🎤",
 }
-FALLBACK_EMOJIS = [
-    "🧠", "🤖", "🚀", "💡", "⚡", "🔥", "🌟", "💎",
+FALLBACK_EMOJIS = ["🧠", "🤖", "🚀", "💡", "⚡", "🔥", "🌟", "💎",
     "📡", "🛸", "🧩", "🎯", "🏆", "🎓", "🧬", "🔮",
-    "🌀", "🌈", "💫", "🎨", "🦾", "🧿", "⚙️", "📊"
-]
+    "🌀", "🌈", "💫", "🎨", "🦾", "🧿", "⚙️", "📊"]
 
 def get_model_emoji(model_name: str, model_id: int) -> str:
     name_lower = model_name.lower()
@@ -248,9 +215,6 @@ def shorten_model_name(name: str, max_len: int = 25) -> str:
                 return base
     return name[:max_len] + '…'
 
-# ------------------------------
-# Multi‑language dictionary – with new keys for DB & Stats
-# ------------------------------
 LANGS = {
     "en": {
         "name": "🇬🇧 English",
@@ -324,7 +288,12 @@ LANGS = {
         "no_routers": "⚠️ No API routers have been added yet.",
         "help_user": "📖 Available Commands\n\n🚀 /start • start ➜ Start\n🌐 /lang • lang ➜ Language\n🤖 /model • model ➜ Clear chat & select new model\n❓ /help • help ➜ Help\n\n✨ Choose and start 🚀",
         "help_admin": "🌐 /lang • lang ➜ Language\n👤 /user • user ➜ User mode\n🤖 /model • model ➜ Clear cache & models\n❓ /help • help ➜ Help\n✨ Choose and start 🚀",
-        "stats_text": "📊 **Bot Statistics**\n\n👤 Users: `{users}`\n📢 Force Channel: `{channel}`\n🤖 Models: `{models}`\n🗂️ Routers: `{routers}`\n🔑 Tokens: `{tokens}`\n🔐 Password: `{pwd_status}`"
+        "stats_text": "📊 **Bot Statistics**\n\n👤 Users: `{users}`\n📢 Force Channel(s): `{channel}`\n🤖 Models: `{models}`\n🗂️ Routers: `{routers}`\n🔑 Tokens: `{tokens}`\n🔐 Password: `{pwd_status}`",
+        "btn_view_data": "📋 View All Data",
+        "all_data_title": "📋 **All Routers, Models and Tokens**\n\n",
+        "data_router_header": "📍 **Router #{id}** – `{domain}`\n🌐 Base URL: `{base_url}`\n🔑 Token: `{api_key}`\n📦 Models:\n",
+        "data_model_line": "   • `{name}`  {emoji}\n",
+        "data_no_models": "   (no models)\n"
     },
     "fa": {
         "name": "🇮🇷🇦🇫 فارسی",
@@ -374,14 +343,14 @@ LANGS = {
         "del_success": "✅ حذف شد.",
         "pls_select_model": "لطفاً یک مدل معتبر انتخاب کنید.",
         "invalid_command": "❌ لطفاً از دستورات منطقی استفاده کنید.",
-        "send_channel_prompt": "آیدی کانال را با @ بفرستید (یا none برای غیرفعال‌سازی):",
-        "channel_set": "✅ کانال اجباری تنظیم شد: `{}`",
+        "send_channel_prompt": "آیدی کانال را با @ بفرستید (یا none برای غیرفعال‌سازی). برای چند کانال با کاما جدا کنید:",
+        "channel_set": "✅ کانال‌های اجباری تنظیم شدند: `{}`",
         "channel_none": "🔓 کانال اجباری غیرفعال شد.",
-        "must_join": "⛔ برای استفاده از ربات، باید در کانال ما عضو باشید:",
+        "must_join": "⛔ برای استفاده از ربات، باید در کانال‌های زیر عضو باشید:\n{channels}",
         "btn_join_channel": "🔗 عضویت در کانال",
         "btn_check_join": "🔄 بررسی عضویت",
-        "join_ok": "✅ عضویت تایید شد! حالا می‌توانید استفاده کنید.",
-        "join_fail": "❌ شما هنوز در کانال عضو نشده‌اید!",
+        "join_ok": "✅ عضویت در همه کانال‌ها تایید شد! حالا می‌توانید استفاده کنید.",
+        "join_fail": "❌ شما هنوز در همه کانال‌ها عضو نشده‌اید!",
         "send_del_model": "نام دقیق مدلی که می‌خواهید حذف کنید را بفرستید:",
         "model_deleted": "✅ مدل با موفقیت حذف شد.",
         "model_not_found": "❌ مدلی با این نام یافت نشد.",
@@ -398,531 +367,15 @@ LANGS = {
         "no_routers": "⚠️ هنوز هیچ API ثبت نشده است.",
         "help_user": "📖 دستورات موجود\n\n🚀 /start • start➜ شروع\n🌐 /lang • lang ➜  زبان\n🤖 /model • model ➜ پاک‌سازی چت و انتخاب مدل جدید\n❓ /help • help ➜  راهنما\n\n✨ انتخاب کن و شروع کن 🚀",
         "help_admin": "🌐 /lang • lang ➜ زبان\n👤 /user • user ➜ کاربری\n🤖 /model • model ➜ پاک‌سازی کش و مدل‌ها\n❓ /help • help ➜ راهنما\n✨ انتخاب کن و شروع کن 🚀",
-        "stats_text": "📊 **آمار ربات**\n\n👤 کاربران: `{users}`\n📢 کانال اجباری: `{channel}`\n🤖 مدل‌ها: `{models}`\n🗂️ روترها: `{routers}`\n🔑 توکن‌ها: `{tokens}`\n🔐 رمز عبور: `{pwd_status}`"
-    },
-    "ru": {
-        "name": "🇷🇺 Русский",
-        "welcome_new": "Пожалуйста, выберите язык:",
-        "welcome_back": "С возвращением, {name}!",
-        "welcome_first": "👋 Добро пожаловать! Используйте /help для списка команд.",
-        "locked": "⛔ Доступ ограничен. Введите пароль:",
-        "pwd_ok": "✅ Пароль принят!",
-        "pwd_err": "❌ Неверный пароль.",
-        "pwd_none": "🔓 Пароль удален. Бот общедоступен.",
-        "pwd_set": "✅ Новый пароль: `{}`",
-        "admin_only": "❌ Только для админа.",
-        "type_here": "Введите сообщение...",
-        "select_model": "Выберите модель для нового чата:",
-        "no_models_admin": "⚠️ Нет доступных моделей.",
-        "no_models_user": "⚠️ Нет доступных моделей.",
-        "chat_started": "✅ Подключено к {}.\nОтправьте сообщение:",
-        "invalid_url": "❌ Неверный URL.",
-        "admin_menu": "⚙️ Расширенная панель администратора – используйте меню:",
-        "title_routers": "🗂 Список всех доступных API-роутеров:",
-        "title_settings": "⚙️ Настройки бота и управление базой данных :",
-        "btn_routers": "🗂 Список API",
-        "btn_add_router": "➕ Добавить роутер",
-        "btn_settings": "⚙️ Настройки",
-        "btn_database": "🗄️ База данных",
-        "btn_stats": "📊 Статистика и статус",
-        "btn_set_pwd": "🔐 Пароль",
-        "btn_set_channel": "📢 Канал",
-        "btn_broadcast": "📢 Рассылка",
-        "btn_back": "🔙 Назад",
-        "btn_back_main": "🏠 Главное меню",
-        "send_pwd_prompt": "Введите новый пароль (или none):",
-        "send_broadcast": "Введите сообщение для рассылки:",
-        "broadcast_done": "✅ Отправлено: {}.",
-        "send_url": "Введите Base URL:",
-        "url_detected": "Домен: {}\nВведите API ключ:",
-        "send_model": "Введите название модели:",
-        "send_model_for_router": "Отправьте точное имя модели для добавления к этому роутеру:",
-        "router_added": "✅ Успешно!",
-        "router_details": "📌 **Роутер:** {}\n\n🌐 URL: `{}`\n\n🔑 Токен: `{}`\n\n📦 **Модели (нажмите для копирования):**\n{}",
-        "btn_add_mod": "➕ Модель",
-        "btn_del_mod": "🗑 Удалить",
-        "btn_del_router": "🗑 Роутер",
-        "del_confirm_msg": "⚠️ Вы уверены?",
-        "btn_yes": "✅ Да",
-        "btn_no": "❌ Нет",
-        "del_success": "✅ Удалено.",
-        "pls_select_model": "Выберите модель.",
-        "invalid_command": "❌ Неверная команда.",
-        "send_channel_prompt": "Отправьте юзернейм канала (@channel) или none:",
-        "channel_set": "✅ Канал установлен: `{}`",
-        "channel_none": "🔓 Подписка отключена.",
-        "must_join": "⛔ Подпишитесь на канал:",
-        "btn_join_channel": "🔗 Подписаться",
-        "btn_check_join": "🔄 Проверить",
-        "join_ok": "✅ Проверка пройдена!",
-        "join_fail": "❌ Вы еще не подписались!",
-        "send_del_model": "Точное имя модели для удаления:",
-        "model_deleted": "✅ Удалена.",
-        "model_not_found": "❌ Не найдена.",
-        "btn_user_mode": "👤 Режим пользователя",
-        "btn_clear_cache": "🧹 Очистить кэш (только историю)",
-        "btn_clear_all": "🗑️ Полная очистка БД",
-        "clear_cache_confirm": "🧹 Это удалит всю историю чатов (сообщения) всех пользователей.\n❓ Вы уверены?",
-        "clear_cache_done": "✅ История чатов очищена.",
-        "clear_all_confirm": "🗑️ Это удалит ВСЕ данные:\n- Пользователи\n- Настройки\n- Роутеры\n- Модели\n- История чатов\n\n❓ Вы уверены?",
-        "clear_all_done": "✅ Все данные удалены.",
-        "clear_cancelled": "❌ Отменено.",
-        "btn_admin_panel": "⚙️ Панель администратора",
-        "no_cloud_db": "⚠️ Внешняя облачная БД не настроена. Используется локальный SQLite.",
-        "no_routers": "⚠️ API-роутеры ещё не добавлены.",
-        "help_user": "📖 Доступные команды\n\n🚀 /start • start ➜ Начать\n🌐 /lang • lang ➜ Язык\n🤖 /model • model ➜ Очистить чат и выбрать модель\n❓ /help • help ➜ Помощь\n\n✨ Выбери и начни 🚀",
-        "help_admin": "🌐 /lang • lang ➜ Язык\n👤 /user • user ➜ Пользовательский режим\n🤖 /model • model ➜ Очистить кэш и модели\n❓ /help • help ➜ Помощь\n✨ Выбери и начни 🚀",
-        "stats_text": "📊 **Статистика бота**\n\n👤 Пользователи: `{users}`\n📢 Канал: `{channel}`\n🤖 Модели: `{models}`\n🗂️ Роутеры: `{routers}`\n🔑 Токены: `{tokens}`\n🔐 Пароль: `{pwd_status}`"
-    },
-    "ar": {
-        "name": "🇸🇦 العربية",
-        "welcome_new": "يرجى اختيار لغتك:",
-        "welcome_back": "أهلاً بك مجدداً، {name}!",
-        "welcome_first": "👋 مرحباً! استخدم /help لعرض الأوامر.",
-        "locked": "⛔ غير مصرح. أدخل كلمة المرور:",
-        "pwd_ok": "✅ تم القبول!",
-        "pwd_err": "❌ خطأ.",
-        "pwd_none": "🔓 تمت إزالة كلمة المرور.",
-        "pwd_set": "✅ كلمة المرور الجديدة: `{}`",
-        "admin_only": "❌ للمسؤولين فقط.",
-        "type_here": "اكتب رسالتك...",
-        "select_model": "اختر نموذج لبدء محادثة جديدة:",
-        "no_models_admin": "⚠️ لا توجد نماذج متاحة.",
-        "no_models_user": "⚠️ لا توجد نماذج متاحة.",
-        "chat_started": "✅ متصل بـ {}.\nأرسل رسالتك:",
-        "invalid_url": "❌ رابط غير صالح.",
-        "admin_menu": "⚙️ لوحة إدارة متقدمة – استخدم القائمة أدناه:",
-        "title_routers": "🗂 قائمة جميع موجهات API المتاحة:",
-        "title_settings": "⚙️ إعدادات البوت وإدارة قاعدة البيانات :",
-        "btn_routers": "🗂 قائمة API",
-        "btn_add_router": "➕ إضافة موجه",
-        "btn_settings": "⚙️ الإعدادات",
-        "btn_database": "🗄️ قاعدة البيانات",
-        "btn_stats": "📊 الإحصائيات والحالة",
-        "btn_set_pwd": "🔐 كلمة المرور",
-        "btn_set_channel": "📢 قناة إجبارية",
-        "btn_broadcast": "📢 إرسال للكل",
-        "btn_back": "🔙 رجوع",
-        "btn_back_main": "🏠 القائمة الرئيسية",
-        "send_pwd_prompt": "أدخل كلمة المرور الجديدة (أو none):",
-        "send_broadcast": "أدخل رسالة البث:",
-        "broadcast_done": "✅ تم الإرسال إلى {}.",
-        "send_url": "أدخل Base URL:",
-        "url_detected": "النطاق: {}\nأدخل مفتاح API:",
-        "send_model": "أدخل اسم النموذج:",
-        "send_model_for_router": "أرسل الاسم الدقيق للنموذج لإضافته إلى هذا الموجه:",
-        "router_added": "✅ تمت الإضافة!",
-        "router_details": "📌 **الموجه:** {}\n\n🌐 الرابط: `{}`\n\n🔑 الرمز: `{}`\n\n📦 **النماذج (انقر للنسخ):**\n{}",
-        "btn_add_mod": "➕ إضافة نموذج",
-        "btn_del_mod": "🗑 حذف نموذج",
-        "btn_del_router": "🗑 حذف الموجه",
-        "del_confirm_msg": "⚠️ هل أنت متأكد؟",
-        "btn_yes": "✅ نعم",
-        "btn_no": "❌ لا",
-        "del_success": "✅ تم الحذف.",
-        "pls_select_model": "يرجى اختيار نموذج.",
-        "invalid_command": "❌ أمر غير صالح.",
-        "send_channel_prompt": "أرسل معرف القناة (@channel) أو none:",
-        "channel_set": "✅ تم تعيين القناة: `{}`",
-        "channel_none": "🔓 تم إلغاء القناة الإجبارية.",
-        "must_join": "⛔ يجب الاشتراك في القناة أولاً:",
-        "btn_join_channel": "🔗 اشترك",
-        "btn_check_join": "🔄 تحقق",
-        "join_ok": "✅ تم التحقق!",
-        "join_fail": "❌ لم تشترك بعد!",
-        "send_del_model": "أرسل الاسم الدقيق للنموذج:",
-        "model_deleted": "✅ تم الحذف.",
-        "model_not_found": "❌ غير موجود.",
-        "btn_user_mode": "👤 وضع المستخدم",
-        "btn_clear_cache": "🧹 مسح الكاش (التاريخ فقط)",
-        "btn_clear_all": "🗑️ مسح قاعدة البيانات بالكامل",
-        "clear_cache_confirm": "🧹 سيتم حذف كل سجل المحادثات (الرسائل) من جميع المستخدمين.\n❓ هل أنت متأكد؟",
-        "clear_cache_done": "✅ تم مسح تاريخ المحادثات.",
-        "clear_all_confirm": "🗑️ سيتم حذف كل البيانات:\n- المستخدمين\n- الإعدادات\n- الموجهات\n- النماذج\n- سجل المحادثات\n\n❓ هل أنت متأكد؟",
-        "clear_all_done": "✅ تم مسح كل البيانات.",
-        "clear_cancelled": "❌ ألغي.",
-        "btn_admin_panel": "⚙️ لوحة الإدارة",
-        "no_cloud_db": "⚠️ لم يتم تكوين قاعدة بيانات سحابية خارجية. يتم استخدام SQLite المحلي.",
-        "no_routers": "⚠️ لم تتم إضافة أي موجه API بعد.",
-        "help_user": "📖 الأوامر المتاحة\n\n🚀 /start • start➜ البدء\n🌐 /lang • lang ➜ اللغة\n🤖 /model • model ➜ مسح المحادثة واختيار نموذج جديد\n❓ /help • help ➜ المساعدة\n\n✨ اختر وابدأ 🚀",
-        "help_admin": "🌐 /lang • lang ➜ اللغة\n👤 /user • user ➜ وضع المستخدم\n🤖 /model • model ➜ مسح الكاش والنماذج\n❓ /help • help ➜ المساعدة\n✨ اختر وابدأ 🚀",
-        "stats_text": "📊 **إحصائيات البوت**\n\n👤 المستخدمون: `{users}`\n📢 القناة الإجبارية: `{channel}`\n🤖 النماذج: `{models}`\n🗂️ الموجهات: `{routers}`\n🔑 الرموز: `{tokens}`\n🔐 كلمة المرور: `{pwd_status}`"
-    },
-    "hi": {
-        "name": "🇮🇳 हिन्दी",
-        "welcome_new": "कृपया अपनी भाषा चुनें:",
-        "welcome_back": "वापसी पर स्वागत है, {name}!",
-        "welcome_first": "👋 स्वागत है! कमांड देखने के लिए /help का उपयोग करें।",
-        "locked": "🔑 पासवर्ड दर्ज करें:",
-        "pwd_ok": "✅ स्वीकृत!",
-        "pwd_err": "❌ गलत।",
-        "pwd_none": "🔓 पासवर्ड हटाया गया।",
-        "pwd_set": "✅ नया पासवर्ड: `{}`",
-        "admin_only": "❌ केवल व्यवस्थापक।",
-        "type_here": "संदेश लिखें...",
-        "select_model": "नया चैट शुरू करने के लिए मॉडल चुनें:",
-        "no_models_admin": "⚠️ कोई मॉडल उपलब्ध नहीं।",
-        "no_models_user": "⚠️ कोई मॉडल उपलब्ध नहीं।",
-        "chat_started": "✅ {} से कनेक्टेड।\nसंदेश भेजें:",
-        "invalid_url": "❌ अमान्य URL۔",
-        "admin_menu": "⚙️ उन्नत व्यवस्थापक पैनल – नीचे मेनू का उपयोग करें:",
-        "title_routers": "🗂 सभी उपलब्ध API राउटरों की सूची:",
-        "title_settings": "⚙️ बॉट सेटिंग्स और डेटाबेस प्रबंधन :",
-        "btn_routers": "🗂 API सूची",
-        "btn_add_router": "➕ राउटर जोड़ें",
-        "btn_settings": "⚙️ सेटिंग्स",
-        "btn_database": "🗄️ डेटाबेस",
-        "btn_stats": "📊 आँकड़े और स्थिति",
-        "btn_set_pwd": "🔐 पासवर्ड",
-        "btn_set_channel": "📢 चैनल",
-        "btn_broadcast": "📢 प्रसारण",
-        "btn_back": "🔙 पीछे",
-        "btn_back_main": "🏠 मुख्य मेनू",
-        "send_pwd_prompt": "नया पासवर्ड भेजें (या none):",
-        "send_broadcast": "संदेश भेजें:",
-        "broadcast_done": "✅ {} को भेजा गया।",
-        "send_url": "Base URL भेजें:",
-        "url_detected": "डोमेन: {}\nAPI कुंजी भेजें:",
-        "send_model": "मॉडल का नाम भेजें:",
-        "send_model_for_router": "इस राउटर में जोड़ने के लिए सटीक मॉडल नाम भेजें:",
-        "router_added": "✅ जोड़ा गया!",
-        "router_details": "📌 **राउटर:** {}\n\n🌐 URL: `{}`\n\n🔑 टोकन: `{}`\n\n📦 **मॉडल (कॉपी करने के लिए टैप करें):**\n{}",
-        "btn_add_mod": "➕ मॉडल",
-        "btn_del_mod": "🗑 मॉडल हटाएं",
-        "btn_del_router": "🗑 राउटर हटाएं",
-        "del_confirm_msg": "⚠️ क्या आप सुनिश्चित हैं?",
-        "btn_yes": "✅ हाँ",
-        "btn_no": "❌ नहीं",
-        "del_success": "✅ हटा दिया गया।",
-        "pls_select_model": "मॉडल चुनें।",
-        "invalid_command": "❌ अमान्य कमांड।",
-        "send_channel_prompt": "चैनल का नाम (@channel) या none भेजें:",
-        "channel_set": "✅ चैनल सेट: `{}`",
-        "channel_none": "🔓 चैनल बंद।",
-        "must_join": "⛔ पहले चैनल से जुड़ें:",
-        "btn_join_channel": "🔗 जुड़ें",
-        "btn_check_join": "🔄 जांचें",
-        "join_ok": "✅ सदस्यता सत्यापित!",
-        "join_fail": "❌ आप अभी तक नहीं जुड़े हैं!",
-        "send_del_model": "हटाने के लिए सटीक मॉडल नाम:",
-        "model_deleted": "✅ हटाया गया।",
-        "model_not_found": "❌ नहीं मिला।",
-        "btn_user_mode": "👤 उपयोगकर्ता मोड",
-        "btn_clear_cache": "🧹 कैश साफ़ करें (केवल इतिहास)",
-        "btn_clear_all": "🗑️ पूर्ण डेटाबेस साफ़ करें",
-        "clear_cache_confirm": "🧹 यह सभी उपयोगकर्ताओं की चैट इतिहास (संदेश) हटा देगा।\n❓ क्या आप निश्चित हैं?",
-        "clear_cache_done": "✅ चैट इतिहास साफ़ हो गया।",
-        "clear_all_confirm": "🗑️ यह सभी डेटा हटा देगा:\n- उपयोगकर्ता\n- सेटिंग्स\n- राउटर\n- मॉडल\n- चैट इतिहास\n\n❓ क्या आप निश्चित हैं?",
-        "clear_all_done": "✅ सभी डेटा साफ़ हो गए।",
-        "clear_cancelled": "❌ रद्द।",
-        "btn_admin_panel": "⚙️ व्यवस्थापक पैनल",
-        "no_cloud_db": "⚠️ कोई बाहरी क्लाउड डेटाबेस कॉन्फ़िगर नहीं है। स्थानीय SQLite का उपयोग होगा।",
-        "no_routers": "⚠️ अभी तक कोई API राउटर नहीं जोड़ा गया।",
-        "help_user": "📖 उपलब्ध कमांड\n\n🚀 /start • start➜ शुरू करें\n🌐 /lang • lang ➜ भाषा\n🤖 /model • model ➜ चैट साफ़ करें और नया मॉडल चुनें\n❓ /help • help ➜ सहायता\n\n✨ चुनें और शुरू करें 🚀",
-        "help_admin": "🌐 /lang • lang ➜ भाषा\n👤 /user • user ➜ उपयोगकर्ता मोड\n🤖 /model • model ➜ कैश और मॉडल साफ़ करें\n❓ /help • help ➜ सहायता\n✨ चुनें और शुरू करें 🚀",
-        "stats_text": "📊 **बॉट आँकड़े**\n\n👤 उपयोगकर्ता: `{users}`\n📢 अनिवार्य चैनल: `{channel}`\n🤖 मॉडल: `{models}`\n🗂️ राउटर: `{routers}`\n🔑 टोकन: `{tokens}`\n🔐 पासवर्ड: `{pwd_status}`"
-    },
-    "tr": {
-        "name": "🇹🇷 Türkçe",
-        "welcome_new": "Lütfen dilinizi seçin:",
-        "welcome_back": "Tekrar hoş geldiniz, {name}!",
-        "welcome_first": "👋 Hoş geldiniz! Komutları görmek için /help kullanın.",
-        "locked": "⛔ Şifreyi girin:",
-        "pwd_ok": "✅ Kabul edildi!",
-        "pwd_err": "❌ Yanlış.",
-        "pwd_none": "🔓 Şifre kaldırıldı.",
-        "pwd_set": "✅ Yeni şifre: `{}`",
-        "admin_only": "❌ Sadece yönetici.",
-        "type_here": "Mesajınızı yazın...",
-        "select_model": "Yeni bir sohbet için model seçin:",
-        "no_models_admin": "⚠️ Mevcut model yok.",
-        "no_models_user": "⚠️ Mevcut model yok.",
-        "chat_started": "✅ {} bağlanıldı.\nMesajınızı gönderin:",
-        "invalid_url": "❌ Geçersiz URL.",
-        "admin_menu": "⚙️ Gelişmiş Yönetici Paneli – menüyü kullanın:",
-        "title_routers": "🗂 Mevcut tüm API yönlendiricilerinin listesi:",
-        "title_settings": "⚙️ Bot ayarları ve veritabanı yönetimi :",
-        "btn_routers": "🗂 API Listesi",
-        "btn_add_router": "➕ Yönlendirici",
-        "btn_settings": "⚙️ Ayarlar",
-        "btn_database": "🗄️ Veritabanı",
-        "btn_stats": "📊 İstatistik ve Durum",
-        "btn_set_pwd": "🔐 Şifre",
-        "btn_set_channel": "📢 Kanal",
-        "btn_broadcast": "📢 Duyuru",
-        "btn_back": "🔙 Geri",
-        "btn_back_main": "🏠 Ana Menü",
-        "send_pwd_prompt": "Yeni şifre (veya none):",
-        "send_broadcast": "Duyuru gönderin:",
-        "broadcast_done": "✅ {} kişiye gönderildi.",
-        "send_url": "Base URL:",
-        "url_detected": "Alan adı: {}\nAPI Anahtarı:",
-        "send_model": "Model adını gönderin:",
-        "send_model_for_router": "Bu yönlendiriciye eklemek için tam model adını gönderin:",
-        "router_added": "✅ Eklendi!",
-        "router_details": "📌 **Yönlendirici:** {}\n\n🌐 URL: `{}`\n\n🔑 Token: `{}`\n\n📦 **Modeller (kopyalamak için tıklayın):**\n{}",
-        "btn_add_mod": "➕ Model",
-        "btn_del_mod": "🗑 Model Sil",
-        "btn_del_router": "🗑 Yönlendirici Sil",
-        "del_confirm_msg": "⚠️ Emin misiniz?",
-        "btn_yes": "✅ Evet",
-        "btn_no": "❌ Hayır",
-        "del_success": "✅ Silindi.",
-        "pls_select_model": "Model seçin.",
-        "invalid_command": "❌ Geçersiz komut.",
-        "send_channel_prompt": "Kanal adını (@channel) veya none:",
-        "channel_set": "✅ Kanal ayarlandı: `{}`",
-        "channel_none": "🔓 Zorunlu kanal iptal edildi.",
-        "must_join": "⛔ Önce kanala katılın:",
-        "btn_join_channel": "🔗 Katıl",
-        "btn_check_join": "🔄 Kontrol Et",
-        "join_ok": "✅ Katılım onaylandı!",
-        "join_fail": "❌ Henüz katılmadınız!",
-        "send_del_model": "Tam model adını gönderin:",
-        "model_deleted": "✅ Silindi.",
-        "model_not_found": "❌ Bulunamadı.",
-        "btn_user_mode": "👤 Kullanıcı Modu",
-        "btn_clear_cache": "🧹 Önbelleği temizle (sadece geçmiş)",
-        "btn_clear_all": "🗑️ Veritabanını tamamen temizle",
-        "clear_cache_confirm": "🧹 Bu, tüm kullanıcıların sohbet geçmişini (mesajlar) siler.\n❓ Emin misiniz?",
-        "clear_cache_done": "✅ Sohbet geçmişi temizlendi.",
-        "clear_all_confirm": "🗑️ Bu, TÜM verileri siler:\n- Kullanıcılar\n- Ayarlar\n- Yönlendiriciler\n- Modeller\n- Sohbet geçmişi\n\n❓ Emin misiniz?",
-        "clear_all_done": "✅ Tüm veriler temizlendi.",
-        "clear_cancelled": "❌ İptal.",
-        "btn_admin_panel": "⚙️ Yönetici Paneli",
-        "no_cloud_db": "⚠️ Harici bulut veritabanı yapılandırılmamış. Yerel SQLite kullanılıyor.",
-        "no_routers": "⚠️ Henüz hiç API yönlendiricisi eklenmemiş.",
-        "help_user": "📖 Mevcut Komutlar\n\n🚀 /start • start➜ Başlat\n🌐 /lang • lang ➜ Dil\n🤖 /model • model ➜ Sohbeti temizle ve yeni model seç\n❓ /help • help ➜ Yardım\n\n✨ Seç ve başla 🚀",
-        "help_admin": "🌐 /lang • lang ➜ Dil\n👤 /user • user ➜ Kullanıcı modu\n🤖 /model • model ➜ Önbellek ve modelleri temizle\n❓ /help • help ➜ Yardım\n✨ Seç ve başla 🚀",
-        "stats_text": "📊 **Bot İstatistikleri**\n\n👤 Kullanıcılar: `{users}`\n📢 Zorunlu Kanal: `{channel}`\n🤖 Modeller: `{models}`\n🗂️ Yönlendiriciler: `{routers}`\n🔑 Tokenlar: `{tokens}`\n🔐 Şifre: `{pwd_status}`"
-    },
-    "fr": {
-        "name": "🇫🇷 Français",
-        "welcome_new": "Choisissez votre langue :",
-        "welcome_back": "Bon retour, {name} !",
-        "welcome_first": "👋 Bienvenue ! Utilisez /help pour voir les commandes.",
-        "locked": "⛔ Entrez le mot de passe :",
-        "pwd_ok": "✅ Accepté !",
-        "pwd_err": "❌ Erreur.",
-        "pwd_none": "🔓 MDP supprimé.",
-        "pwd_set": "✅ Nouveau MDP : `{}`",
-        "admin_only": "❌ Admin uniquement.",
-        "type_here": "Tapez votre message...",
-        "select_model": "Sélectionnez un modèle pour commencer :",
-        "no_models_admin": "⚠️ Aucun modèle disponible.",
-        "no_models_user": "⚠️ Aucun modèle disponible.",
-        "chat_started": "✅ Connecté à {}.\nEnvoyez votre message :",
-        "invalid_url": "❌ URL invalide.",
-        "admin_menu": "⚙️ Panneau d'administration avancé – utilisez le menu ci-dessous :",
-        "title_routers": "🗂 Liste de tous les routeurs API disponibles :",
-        "title_settings": "⚙️ Paramètres du bot et gestion de la base de données :",
-        "btn_routers": "🗂 Liste API",
-        "btn_add_router": "➕ Routeur",
-        "btn_settings": "⚙️ Paramètres",
-        "btn_database": "🗄️ Base de données",
-        "btn_stats": "📊 Statistiques et statut",
-        "btn_set_pwd": "🔐 MDP",
-        "btn_set_channel": "📢 Canal",
-        "btn_broadcast": "📢 Diffusion",
-        "btn_back": "🔙 Retour",
-        "btn_back_main": "🏠 Menu",
-        "send_pwd_prompt": "Nouveau mot de passe (ou none) :",
-        "send_broadcast": "Envoyez le message :",
-        "broadcast_done": "✅ Envoyé à {}.",
-        "send_url": "URL de base :",
-        "url_detected": "Domaine : {}\nClé API :",
-        "send_model": "Nom du modèle :",
-        "send_model_for_router": "Envoyez le nom exact du modèle à ajouter à ce routeur :",
-        "router_added": "✅ Ajouté !",
-        "router_details": "📌 **Routeur :** {}\n\n🌐 URL : `{}`\n\n🔑 Jeton : `{}`\n\n📦 **Modèles (appuyez pour copier) :**\n{}",
-        "btn_add_mod": "➕ Modèle",
-        "btn_del_mod": "🗑 Supprimer",
-        "btn_del_router": "🗑 Supprimer Routeur",
-        "del_confirm_msg": "⚠️ Sûr ?",
-        "btn_yes": "✅ Oui",
-        "btn_no": "❌ Non",
-        "del_success": "✅ Supprimé.",
-        "pls_select_model": "Choisissez un modèle.",
-        "invalid_command": "❌ Commande invalide.",
-        "send_channel_prompt": "Envoyez le nom du canal (@canal) ou none :",
-        "channel_set": "✅ Canal défini : `{}`",
-        "channel_none": "🔓 Canal désactivé.",
-        "must_join": "⛔ Rejoignez le canal d'abord :",
-        "btn_join_channel": "🔗 Rejoindre",
-        "btn_check_join": "🔄 Vérifier",
-        "join_ok": "✅ Abonnement vérifié !",
-        "join_fail": "❌ Vous n'avez pas rejoint !",
-        "send_del_model": "Nom exact du modèle :",
-        "model_deleted": "✅ Supprimé.",
-        "model_not_found": "❌ Introuvable.",
-        "btn_user_mode": "👤 Mode utilisateur",
-        "btn_clear_cache": "🧹 Vider le cache (historique uniquement)",
-        "btn_clear_all": "🗑️ Nettoyage complet de la base",
-        "clear_cache_confirm": "🧹 Cela supprimera tout l'historique des conversations (messages) de tous les utilisateurs.\n❓ Êtes-vous sûr ?",
-        "clear_cache_done": "✅ Historique des conversations effacé.",
-        "clear_all_confirm": "🗑️ Cela supprimera TOUTES les données :\n- Utilisateurs\n- Paramètres\n- Routeurs\n- Modèles\n- Historique des chats\n\n❓ Êtes-vous sûr ?",
-        "clear_all_done": "✅ Toutes les données ont été effacées.",
-        "clear_cancelled": "❌ Annulé.",
-        "btn_admin_panel": "⚙️ Panneau d'administration",
-        "no_cloud_db": "⚠️ Aucune base de données cloud externe configurée. Utilisation de SQLite local.",
-        "no_routers": "⚠️ Aucun routeur API n'a encore été ajouté.",
-        "help_user": "📖 Commandes disponibles\n\n🚀 /start • start➜ Démarrer\n🌐 /lang • lang ➜ Langue\n🤖 /model • model ➜ Effacer le chat et choisir un nouveau modèle\n❓ /help • help ➜ Aide\n\n✨ Choisissez et commencez 🚀",
-        "help_admin": "🌐 /lang • lang ➜ Langue\n👤 /user • user ➜ Mode utilisateur\n🤖 /model • model ➜ Vider le cache et les modèles\n❓ /help • help ➜ Aide\n✨ Choisissez et commencez 🚀",
-        "stats_text": "📊 **Statistiques du bot**\n\n👤 Utilisateurs : `{users}`\n📢 Canal obligatoire : `{channel}`\n🤖 Modèles : `{models}`\n🗂️ Routeurs : `{routers}`\n🔑 Jetons : `{tokens}`\n🔐 Mot de passe : `{pwd_status}`"
-    },
-    "de": {
-        "name": "🇩🇪 Deutsch",
-        "welcome_new": "Sprache wählen:",
-        "welcome_back": "Willkommen, {name}!",
-        "welcome_first": "👋 Willkommen! Nutze /help für Befehle.",
-        "locked": "⛔ Passwort eingeben:",
-        "pwd_ok": "✅ Akzeptiert!",
-        "pwd_err": "❌ Falsch.",
-        "pwd_none": "🔓 Passwort entfernt.",
-        "pwd_set": "✅ Neues Passwort: `{}`",
-        "admin_only": "❌ Nur Admin.",
-        "type_here": "Nachricht...",
-        "select_model": "Modell für neuen Chat wählen:",
-        "no_models_admin": "⚠️ Keine Modelle verfügbar.",
-        "no_models_user": "⚠️ Keine Modelle verfügbar.",
-        "chat_started": "✅ Verbunden mit {}.\nNachricht senden:",
-        "invalid_url": "❌ Ungültige URL.",
-        "admin_menu": "⚙️ Erweitertes Admin-Panel – Menü unten:",
-        "title_routers": "🗂 Liste aller verfügbaren API-Router:",
-        "title_settings": "⚙️ Bot-Einstellungen und Datenbankverwaltung :",
-        "btn_routers": "🗂 API-Liste",
-        "btn_add_router": "➕ Router",
-        "btn_settings": "⚙️ Einstellungen",
-        "btn_database": "🗄️ Datenbank",
-        "btn_stats": "📊 Statistiken und Status",
-        "btn_set_pwd": "🔐 Passwort",
-        "btn_set_channel": "📢 Kanal",
-        "btn_broadcast": "📢 Broadcast",
-        "btn_back": "🔙 Zurück",
-        "btn_back_main": "🏠 Hauptmenü",
-        "send_pwd_prompt": "Neues Passwort (oder none):",
-        "send_broadcast": "Nachricht senden:",
-        "broadcast_done": "✅ An {} gesendet.",
-        "send_url": "Base URL:",
-        "url_detected": "Domain: {}\nAPI-Key:",
-        "send_model": "Modellname:",
-        "send_model_for_router": "Senden Sie den genauen Modellnamen, um ihn zu diesem Router hinzuzufügen:",
-        "router_added": "✅ Hinzugefügt!",
-        "router_details": "📌 **Router:** {}\n\n🌐 URL: `{}`\n\n🔑 Token: `{}`\n\n📦 **Modelle (zum Kopieren tippen):**\n{}",
-        "btn_add_mod": "➕ Modell",
-        "btn_del_mod": "🗑 Modell löschen",
-        "btn_del_router": "🗑 Router löschen",
-        "del_confirm_msg": "⚠️ Sicher?",
-        "btn_yes": "✅ Ja",
-        "btn_no": "❌ Nein",
-        "del_success": "✅ Gelöscht.",
-        "pls_select_model": "Modell wählen.",
-        "invalid_command": "❌ Ungültig.",
-        "send_channel_prompt": "Kanalname (@kanal) oder none:",
-        "channel_set": "✅ Kanal gesetzt: `{}`",
-        "channel_none": "🔓 Pflichtkanal deaktiviert.",
-        "must_join": "⛔ Bitte dem Kanal beitreten:",
-        "btn_join_channel": "🔗 Beitreten",
-        "btn_check_join": "🔄 Prüfen",
-        "join_ok": "✅ Mitgliedschaft geprüft!",
-        "join_fail": "❌ Sie sind noch nicht beigetreten!",
-        "send_del_model": "Exakten Modellnamen:",
-        "model_deleted": "✅ Gelöscht.",
-        "model_not_found": "❌ Nicht gefunden.",
-        "btn_user_mode": "👤 Benutzermodus",
-        "btn_clear_cache": "🧹 Cache leeren (nur Verlauf)",
-        "btn_clear_all": "🗑️ Vollständige Datenbanklöschung",
-        "clear_cache_confirm": "🧹 Dies löscht den gesamten Chatverlauf (Nachrichten) aller Benutzer.\n❓ Sicher?",
-        "clear_cache_done": "✅ Chatverlauf gelöscht.",
-        "clear_all_confirm": "🗑️ Dies löscht ALLE Daten:\n- Benutzer\n- Einstellungen\n- Router\n- Modelle\n- Chatverlauf\n\n❓ Sicher?",
-        "clear_all_done": "✅ Alle Daten gelöscht.",
-        "clear_cancelled": "❌ Abgebrochen.",
-        "btn_admin_panel": "⚙️ Admin-Panel",
-        "no_cloud_db": "⚠️ Keine externe Cloud-DB konfiguriert. Lokale SQLite wird verwendet.",
-        "no_routers": "⚠️ Es wurden noch keine API-Router hinzugefügt.",
-        "help_user": "📖 Verfügbare Befehle\n\n🚀 /start • start➜ Start\n🌐 /lang • lang ➜ Sprache\n🤖 /model • model ➜ Chat löschen und neues Modell wählen\n❓ /help • help ➜ Hilfe\n\n✨ Wähle und starte 🚀",
-        "help_admin": "🌐 /lang • lang ➜ Sprache\n👤 /user • user ➜ Benutzermodus\n🤖 /model • model ➜ Cache und Modelle löschen\n❓ /help • help ➜ Hilfe\n✨ Wähle und starte 🚀",
-        "stats_text": "📊 **Bot-Statistiken**\n\n👤 Benutzer: `{users}`\n📢 Pflichtkanal: `{channel}`\n🤖 Modelle: `{models}`\n🗂️ Router: `{routers}`\n🔑 Tokens: `{tokens}`\n🔐 Passwort: `{pwd_status}`"
-    },
-    "zh": {
-        "name": "🇨🇳 中文",
-        "welcome_new": "请选择语言：",
-        "welcome_back": "欢迎，{name}！",
-        "welcome_first": "👋 欢迎！使用 /help 查看命令。",
-        "locked": "⛔ 请输入密码：",
-        "pwd_ok": "✅ 密码正确！",
-        "pwd_err": "❌ 密码错误。",
-        "pwd_none": "🔓 密码已移除。",
-        "pwd_set": "✅ 新密码：`{}`",
-        "admin_only": "❌ 仅限管理员。",
-        "type_here": "输入消息...",
-        "select_model": "选择模型以开始新聊天：",
-        "no_models_admin": "⚠️ 没有可用模型。",
-        "no_models_user": "⚠️ 没有可用模型。",
-        "chat_started": "✅ 连接到 {}。\n发送您的消息：",
-        "invalid_url": "❌ 无效 URL。",
-        "admin_menu": "⚙️ 高级管理面板 – 使用下方菜单：",
-        "title_routers": "🗂 所有可用 API 路由器列表：",
-        "title_settings": "⚙️ 机器人设置与数据库管理 :",
-        "btn_routers": "🗂 API 列表",
-        "btn_add_router": "➕ 添加路由",
-        "btn_settings": "⚙️ 设置",
-        "btn_database": "🗄️ 数据库",
-        "btn_stats": "📊 统计与状态",
-        "btn_set_pwd": "🔐 密码",
-        "btn_set_channel": "📢 频道",
-        "btn_broadcast": "📢 广播",
-        "btn_back": "🔙 返回",
-        "btn_back_main": "🏠 主菜单",
-        "send_pwd_prompt": "发送新密码（或 none）：",
-        "send_broadcast": "发送广播：",
-        "broadcast_done": "✅ 已发送给 {}。",
-        "send_url": "Base URL：",
-        "url_detected": "域：{}\nAPI 密钥：",
-        "send_model": "模型名称：",
-        "send_model_for_router": "发送要添加到此路由器的确切模型名称：",
-        "router_added": "✅ 添加成功！",
-        "router_details": "📌 **路由：** {}\n\n🌐 地址：`{}`\n\n🔑 密钥：`{}`\n\n📦 **模型（点击复制）：**\n{}",
-        "btn_add_mod": "➕ 模型",
-        "btn_del_mod": "🗑 删除模型",
-        "btn_del_router": "🗑 删除路由",
-        "del_confirm_msg": "⚠️ 确定吗？",
-        "btn_yes": "✅ 是",
-        "btn_no": "❌ 否",
-        "del_success": "✅ 已删除。",
-        "pls_select_model": "请选择模型。",
-        "invalid_command": "❌ 无效命令。",
-        "send_channel_prompt": "发送频道名 (@channel) 或 none：",
-        "channel_set": "✅ 频道已设置：`{}`",
-        "channel_none": "🔓 强制订阅已关闭。",
-        "must_join": "⛔ 必须先加入频道：",
-        "btn_join_channel": "🔗 加入频道",
-        "btn_check_join": "🔄 检查",
-        "join_ok": "✅ 验证通过！",
-        "join_fail": "❌ 您尚未加入！",
-        "send_del_model": "要删除的准确模型名称：",
-        "model_deleted": "✅ 已删除。",
-        "model_not_found": "❌ 找不到模型。",
-        "btn_user_mode": "👤 用户模式",
-        "btn_clear_cache": "🧹 清除缓存（仅历史）",
-        "btn_clear_all": "🗑️ 完全清除数据库",
-        "clear_cache_confirm": "🧹 这将删除所有用户的聊天历史（消息）。\n❓ 您确定吗？",
-        "clear_cache_done": "✅ 聊天历史已清除。",
-        "clear_all_confirm": "🗑️ 这将删除所有数据：\n- 用户\n- 设置\n- 路由器\n- 模型\n- 聊天记录\n\n❓ 您确定吗？",
-        "clear_all_done": "✅ 所有数据已清除。",
-        "clear_cancelled": "❌ 已取消。",
-        "btn_admin_panel": "⚙️ 管理面板",
-        "no_cloud_db": "⚠️ 未配置外部云数据库。使用本地 SQLite。",
-        "no_routers": "⚠️ 尚未添加任何 API 路由器。",
-        "help_user": "📖 可用命令\n\n🚀 /start • start➜ 开始\n🌐 /lang • lang ➜ 语言\n🤖 /model • model ➜ 清除聊天并选择新模型\n❓ /help • help ➜ 帮助\n\n✨ 选择并开始 🚀",
-        "help_admin": "🌐 /lang • lang ➜ 语言\n👤 /user • user ➜ 用户模式\n🤖 /model • model ➜ 清除缓存和模型\n❓ /help • help ➜ 帮助\n✨ 选择并开始 🚀",
-        "stats_text": "📊 **机器人统计**\n\n👤 用户：`{users}`\n📢 强制频道：`{channel}`\n🤖 模型：`{models}`\n🗂️ 路由器：`{routers}`\n🔑 令牌：`{tokens}`\n🔐 密码：`{pwd_status}`"
+        "stats_text": "📊 **آمار ربات**\n\n👤 کاربران: `{users}`\n📢 کانال‌های اجباری: `{channel}`\n🤖 مدل‌ها: `{models}`\n🗂️ روترها: `{routers}`\n🔑 توکن‌ها: `{tokens}`\n🔐 رمز عبور: `{pwd_status}`",
+        "btn_view_data": "📋 مشاهده داده‌ها",
+        "all_data_title": "📋 **همه روترها، مدل‌ها و توکن‌ها**\n\n",
+        "data_router_header": "📍 **روتر #{id}** – `{domain}`\n🌐 آدرس: `{base_url}`\n🔑 توکن: `{api_key}`\n📦 مدل‌ها:\n",
+        "data_model_line": "   • `{name}`  {emoji}\n",
+        "data_no_models": "   (هیچ مدلی وجود ندارد)\n"
     }
 }
 
-# ------------------------------
-# Database init
-# ------------------------------
 async def init_db():
     await db.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY, lang TEXT, is_auth INTEGER DEFAULT 0, current_model_id INTEGER)")
     try:
@@ -942,11 +395,7 @@ async def get_text(user_id, key):
 async def check_auth(user_id):
     if user_id == ADMIN_ID:
         return True
-    pwd_row = await db.fetchone("SELECT value FROM settings WHERE key = 'global_password'")
-    if not pwd_row or not pwd_row[0] or pwd_row[0].lower() == 'none':
-        return True
-    auth_row = await db.fetchone("SELECT is_auth FROM users WHERE user_id = ?", (user_id,))
-    return bool(auth_row and auth_row[0] == 1)
+    return False
 
 async def check_channel_join(user_id):
     if user_id == ADMIN_ID:
@@ -954,18 +403,19 @@ async def check_channel_join(user_id):
     row = await db.fetchone("SELECT value FROM settings WHERE key = 'force_channel'")
     if not row or not row[0] or row[0].lower() == 'none':
         return True, None
-    channel = row[0]
-    try:
-        member = await bot.get_chat_member(channel, user_id)
-        if member.status in ['left', 'kicked']:
-            return False, channel
-        return True, None
-    except Exception:
-        return False, channel
+    channels = [ch.strip() for ch in row[0].split(',') if ch.strip()]
+    failed = []
+    for ch in channels:
+        try:
+            member = await bot.get_chat_member(ch, user_id)
+            if member.status in ['left', 'kicked']:
+                failed.append(ch)
+        except:
+            failed.append(ch)
+    if failed:
+        return False, failed
+    return True, None
 
-# ------------------------------
-# FSM States
-# ------------------------------
 class BotStates(StatesGroup):
     waiting_for_password = State()
     admin_add_router_url = State()
@@ -979,9 +429,6 @@ class BotStates(StatesGroup):
     admin_clear_cache_confirm = State()
     admin_clear_all_confirm = State()
 
-# ------------------------------
-# Keyboard builders
-# ------------------------------
 def lang_keyboard():
     builder = InlineKeyboardBuilder()
     for k, v in LANGS.items():
@@ -1006,39 +453,36 @@ async def admin_settings_keyboard(user_id):
     builder.button(text=await get_text(user_id, "btn_set_channel"), callback_data="admin_channel")
     builder.button(text=await get_text(user_id, "btn_broadcast"), callback_data="admin_broadcast")
     builder.button(text=await get_text(user_id, "btn_back_main"), callback_data="admin_back")
-    builder.adjust(2, 2, 1, 1)  # 2-2-1-1 layout
+    builder.adjust(2, 2, 1, 1)
     return builder.as_markup()
 
 async def admin_database_keyboard(user_id):
     builder = InlineKeyboardBuilder()
     builder.button(text=await get_text(user_id, "btn_clear_cache"), callback_data="admin_clear_cache")
     builder.button(text=await get_text(user_id, "btn_clear_all"), callback_data="admin_clear_all")
+    builder.button(text=await get_text(user_id, "btn_view_data"), callback_data="admin_view_data")
     builder.button(text=await get_text(user_id, "btn_back"), callback_data="admin_settings_menu")
-    builder.adjust(1, 1, 1)
+    builder.adjust(1, 1, 1, 1)
     return builder.as_markup()
 
 def cancel_admin_keyboard(user_id, text_back):
     return InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=text_back, callback_data="admin_back")]])
 
-# ------------------------------
-# User panel - edited to support edit mode
-# ------------------------------
 async def show_user_panel(target, user_id, page=0, is_admin_view=False, edit=False):
-    """
-    target: can be a Message or CallbackQuery (we treat them similarly)
-    edit: if True, we edit the existing message instead of sending new.
-    """
-    joined, channel = await check_channel_join(user_id)
+    joined, channels = await check_channel_join(user_id)
     if not joined:
         txt = await get_text(user_id, "must_join")
-        kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text=await get_text(user_id, "btn_join_channel"), url=f"https://t.me/{channel.replace('@', '')}")],
-            [InlineKeyboardButton(text=await get_text(user_id, "btn_check_join"), callback_data="check_join_channel")]
-        ])
+        channel_list = "\n".join([f"• {ch}" for ch in channels])
+        txt = txt.format(channels=channel_list)
+        kb_buttons = []
+        for ch in channels:
+            kb_buttons.append([InlineKeyboardButton(text=f"🔗 {ch}", url=f"https://t.me/{ch.replace('@', '')}")])
+        kb_buttons.append([InlineKeyboardButton(text=await get_text(user_id, "btn_check_join"), callback_data="check_join_channel")])
+        kb = InlineKeyboardMarkup(inline_keyboard=kb_buttons)
         if edit and hasattr(target, 'message') and hasattr(target.message, 'edit_text'):
-            await target.message.edit_text(f"{txt}\n{channel}", reply_markup=kb)
+            await target.message.edit_text(txt, reply_markup=kb)
         else:
-            await target.answer(f"{txt}\n{channel}", reply_markup=kb)
+            await target.answer(txt, reply_markup=kb)
         return
 
     all_models = await db.fetchall("SELECT id, model_name FROM models ORDER BY id")
@@ -1071,12 +515,10 @@ async def show_user_panel(target, user_id, page=0, is_admin_view=False, edit=Fal
     if nav_buttons:
         buttons.append(nav_buttons)
 
-    # Admin panel button: only if user is admin and not already in admin view
     if user_id == ADMIN_ID and not is_admin_view:
         admin_btn_text = await get_text(user_id, "btn_admin_panel")
         buttons.append([InlineKeyboardButton(text=admin_btn_text, callback_data="go_admin_panel")])
     elif is_admin_view:
-        # In admin view, show back to admin panel button
         back_text = await get_text(user_id, "btn_back_main")
         buttons.append([InlineKeyboardButton(text=back_text, callback_data="admin_back")])
 
@@ -1086,19 +528,13 @@ async def show_user_panel(target, user_id, page=0, is_admin_view=False, edit=Fal
         select_text = await get_text(user_id, "no_models_user") if not is_admin_view else await get_text(user_id, "no_models_admin")
 
     if edit:
-        # Edit the existing message
         if hasattr(target, 'message') and hasattr(target.message, 'edit_text'):
             await target.message.edit_text(select_text, reply_markup=kb)
         else:
-            # fallback
             await target.answer(select_text, reply_markup=kb)
     else:
-        # Send new message
         await target.answer(select_text, reply_markup=kb)
 
-# ------------------------------
-# Handlers for commands (with and without slash)
-# ------------------------------
 @router.message(Command("start"))
 @router.message(F.text.lower().in_({"start", "/start"}))
 async def cmd_start(message: Message, state: FSMContext):
@@ -1138,7 +574,7 @@ async def cmd_user(message: Message, state: FSMContext):
 
 @router.callback_query(F.data == "check_join_channel")
 async def check_join_callback(callback: CallbackQuery):
-    joined, channel = await check_channel_join(callback.from_user.id)
+    joined, channels = await check_channel_join(callback.from_user.id)
     if joined:
         ok_txt = await get_text(callback.from_user.id, "join_ok")
         await callback.answer(ok_txt, show_alert=True)
@@ -1163,13 +599,11 @@ async def go_admin_panel(callback: CallbackQuery, state: FSMContext):
 async def select_model(callback: CallbackQuery, state: FSMContext):
     model_id = callback.data.split("_")[1]
     user_id = callback.from_user.id
-
     row = await db.fetchone("SELECT model_name FROM models WHERE id = ?", (model_id,))
     if not row:
         await callback.answer(await get_text(user_id, "model_not_found"), show_alert=True)
         return
     model_name = row[0]
-
     is_authorized = await check_auth(user_id)
     if not is_authorized:
         locked_text = await get_text(user_id, "locked")
@@ -1177,10 +611,8 @@ async def select_model(callback: CallbackQuery, state: FSMContext):
         await callback.message.answer(locked_text)
         await state.set_state(BotStates.waiting_for_password)
         return
-
     await db.execute("UPDATE users SET current_model_id = ? WHERE user_id = ?", (model_id, user_id))
     await db.execute("DELETE FROM history WHERE user_id = ?", (user_id,))
-
     chat_start_txt = await get_text(user_id, "chat_started")
     await callback.message.answer(chat_start_txt.format(model_name))
     await callback.answer()
@@ -1254,7 +686,6 @@ async def admin_stats(callback: CallbackQuery):
     pwd_status = "✅ Active" if has_pwd else "❌ Inactive"
     channel_row = await db.fetchone("SELECT value FROM settings WHERE key = 'force_channel'")
     channel = channel_row[0] if channel_row and channel_row[0] and channel_row[0].lower() != 'none' else "❌ Not set"
-    # Translate channel status based on language
     lang = await db.fetchone("SELECT lang FROM users WHERE user_id = ?", (callback.from_user.id,))
     lang_code = lang[0] if lang and lang[0] in LANGS else "en"
     if lang_code == "fa":
@@ -1281,8 +712,6 @@ async def admin_stats(callback: CallbackQuery):
     elif lang_code == "zh":
         pwd_status = "✅ 已启用" if has_pwd else "❌ 已禁用"
         channel = channel if channel != "❌ Not set" else "❌ 未设置"
-    else:
-        pass  # English already set
     stats_text = await get_text(callback.from_user.id, "stats_text")
     stats_text = stats_text.format(
         users=users,
@@ -1298,32 +727,16 @@ async def admin_stats(callback: CallbackQuery):
 
 @router.callback_query(F.data == "admin_switch_user")
 async def admin_switch_user(callback: CallbackQuery):
-    # Edit the current message to user panel view (admin view is true)
     await show_user_panel(callback, callback.from_user.id, is_admin_view=True, edit=True)
     await callback.answer()
 
 @router.callback_query(F.data.startswith("userpage_"))
 async def user_page_callback(callback: CallbackQuery):
     page = int(callback.data.split("_")[1])
-    # Determine if user is admin to show admin panel button appropriately
     is_admin = (callback.from_user.id == ADMIN_ID)
-    # Edit the message with new page, but NOT in admin view unless they came from admin panel
-    # However we need to know if we are in admin view. We'll use the presence of "admin_view" in callback data or a separate flag.
-    # For simplicity, we assume that if the user is admin, they might be in admin view if they clicked from admin panel.
-    # We can pass a flag via callback data, but we'll just check if the previous message had admin back button.
-    # To be safe, we will always set is_admin_view=False for user page navigation unless we are in admin mode.
-    # But we need to retain admin view if the user was in admin panel and clicked user mode.
-    # We'll store a flag in state or in callback data. Since we don't have it, we'll use a simple approach:
-    # We'll pass the current admin view flag via a separate callback data part.
-    # Alternatively, we can just always allow the user to see the admin panel button if they are admin.
-    # The previous fix ensures that the admin panel button appears only when is_admin_view=False, so we keep that.
-    # So for userpage, we set is_admin_view=False (user mode) and let the show_user_panel decide whether to show admin button.
     await show_user_panel(callback, callback.from_user.id, page=page, is_admin_view=False, edit=True)
     await callback.answer()
 
-# ------------------------------
-# Admin: Password
-# ------------------------------
 @router.callback_query(F.data == "admin_pwd")
 async def admin_pwd_start(callback: CallbackQuery, state: FSMContext):
     txt = await get_text(callback.from_user.id, "send_pwd_prompt")
@@ -1347,9 +760,6 @@ async def admin_pwd_save(message: Message, state: FSMContext):
     await state.clear()
     await cmd_admin(message, state)
 
-# ------------------------------
-# Admin: Force Channel
-# ------------------------------
 @router.callback_query(F.data == "admin_channel")
 async def admin_channel_start(callback: CallbackQuery, state: FSMContext):
     txt = await get_text(callback.from_user.id, "send_channel_prompt")
@@ -1364,18 +774,15 @@ async def admin_channel_save(message: Message, state: FSMContext):
         await db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('force_channel', 'none')")
         res_txt = await get_text(message.from_user.id, "channel_none")
     else:
-        if not new_channel.startswith("@"):
-            new_channel = "@" + new_channel
-        await db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('force_channel', ?)", (new_channel,))
+        channels = [ch.strip() for ch in new_channel.split(',') if ch.strip()]
+        formatted = ','.join([ch if ch.startswith('@') else '@'+ch for ch in channels])
+        await db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('force_channel', ?)", (formatted,))
         res_txt = await get_text(message.from_user.id, "channel_set")
-        res_txt = res_txt.format(new_channel)
+        res_txt = res_txt.format(formatted)
     await message.answer(res_txt)
     await state.clear()
     await cmd_admin(message, state)
 
-# ------------------------------
-# Admin: Broadcast
-# ------------------------------
 @router.callback_query(F.data == "admin_broadcast")
 async def admin_broadcast_start(callback: CallbackQuery, state: FSMContext):
     txt = await get_text(callback.from_user.id, "send_broadcast")
@@ -1398,9 +805,6 @@ async def admin_broadcast_send(message: Message, state: FSMContext):
     await state.clear()
     await cmd_admin(message, state)
 
-# ------------------------------
-# Admin: Clear Cache (history only)
-# ------------------------------
 @router.callback_query(F.data == "admin_clear_cache")
 async def admin_clear_cache_start(callback: CallbackQuery, state: FSMContext):
     confirm_txt = await get_text(callback.from_user.id, "clear_cache_confirm")
@@ -1428,9 +832,6 @@ async def clear_cache_no(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     await admin_database_menu(callback)
 
-# ------------------------------
-# Admin: Clear All Data (full wipe)
-# ------------------------------
 @router.callback_query(F.data == "admin_clear_all")
 async def admin_clear_all_start(callback: CallbackQuery, state: FSMContext):
     if not db.use_cloud:
@@ -1462,9 +863,35 @@ async def clear_all_no(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     await admin_database_menu(callback)
 
-# ------------------------------
-# Admin: Routers and Models
-# ------------------------------
+@router.callback_query(F.data == "admin_view_data")
+async def admin_view_data(callback: CallbackQuery):
+    data = await db.get_all_data()
+    if not data:
+        await callback.answer("⚠️ هیچ داده‌ای یافت نشد.", show_alert=True)
+        return
+    text = await get_text(callback.from_user.id, "all_data_title")
+    for router in data:
+        header = await get_text(callback.from_user.id, "data_router_header")
+        header = header.format(id=router['id'], domain=router['domain'], base_url=router['base_url'], api_key=router['api_key'])
+        text += header
+        if router['models']:
+            for m_id, m_name in router['models']:
+                emoji = get_model_emoji(m_name, m_id)
+                line = await get_text(callback.from_user.id, "data_model_line")
+                line = line.format(name=m_name, emoji=emoji)
+                text += line
+        else:
+            text += await get_text(callback.from_user.id, "data_no_models")
+        text += "\n"
+    if len(text) > 4000:
+        file = BufferedInputFile(text.encode('utf-8'), filename="all_data.txt")
+        await callback.message.answer_document(file, caption="📄 تمام داده‌ها به صورت فایل ارسال شد.")
+    else:
+        btn_back = await get_text(callback.from_user.id, "btn_back")
+        kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=btn_back, callback_data="admin_database_menu")]])
+        await callback.message.edit_text(text, parse_mode="Markdown", reply_markup=kb)
+    await callback.answer()
+
 @router.callback_query(F.data == "admin_routers")
 async def admin_routers_list(callback: CallbackQuery):
     routers = await db.fetchall("SELECT id, domain FROM routers")
@@ -1496,7 +923,6 @@ async def admin_router_details(callback: CallbackQuery):
     model_text = "\n".join(model_lines) if model_lines else "(no models)"
     txt_template = await get_text(callback.from_user.id, "router_details")
     msg = txt_template.format(r[0], r[1], r[2], model_text)
-
     btn_add = await get_text(callback.from_user.id, "btn_add_mod")
     btn_del_mod = await get_text(callback.from_user.id, "btn_del_mod")
     btn_del = await get_text(callback.from_user.id, "btn_del_router")
@@ -1559,51 +985,42 @@ async def admin_confirm_delete(callback: CallbackQuery):
     await callback.answer(msg, show_alert=True)
     await admin_routers_list(callback)
 
-# ------------------------------
-# Admin: Add Model to existing router (with persistence)
-# ------------------------------
 @router.callback_query(F.data.startswith("addmod_"))
 async def admin_add_model_only(callback: CallbackQuery, state: FSMContext):
     r_id = callback.data.split("_")[1]
     await state.update_data(r_id=r_id)
     txt = await get_text(callback.from_user.id, "send_model_for_router")
-    # Add a cancel button that goes back to router details
     btn_back = await get_text(callback.from_user.id, "btn_back")
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="✅ Done (پایان)", callback_data=f"addmod_done_{r_id}")],
         [InlineKeyboardButton(text=btn_back, callback_data=f"router_{r_id}")]
     ])
-    await callback.message.edit_text(txt + "\n\n(برای پایان، دکمه‌ی 'Done' را بزنید یا 'done' تایپ کنید)", reply_markup=kb)
+    await callback.message.edit_text(txt, reply_markup=kb)
     await state.set_state(BotStates.admin_add_model_only)
-
-@router.callback_query(F.data.startswith("addmod_done_"))
-async def admin_add_model_done(callback: CallbackQuery, state: FSMContext):
-    # Finish adding models
-    await state.clear()
-    r_id = callback.data.split("_")[1]
-    await callback.answer("✅ افزودن مدل‌ها تمام شد.")
-    # Go back to router details
-    # Simulate clicking router details
-    await admin_router_details(callback)
 
 @router.message(BotStates.admin_add_model_only)
 async def admin_save_model_only(message: Message, state: FSMContext):
     data = await state.get_data()
     r_id = data['r_id']
     model_name = message.text.strip()
-    if model_name.lower() == 'done':
-        # Finish
-        await state.clear()
-        await message.answer("✅ افزودن مدل‌ها تمام شد.")
-        await cmd_admin(message, state)
-        return
     await db.execute("INSERT INTO models (router_id, model_name) VALUES (?, ?)", (r_id, model_name))
-    await message.answer("✅ مدل اضافه شد. نام مدل بعدی را وارد کنید، یا 'done' را تایپ کنید، یا دکمه‌ی Done را بزنید.")
+    # Show success message with "Finish" button
+    txt = await get_text(message.from_user.id, "model_deleted")  # reuse but we'll change to a custom message
+    # Actually we need a custom message: "✅ مدل اضافه شد. نام مدل بعدی را وارد کنید"
+    # But we have to get the localized version. We'll use a hardcoded or add a new key.
+    # For simplicity, we'll send a new message with a "Finish" button.
+    finish_btn = InlineKeyboardButton(text="✅ پایان", callback_data=f"addmod_done_{r_id}")
+    kb = InlineKeyboardMarkup(inline_keyboard=[[finish_btn]])
+    await message.answer("✅ مدل اضافه شد. نام مدل بعدی را وارد کنید", reply_markup=kb)
     # state remains
 
-# ------------------------------
-# Admin: Add Router (with persistence)
-# ------------------------------
+@router.callback_query(F.data.startswith("addmod_done_"))
+async def admin_add_model_done(callback: CallbackQuery, state: FSMContext):
+    await state.clear()
+    r_id = callback.data.split("_")[1]
+    await callback.answer("✅ افزودن مدل‌ها تمام شد.")
+    # Go back to router details
+    await admin_router_details(callback)
+
 @router.callback_query(F.data == "admin_add_router")
 async def add_router_start(callback: CallbackQuery, state: FSMContext):
     txt = await get_text(callback.from_user.id, "send_url")
@@ -1630,25 +1047,13 @@ async def add_router_key(message: Message, state: FSMContext):
     await state.update_data(api_key=message.text.strip())
     txt = await get_text(message.from_user.id, "send_model")
     btn_back = await get_text(message.from_user.id, "btn_back_main")
-    # We'll provide a cancel button that goes back to admin menu
-    await message.answer(txt + "\n\n(برای پایان، 'done' را تایپ کنید)", reply_markup=cancel_admin_keyboard(message.from_user.id, btn_back))
+    await message.answer(txt, reply_markup=cancel_admin_keyboard(message.from_user.id, btn_back))
     await state.set_state(BotStates.admin_add_router_model)
 
 @router.message(BotStates.admin_add_router_model)
 async def add_router_model_finish(message: Message, state: FSMContext):
     data = await state.get_data()
     model_name = message.text.strip()
-    if model_name.lower() == 'done':
-        # Finish the whole process: but we need to save router only if models were added.
-        # Check if we have stored a router_id
-        if 'router_saved' in data and data.get('router_saved'):
-            await message.answer("✅ روتر و مدل‌ها با موفقیت ثبت شدند.")
-        else:
-            await message.answer("⚠️ هیچ مدلی ثبت نشد. روتر ذخیره نشد.")
-        await state.clear()
-        await cmd_admin(message, state)
-        return
-
     # If router not saved yet, save it now
     if 'router_saved' not in data or not data.get('router_saved'):
         res = await db.execute("INSERT INTO routers (domain, base_url, api_key) VALUES (?, ?, ?)",
@@ -1657,27 +1062,33 @@ async def add_router_model_finish(message: Message, state: FSMContext):
         await state.update_data(router_id=r_id, router_saved=True)
     else:
         r_id = data['router_id']
-
-    # Insert the model
     await db.execute("INSERT INTO models (router_id, model_name) VALUES (?, ?)", (r_id, model_name))
-    await message.answer("✅ مدل اضافه شد. نام مدل بعدی را وارد کنید، یا 'done' برای پایان.")
+    # Show success with Finish button
+    finish_btn = InlineKeyboardButton(text="✅ پایان", callback_data="add_router_done")
+    kb = InlineKeyboardMarkup(inline_keyboard=[[finish_btn]])
+    await message.answer("✅ مدل اضافه شد. نام مدل بعدی را وارد کنید", reply_markup=kb)
     # state remains
 
-# ------------------------------
-# Main chat handler - fixed invalid command
-# ------------------------------
+@router.callback_query(F.data == "add_router_done")
+async def add_router_done(callback: CallbackQuery, state: FSMContext):
+    await state.clear()
+    await callback.answer("✅ ثبت روتر و مدل‌ها تمام شد.")
+    await cmd_admin(callback.message, state)  # go to admin panel
+
 @router.message()
 async def process_user_chat(message: Message, state: FSMContext):
     user_id = message.from_user.id
-
-    joined, channel = await check_channel_join(user_id)
+    joined, channels = await check_channel_join(user_id)
     if not joined:
         txt = await get_text(user_id, "must_join")
-        kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text=await get_text(user_id, "btn_join_channel"), url=f"https://t.me/{channel.replace('@', '')}")],
-            [InlineKeyboardButton(text=await get_text(user_id, "btn_check_join"), callback_data="check_join_channel")]
-        ])
-        await message.answer(f"{txt}\n{channel}", reply_markup=kb)
+        channel_list = "\n".join([f"• {ch}" for ch in channels])
+        txt = txt.format(channels=channel_list)
+        kb_buttons = []
+        for ch in channels:
+            kb_buttons.append([InlineKeyboardButton(text=f"🔗 {ch}", url=f"https://t.me/{ch.replace('@', '')}")])
+        kb_buttons.append([InlineKeyboardButton(text=await get_text(user_id, "btn_check_join"), callback_data="check_join_channel")])
+        kb = InlineKeyboardMarkup(inline_keyboard=kb_buttons)
+        await message.answer(txt, reply_markup=kb)
         return
 
     active_model = await db.fetchone("""
@@ -1689,10 +1100,8 @@ async def process_user_chat(message: Message, state: FSMContext):
     """, (user_id,))
 
     if not active_model:
-        # Instead of showing list of models, show a friendly message and redirect to user panel
         invalid_txt = await get_text(user_id, "invalid_command")
         await message.answer(invalid_txt)
-        # Show the user panel (model selection)
         await show_user_panel(message, user_id)
         return
 
@@ -1769,9 +1178,6 @@ async def process_user_chat(message: Message, state: FSMContext):
 
     await db.execute("INSERT INTO history (user_id, role, content) VALUES (?, ?, ?)", (user_id, "assistant", reply_text[:2000] if len(reply_text) > 2000 else reply_text))
 
-# ------------------------------
-# Main runner
-# ------------------------------
 async def main():
     await init_db()
     await dp.start_polling(bot)
