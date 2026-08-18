@@ -223,7 +223,7 @@ LANGS = {
         "welcome_first": "👋 Welcome! Use /help to see available commands.",
         "locked": "⛔ Unauthorized. Please enter the password:",
         "pwd_ok": "✅ Password accepted! Continue chatting...",
-        "pwd_err": "❌ Incorrect password. Please try again.",
+        "pwd_err": "⛔ Please enter the correct password:",
         "pwd_none": "🔓 Password requirement removed. Bot is public.",
         "pwd_set": "✅ New password set: `{}`",
         "admin_only": "❌ Admin only.",
@@ -314,7 +314,9 @@ LANGS = {
         "contact_forward": "Message from user {name} (ID: {user_id}):\n{text}",
         "contact_button": "📞 Contact Admin",
         "contact_admin_reply": "📩 Reply from admin:\n{text}",
-        "admin_reply_sent": "✅ Reply sent to user."
+        "admin_reply_sent": "✅ Reply sent to user.",
+        # password wrong while blocked
+        "pwd_prompt_wrong": "⛔ Please enter the correct password:"
     },
     "fa": {
         "name": "🇮🇷🇦🇫 فارسی",
@@ -323,7 +325,7 @@ LANGS = {
         "welcome_first": "👋 خوش آمدی! برای دیدن راهنما از دستور /help استفاده کن.",
         "locked": "⛔ شما کاربر غیرمجاز هستید. لطفاً رمز عبور را وارد کنید:",
         "pwd_ok": "✅ رمز عبور تایید شد! به چت ادامه بده...",
-        "pwd_err": "❌ رمز اشتباه است. دوباره تلاش کنید.",
+        "pwd_err": "⛔ رمز عبور صحیح را وارد کنید:",
         "pwd_none": "🔓 قفل ربات برداشته شد. استفاده برای همه آزاد است.",
         "pwd_set": "✅ رمز عبور جدید تنظیم شد: `{}`",
         "admin_only": "❌ دسترسی فقط برای مدیریت.",
@@ -414,7 +416,9 @@ LANGS = {
         "contact_forward": "پیام از کاربر {name} (شناسه: {user_id}):\n{text}",
         "contact_button": "📞 تماس با مدیر",
         "contact_admin_reply": "📩 پاسخ از مدیر:\n{text}",
-        "admin_reply_sent": "✅ پاسخ به کاربر ارسال شد."
+        "admin_reply_sent": "✅ پاسخ به کاربر ارسال شد.",
+        # password wrong while blocked
+        "pwd_prompt_wrong": "⛔ رمز عبور صحیح را وارد کنید:"
     },
     "ru": {
         "name": "🇷🇺 Русский",
@@ -423,7 +427,7 @@ LANGS = {
         "welcome_first": "👋 Добро пожаловать! Используйте /help для списка команд.",
         "locked": "⛔ Доступ ограничен. Введите пароль:",
         "pwd_ok": "✅ Пароль принят! Продолжайте общение...",
-        "pwd_err": "❌ Неверный пароль. Попробуйте снова.",
+        "pwd_err": "⛔ Введите правильный пароль:",
         "pwd_none": "🔓 Пароль удален. Бот общедоступен.",
         "pwd_set": "✅ Новый пароль: `{}`",
         "admin_only": "❌ Только для админа.",
@@ -514,7 +518,9 @@ LANGS = {
         "contact_forward": "Сообщение от пользователя {name} (ID: {user_id}):\n{text}",
         "contact_button": "📞 Связаться с администратором",
         "contact_admin_reply": "📩 Ответ от администратора:\n{text}",
-        "admin_reply_sent": "✅ Ответ отправлен пользователю."
+        "admin_reply_sent": "✅ Ответ отправлен пользователю.",
+        # password wrong while blocked
+        "pwd_prompt_wrong": "⛔ Введите правильный пароль:"
     },
     "ar": {
         "name": "🇸🇦 العربية",
@@ -523,7 +529,7 @@ LANGS = {
         "welcome_first": "👋 مرحباً! استخدم /help لعرض الأوامر.",
         "locked": "⛔ غير مصرح. أدخل كلمة المرور:",
         "pwd_ok": "✅ تم القبول! استمر في المحادثة...",
-        "pwd_err": "❌ كلمة مرور خاطئة. حاول مرة أخرى.",
+        "pwd_err": "⛔ أدخل كلمة المرور الصحيحة:",
         "pwd_none": "🔓 تمت إزالة كلمة المرور.",
         "pwd_set": "✅ كلمة المرور الجديدة: `{}`",
         "admin_only": "❌ للمسؤولين فقط.",
@@ -614,7 +620,9 @@ LANGS = {
         "contact_forward": "رسالة من المستخدم {name} (ID: {user_id}):\n{text}",
         "contact_button": "📞 اتصل بالمسؤول",
         "contact_admin_reply": "📩 رد من المسؤول:\n{text}",
-        "admin_reply_sent": "✅ تم إرسال الرد إلى المستخدم."
+        "admin_reply_sent": "✅ تم إرسال الرد إلى المستخدم.",
+        # password wrong while blocked
+        "pwd_prompt_wrong": "⛔ أدخل كلمة المرور الصحيحة:"
     },
     "hi": {
         "name": "🇮🇳 हिन्दी",
@@ -623,7 +631,7 @@ LANGS = {
         "welcome_first": "👋 स्वागत है! कमांड देखने के लिए /help का उपयोग करें।",
         "locked": "🔑 पासवर्ड दर्ज करें:",
         "pwd_ok": "✅ पासवर्ड स्वीकृत! चैट जारी रखें...",
-        "pwd_err": "❌ गलत पासवर्ड। फिर से प्रयास करें।",
+        "pwd_err": "⛔ सही पासवर्ड दर्ज करें:",
         "pwd_none": "🔓 पासवर्ड हटाया गया।",
         "pwd_set": "✅ नया पासवर्ड: `{}`",
         "admin_only": "❌ केवल व्यवस्थापक।",
@@ -714,7 +722,9 @@ LANGS = {
         "contact_forward": "उपयोगकर्ता {name} (ID: {user_id}) से संदेश:\n{text}",
         "contact_button": "📞 व्यवस्थापक से संपर्क करें",
         "contact_admin_reply": "📩 व्यवस्थापक का उत्तर:\n{text}",
-        "admin_reply_sent": "✅ उत्तर उपयोगकर्ता को भेज दिया गया।"
+        "admin_reply_sent": "✅ उत्तर उपयोगकर्ता को भेज दिया गया।",
+        # password wrong while blocked
+        "pwd_prompt_wrong": "⛔ सही पासवर्ड दर्ज करें:"
     },
     "tr": {
         "name": "🇹🇷 Türkçe",
@@ -723,7 +733,7 @@ LANGS = {
         "welcome_first": "👋 Hoş geldiniz! Komutları görmek için /help kullanın.",
         "locked": "⛔ Şifreyi girin:",
         "pwd_ok": "✅ Şifre kabul edildi! Sohbete devam edin...",
-        "pwd_err": "❌ Yanlış şifre. Tekrar deneyin.",
+        "pwd_err": "⛔ Doğru şifreyi girin:",
         "pwd_none": "🔓 Şifre kaldırıldı.",
         "pwd_set": "✅ Yeni şifre: `{}`",
         "admin_only": "❌ Sadece yönetici.",
@@ -814,7 +824,9 @@ LANGS = {
         "contact_forward": "{name} kullanıcısından (ID: {user_id}) mesaj:\n{text}",
         "contact_button": "📞 Yöneticiyle iletişime geç",
         "contact_admin_reply": "📩 Yöneticiden yanıt:\n{text}",
-        "admin_reply_sent": "✅ Yanıt kullanıcıya gönderildi."
+        "admin_reply_sent": "✅ Yanıt kullanıcıya gönderildi.",
+        # password wrong while blocked
+        "pwd_prompt_wrong": "⛔ Doğru şifreyi girin:"
     },
     "fr": {
         "name": "🇫🇷 Français",
@@ -823,7 +835,7 @@ LANGS = {
         "welcome_first": "👋 Bienvenue ! Utilisez /help pour voir les commandes.",
         "locked": "⛔ Entrez le mot de passe :",
         "pwd_ok": "✅ Mot de passe accepté ! Continuez la discussion...",
-        "pwd_err": "❌ Mot de passe incorrect. Essayez encore.",
+        "pwd_err": "⛔ Veuillez entrer le mot de passe correct :",
         "pwd_none": "🔓 MDP supprimé.",
         "pwd_set": "✅ Nouveau MDP : `{}`",
         "admin_only": "❌ Admin uniquement.",
@@ -914,7 +926,9 @@ LANGS = {
         "contact_forward": "Message de l'utilisateur {name} (ID: {user_id}) :\n{text}",
         "contact_button": "📞 Contacter l'administrateur",
         "contact_admin_reply": "📩 Réponse de l'administrateur :\n{text}",
-        "admin_reply_sent": "✅ Réponse envoyée à l'utilisateur."
+        "admin_reply_sent": "✅ Réponse envoyée à l'utilisateur.",
+        # password wrong while blocked
+        "pwd_prompt_wrong": "⛔ Veuillez entrer le mot de passe correct :"
     },
     "de": {
         "name": "🇩🇪 Deutsch",
@@ -923,7 +937,7 @@ LANGS = {
         "welcome_first": "👋 Willkommen! Nutze /help für Befehle.",
         "locked": "⛔ Passwort eingeben:",
         "pwd_ok": "✅ Passwort akzeptiert! Setzen Sie die Unterhaltung fort...",
-        "pwd_err": "❌ Falsches Passwort. Versuche es erneut.",
+        "pwd_err": "⛔ Bitte geben Sie das richtige Passwort ein:",
         "pwd_none": "🔓 Passwort entfernt.",
         "pwd_set": "✅ Neues Passwort: `{}`",
         "admin_only": "❌ Nur Admin.",
@@ -1014,7 +1028,9 @@ LANGS = {
         "contact_forward": "Nachricht von Benutzer {name} (ID: {user_id}):\n{text}",
         "contact_button": "📞 Administrator kontaktieren",
         "contact_admin_reply": "📩 Antwort vom Administrator:\n{text}",
-        "admin_reply_sent": "✅ Antwort an Benutzer gesendet."
+        "admin_reply_sent": "✅ Antwort an Benutzer gesendet.",
+        # password wrong while blocked
+        "pwd_prompt_wrong": "⛔ Bitte geben Sie das richtige Passwort ein:"
     },
     "zh": {
         "name": "🇨🇳 中文",
@@ -1023,7 +1039,7 @@ LANGS = {
         "welcome_first": "👋 欢迎！使用 /help 查看命令。",
         "locked": "⛔ 请输入密码：",
         "pwd_ok": "✅ 密码正确！继续聊天...",
-        "pwd_err": "❌ 密码错误。请重试。",
+        "pwd_err": "⛔ 请输入正确的密码：",
         "pwd_none": "🔓 密码已移除。",
         "pwd_set": "✅ 新密码：`{}`",
         "admin_only": "❌ 仅限管理员。",
@@ -1114,7 +1130,9 @@ LANGS = {
         "contact_forward": "来自用户 {name}（ID: {user_id}）的消息：\n{text}",
         "contact_button": "📞 联系管理员",
         "contact_admin_reply": "📩 管理员的回复：\n{text}",
-        "admin_reply_sent": "✅ 回复已发送给用户。"
+        "admin_reply_sent": "✅ 回复已发送给用户。",
+        # password wrong while blocked
+        "pwd_prompt_wrong": "⛔ 请输入正确的密码："
     }
 }
 
@@ -1925,8 +1943,11 @@ async def add_router_model_finish(message: Message, state: FSMContext):
 async def add_router_done(callback: CallbackQuery, state: FSMContext):
     chat_mode[callback.from_user.id] = False
     await state.clear()
-    await callback.answer(await get_text(callback.from_user.id, "add_router_done"), show_alert=True)
-    await cmd_admin(callback.message, state)
+    # FIX: show admin panel directly instead of calling cmd_admin
+    admin_text = await get_text(callback.from_user.id, "admin_menu")
+    kb = await admin_panel_keyboard(callback.from_user.id)
+    await callback.message.answer(admin_text, reply_markup=kb)
+    await callback.answer()
 
 # ------------------------------ Contact Admin Handlers ------------------------------
 @router.message(Command("man"))
@@ -1994,19 +2015,35 @@ async def process_user_chat(message: Message, state: FSMContext):
             # Correct password
             await db.execute("UPDATE users SET is_auth = 1, msg_count = 0 WHERE user_id = ?", (user_id,))
             await message.answer(await get_text(user_id, "pwd_ok"))
+            # If user has a selected model, keep chat_mode. Otherwise, show model panel.
+            if not chat_mode.get(user_id, False):
+                await show_user_panel(message, user_id)
             return
         else:
             # Not a password
+            # If the user typed something (not a command) and this is not the first time they are blocked,
+            # show "incorrect password" message only if they already had msg_count > limit (i.e., already blocked before)
             if message.text and not message.text.startswith('/') and msg_count > limit:
                 await message.answer(await get_text(user_id, "pwd_err"))
-            block_msg = await get_text(user_id, "limit_blocked")
-            block_msg = block_msg.format(limit=limit)
-            contact_btn = InlineKeyboardButton(
-                text=await get_text(user_id, "contact_button"),
-                callback_data="contact_admin"
-            )
-            kb = InlineKeyboardMarkup(inline_keyboard=[[contact_btn]])
-            await message.answer(block_msg, reply_markup=kb)
+                # Show the block message with contact button
+                block_msg = await get_text(user_id, "limit_blocked")
+                block_msg = block_msg.format(limit=limit)
+                contact_btn = InlineKeyboardButton(
+                    text=await get_text(user_id, "contact_button"),
+                    callback_data="contact_admin"
+                )
+                kb = InlineKeyboardMarkup(inline_keyboard=[[contact_btn]])
+                await message.answer(block_msg, reply_markup=kb)
+            else:
+                # Show the block message with contact button
+                block_msg = await get_text(user_id, "limit_blocked")
+                block_msg = block_msg.format(limit=limit)
+                contact_btn = InlineKeyboardButton(
+                    text=await get_text(user_id, "contact_button"),
+                    callback_data="contact_admin"
+                )
+                kb = InlineKeyboardMarkup(inline_keyboard=[[contact_btn]])
+                await message.answer(block_msg, reply_markup=kb)
             return
 
     # ===== 4. If we reach here, user is authorized =====
