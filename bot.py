@@ -1929,7 +1929,7 @@ async def admin_save_model_only(message: Message, state: FSMContext):
     kb = InlineKeyboardMarkup(inline_keyboard=[[finish_btn]])
     await message.answer(await get_text(message.from_user.id, "model_added_continue"), reply_markup=kb)
 
-# ===== FIXED: Finish button now goes to main admin panel and edits message =====
+# ===== FIXED: Finish button now edits the current message to show admin panel =====
 @router.callback_query(F.data.startswith("addmod_done_"))
 async def admin_add_model_done(callback: CallbackQuery, state: FSMContext):
     chat_mode[callback.from_user.id] = False
