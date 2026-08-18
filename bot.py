@@ -287,7 +287,7 @@ LANGS = {
         "btn_admin_panel": "⚙️ Admin Panel",
         "no_cloud_db": "⚠️ No external cloud database is configured. Using local SQLite.",
         "no_routers": "⚠️ No API routers have been added yet.",
-        "help_user": "📖 Available Commands\n\n🚀 /start • start ➜ Start\n🌐 /lang • lang ➜ Language\n🤖 /model • model ➜ Clear chat & select new model\n❓ /help • help ➜ Help\n\n✨ Choose and start 🚀",
+        "help_user": "📖 Available Commands\n\n🚀 /start • start ➜ Start\n🌐 /lang • lang ➜ Language\n🤖 /model • model ➜ Clear chat & select new model\n❓ /help • help ➜ Help\n✨ Choose and start 🚀",
         "help_admin": "🌐 /lang • lang ➜ Language\n👤 /user • user ➜ User mode\n🤖 /model • model ➜ Clear cache & models\n❓ /help • help ➜ Help\n✨ Choose and start 🚀",
         "stats_text": "📊 **Bot Statistics**\n\n👤 Users: `{users}`\n📢 Force Channel(s): `{channel}`\n🤖 Models: `{models}`\n🗂️ Routers: `{routers}`\n🔑 Tokens: `{tokens}`\n🔐 Password: `{pwd_status}`",
         "btn_view_data": "📋 View All Data",
@@ -305,7 +305,14 @@ LANGS = {
         "loading_data": "⏳ Loading data... {progress}%",
         "data_loaded": "✅ Data loaded successfully.",
         "error_occurred": "❌ An error occurred while loading data. Please try again later.",
-        "error_detail": "❌ Error details: {error}"
+        "error_detail": "❌ Error details: {error}",
+        # new keys for contact admin
+        "limit_blocked": "⛔ You've reached the test message limit. Contact admin to get full access.",
+        "contact_intro": "Please write your message to the administrator:",
+        "contact_confirm": "✅ Your message was sent. Please wait for the admin's response.",
+        "contact_end": "✅ Your session has ended.",
+        "contact_forward": "Message from user {name} (ID: {user_id}):\n{text}",
+        "contact_button": "📞 Contact Admin"
     },
     "fa": {
         "name": "🇮🇷🇦🇫 فارسی",
@@ -378,7 +385,7 @@ LANGS = {
         "btn_admin_panel": "⚙️ پنل مدیریت",
         "no_cloud_db": "⚠️ هیچ دیتابیس ابری پیکربندی نشده است. از حافظه محلی SQLite استفاده می‌شود.",
         "no_routers": "⚠️ هنوز هیچ API ثبت نشده است.",
-        "help_user": "📖 دستورات موجود\n\n🚀 /start • start➜ شروع\n🌐 /lang • lang ➜  زبان\n🤖 /model • model ➜ پاک‌سازی چت و انتخاب مدل جدید\n❓ /help • help ➜  راهنما\n\n✨ انتخاب کن و شروع کن 🚀",
+        "help_user": "📖 دستورات موجود\n\n🚀 /start • start➜ شروع\n🌐 /lang • lang ➜  زبان\n🤖 /model • model ➜ پاک‌سازی چت و انتخاب مدل جدید\n❓ /help • help ➜  راهنما\n✨ انتخاب کن و شروع کن 🚀",
         "help_admin": "🌐 /lang • lang ➜ زبان\n👤 /user • user ➜ کاربری\n🤖 /model • model ➜ پاک‌سازی کش و مدل‌ها\n❓ /help • help ➜ راهنما\n✨ انتخاب کن و شروع کن 🚀",
         "stats_text": "📊 **آمار ربات**\n\n👤 کاربران: `{users}`\n📢 کانال‌های اجباری: `{channel}`\n🤖 مدل‌ها: `{models}`\n🗂️ روترها: `{routers}`\n🔑 توکن‌ها: `{tokens}`\n🔐 رمز عبور: `{pwd_status}`",
         "btn_view_data": "📋 مشاهده داده‌ها",
@@ -396,7 +403,14 @@ LANGS = {
         "loading_data": "⏳ در حال بارگذاری داده‌ها... {progress}%",
         "data_loaded": "✅ داده‌ها با موفقیت بارگذاری شدند.",
         "error_occurred": "❌ خطایی در بارگذاری داده‌ها رخ داد. لطفاً بعداً تلاش کنید.",
-        "error_detail": "❌ جزئیات خطا: {error}"
+        "error_detail": "❌ جزئیات خطا: {error}",
+        # new keys for contact admin
+        "limit_blocked": "⛔ محدودیت پیام‌های آزمایشی به پایان رسید. برای دریافت دسترسی کامل، با مدیر تماس بگیرید.",
+        "contact_intro": "لطفاً پیام خود را برای مدیر بنویسید:",
+        "contact_confirm": "✅ پیام شما ارسال شد. منتظر پاسخ مدیر باشید.",
+        "contact_end": "✅ نشست شما پایان یافت.",
+        "contact_forward": "پیام از کاربر {name} (شناسه: {user_id}):\n{text}",
+        "contact_button": "📞 تماس با مدیر"
     },
     "ru": {
         "name": "🇷🇺 Русский",
@@ -487,7 +501,13 @@ LANGS = {
         "loading_data": "⏳ Загрузка данных... {progress}%",
         "data_loaded": "✅ Данные успешно загружены.",
         "error_occurred": "❌ Произошла ошибка при загрузке данных. Попробуйте позже.",
-        "error_detail": "❌ Детали ошибки: {error}"
+        "error_detail": "❌ Детали ошибки: {error}",
+        "limit_blocked": "⛔ Вы достигли лимита тестовых сообщений. Свяжитесь с администратором для полного доступа.",
+        "contact_intro": "Напишите сообщение администратору:",
+        "contact_confirm": "✅ Ваше сообщение отправлено. Ожидайте ответа администратора.",
+        "contact_end": "✅ Ваша сессия завершена.",
+        "contact_forward": "Сообщение от пользователя {name} (ID: {user_id}):\n{text}",
+        "contact_button": "📞 Связаться с администратором"
     },
     "ar": {
         "name": "🇸🇦 العربية",
@@ -578,7 +598,13 @@ LANGS = {
         "loading_data": "⏳ جاري تحميل البيانات... {progress}%",
         "data_loaded": "✅ تم تحميل البيانات بنجاح.",
         "error_occurred": "❌ حدث خطأ أثناء تحميل البيانات. يرجى المحاولة لاحقاً.",
-        "error_detail": "❌ تفاصيل الخطأ: {error}"
+        "error_detail": "❌ تفاصيل الخطأ: {error}",
+        "limit_blocked": "⛔ لقد وصلت إلى حد الرسائل الاختبارية. تواصل مع المسؤول للحصول على الوصول الكامل.",
+        "contact_intro": "اكتب رسالتك إلى المسؤول:",
+        "contact_confirm": "✅ تم إرسال رسالتك. انتظر رد المسؤول.",
+        "contact_end": "✅ انتهت جلستك.",
+        "contact_forward": "رسالة من المستخدم {name} (ID: {user_id}):\n{text}",
+        "contact_button": "📞 اتصل بالمسؤول"
     },
     "hi": {
         "name": "🇮🇳 हिन्दी",
@@ -669,7 +695,13 @@ LANGS = {
         "loading_data": "⏳ डेटा लोड हो रहा है... {progress}%",
         "data_loaded": "✅ डेटा सफलतापूर्वक लोड हो गया।",
         "error_occurred": "❌ डेटा लोड करते समय त्रुटि हुई। कृपया बाद में प्रयास करें।",
-        "error_detail": "❌ त्रुटि विवरण: {error}"
+        "error_detail": "❌ त्रुटि विवरण: {error}",
+        "limit_blocked": "⛔ आप परीक्षण संदेश सीमा तक पहुँच गए हैं। पूर्ण पहुँच के लिए व्यवस्थापक से संपर्क करें।",
+        "contact_intro": "कृपया व्यवस्थापक को अपना संदेश लिखें:",
+        "contact_confirm": "✅ आपका संदेश भेज दिया गया है। कृपया व्यवस्थापक के उत्तर की प्रतीक्षा करें।",
+        "contact_end": "✅ आपका सत्र समाप्त हो गया।",
+        "contact_forward": "उपयोगकर्ता {name} (ID: {user_id}) से संदेश:\n{text}",
+        "contact_button": "📞 व्यवस्थापक से संपर्क करें"
     },
     "tr": {
         "name": "🇹🇷 Türkçe",
@@ -760,7 +792,13 @@ LANGS = {
         "loading_data": "⏳ Veri yükleniyor... {progress}%",
         "data_loaded": "✅ Veriler başarıyla yüklendi.",
         "error_occurred": "❌ Veri yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.",
-        "error_detail": "❌ Hata ayrıntıları: {error}"
+        "error_detail": "❌ Hata ayrıntıları: {error}",
+        "limit_blocked": "⛔ Test mesajı sınırına ulaştınız. Tam erişim için yönetici ile iletişime geçin.",
+        "contact_intro": "Lütfen yöneticiye mesajınızı yazın:",
+        "contact_confirm": "✅ Mesajınız gönderildi. Lütfen yöneticinin yanıtını bekleyin.",
+        "contact_end": "✅ Oturumunuz sona erdi.",
+        "contact_forward": "{name} kullanıcısından (ID: {user_id}) mesaj:\n{text}",
+        "contact_button": "📞 Yöneticiyle iletişime geç"
     },
     "fr": {
         "name": "🇫🇷 Français",
@@ -851,7 +889,13 @@ LANGS = {
         "loading_data": "⏳ Chargement des données... {progress}%",
         "data_loaded": "✅ Données chargées avec succès.",
         "error_occurred": "❌ Une erreur est survenue lors du chargement des données. Veuillez réessayer plus tard.",
-        "error_detail": "❌ Détails de l'erreur : {error}"
+        "error_detail": "❌ Détails de l'erreur : {error}",
+        "limit_blocked": "⛔ Vous avez atteint la limite de messages de test. Contactez l'administrateur pour un accès complet.",
+        "contact_intro": "Écrivez votre message à l'administrateur :",
+        "contact_confirm": "✅ Votre message a été envoyé. Veuillez attendre la réponse de l'administrateur.",
+        "contact_end": "✅ Votre session est terminée.",
+        "contact_forward": "Message de l'utilisateur {name} (ID: {user_id}) :\n{text}",
+        "contact_button": "📞 Contacter l'administrateur"
     },
     "de": {
         "name": "🇩🇪 Deutsch",
@@ -942,7 +986,13 @@ LANGS = {
         "loading_data": "⏳ Daten werden geladen... {progress}%",
         "data_loaded": "✅ Daten erfolgreich geladen.",
         "error_occurred": "❌ Beim Laden der Daten ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
-        "error_detail": "❌ Fehlerdetails: {error}"
+        "error_detail": "❌ Fehlerdetails: {error}",
+        "limit_blocked": "⛔ Sie haben das Testnachrichten-Limit erreicht. Kontaktieren Sie den Administrator für vollen Zugriff.",
+        "contact_intro": "Schreiben Sie Ihre Nachricht an den Administrator:",
+        "contact_confirm": "✅ Ihre Nachricht wurde gesendet. Bitte warten Sie auf die Antwort des Administrators.",
+        "contact_end": "✅ Ihre Sitzung wurde beendet.",
+        "contact_forward": "Nachricht von Benutzer {name} (ID: {user_id}):\n{text}",
+        "contact_button": "📞 Administrator kontaktieren"
     },
     "zh": {
         "name": "🇨🇳 中文",
@@ -1033,7 +1083,13 @@ LANGS = {
         "loading_data": "⏳ 正在加载数据... {progress}%",
         "data_loaded": "✅ 数据加载成功。",
         "error_occurred": "❌ 加载数据时出错，请稍后重试。",
-        "error_detail": "❌ 错误详情：{error}"
+        "error_detail": "❌ 错误详情：{error}",
+        "limit_blocked": "⛔ 您已达到测试消息限制。请联系管理员获取完整访问权限。",
+        "contact_intro": "请给管理员写消息：",
+        "contact_confirm": "✅ 您的消息已发送。请等待管理员回复。",
+        "contact_end": "✅ 您的会话已结束。",
+        "contact_forward": "来自用户 {name}（ID: {user_id}）的消息：\n{text}",
+        "contact_button": "📞 联系管理员"
     }
 }
 
@@ -1124,6 +1180,7 @@ class BotStates(StatesGroup):
     admin_broadcast = State()
     admin_clear_cache_confirm = State()
     admin_clear_all_confirm = State()
+    contact_admin = State()                 # new state for contacting admin
 
 # ------------------------------ Keyboard builders ------------------------------
 def lang_keyboard():
@@ -1241,7 +1298,7 @@ async def show_user_panel(target, user_id, page=0, is_admin_view=False, edit=Fal
 @router.message(Command("start"))
 @router.message(F.text.lower().in_({"start", "/start"}))
 async def cmd_start(message: Message, state: FSMContext):
-    await state.clear()
+    await state.clear()  # clear any state including contact_admin
     chat_mode[message.from_user.id] = False  # exit chat mode
     user_exists = await db.fetchone("SELECT lang FROM users WHERE user_id = ?", (message.from_user.id,))
     if not user_exists:
@@ -1306,6 +1363,8 @@ async def go_admin_panel(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data.startswith("selmod_"))
 async def select_model(callback: CallbackQuery, state: FSMContext):
+    # Clear any contact state when selecting model
+    await state.clear()
     model_id = callback.data.split("_")[1]
     user_id = callback.from_user.id
     row = await db.fetchone("SELECT model_name FROM models WHERE id = ?", (model_id,))
@@ -1865,12 +1924,67 @@ async def add_router_done(callback: CallbackQuery, state: FSMContext):
     await callback.answer(await get_text(callback.from_user.id, "add_router_done"), show_alert=True)
     await cmd_admin(callback.message, state)
 
-# ------------------------------ Main chat handler ------------------------------
+# ------------------------------ Contact Admin Handlers ------------------------------
+@router.message(Command("man"))
+@router.message(Command("contactadmin"))
+async def cmd_contact_admin(message: Message, state: FSMContext):
+    """Enter contact admin mode."""
+    user_id = message.from_user.id
+    # Clear any existing state and chat mode
+    await state.clear()
+    chat_mode[user_id] = False
+    # Set state to contact_admin
+    await state.set_state(BotStates.contact_admin)
+    intro = await get_text(user_id, "contact_intro")
+    # Provide a cancel button? We'll rely on /start or /model to exit, but we can add a small note.
+    await message.answer(intro)
+
+@router.callback_query(F.data == "contact_admin")
+async def contact_admin_callback(callback: CallbackQuery, state: FSMContext):
+    """Callback from the contact admin button."""
+    user_id = callback.from_user.id
+    await state.clear()
+    chat_mode[user_id] = False
+    await state.set_state(BotStates.contact_admin)
+    intro = await get_text(user_id, "contact_intro")
+    await callback.message.answer(intro)
+    await callback.answer()
+
+@router.callback_query(F.data == "contact_end")
+async def contact_end_callback(callback: CallbackQuery, state: FSMContext):
+    """End the contact admin session."""
+    user_id = callback.from_user.id
+    await state.clear()
+    chat_mode[user_id] = False
+    end_msg = await get_text(user_id, "contact_end")
+    await callback.message.edit_text(end_msg)  # or answer a new message?
+    # We'll just edit the confirmation message to show end.
+    await callback.answer()
+
+# ------------------------------ Main chat handler (modified for contact admin) ------------------------------
 @router.message()
 async def process_user_chat(message: Message, state: FSMContext):
     user_id = message.from_user.id
 
-    # Check if user is in chat mode (has selected a model and not issued any bot command)
+    # First, check if user is in contact_admin state
+    current_state = await state.get_state()
+    if current_state == BotStates.contact_admin:
+        # Forward the message to admin
+        text = message.text or message.caption or "[non-text message]"
+        forward_text = await get_text(ADMIN_ID, "contact_forward")
+        forward_text = forward_text.format(name=message.from_user.full_name, user_id=user_id, text=text)
+        # Send to admin
+        await bot.send_message(ADMIN_ID, forward_text)
+        # Confirm to user
+        confirm = await get_text(user_id, "contact_confirm")
+        # Create end button
+        end_button = InlineKeyboardButton(text="🔚 " + await get_text(user_id, "contact_end"), callback_data="contact_end")
+        kb = InlineKeyboardMarkup(inline_keyboard=[[end_button]])
+        await message.answer(confirm, reply_markup=kb)
+        # Keep state, don't clear
+        return
+
+    # If user is in chat mode (selected model) then process as before
     if not chat_mode.get(user_id, False):
         # Not in chat mode: treat as unknown command, forward to admin, show panel
         username = message.from_user.username or "NoUsername"
@@ -1923,10 +2037,15 @@ async def process_user_chat(message: Message, state: FSMContext):
     # Authorization check
     allowed, limit_or_none = await is_user_authorized_for_chat(user_id)
     if not allowed:
-        # limit_or_none contains the limit (int)
-        block_msg = await get_text(user_id, "blocked_unauthorized")
-        block_msg = block_msg.format(limit=limit_or_none)
-        await message.answer(block_msg)
+        # User reached the limit
+        block_msg = await get_text(user_id, "limit_blocked")  # shortened message
+        # Create a button to contact admin
+        contact_btn = InlineKeyboardButton(
+            text=await get_text(user_id, "contact_button"),
+            callback_data="contact_admin"
+        )
+        kb = InlineKeyboardMarkup(inline_keyboard=[[contact_btn]])
+        await message.answer(block_msg, reply_markup=kb)
         chat_mode[user_id] = False
         return
 
