@@ -1341,7 +1341,7 @@ async def show_user_panel(target, user_id, page=0, is_admin_view=False, edit=Fal
 async def cmd_start(message: Message, state: FSMContext):
     await state.clear()
     chat_mode[message.from_user.id] = False
-    # Reset authorization state for this user when they start
+    # Reset authorization state when starting fresh
     await db.execute("UPDATE users SET is_auth = 0, msg_count = 0 WHERE user_id = ?", (message.from_user.id,))
     user_exists = await db.fetchone("SELECT lang FROM users WHERE user_id = ?", (message.from_user.id,))
     if not user_exists:
@@ -1414,8 +1414,8 @@ async def select_model(callback: CallbackQuery, state: FSMContext):
         await callback.answer(await get_text(user_id, "model_not_found"), show_alert=True)
         return
     model_name = row[0]
-    # Reset msg_count when selecting a new model so user can try again with limit if they were blocked
-    await db.execute("UPDATE users SET current_model_id = ?, msg_count = 0, is_auth = 0 WHERE user_id = ?", (model_id, user_id))
+    # Update model but DO NOT reset msg_count or is_auth
+    await db.execute("UPDATE users SET current_model_id = ? WHERE user_id = ?", (model_id, user_id))
     await db.execute("DELETE FROM history WHERE user_id = ?", (user_id,))
     chat_mode[user_id] = True
     chat_start_txt = await get_text(user_id, "chat_started")
@@ -1427,9 +1427,9 @@ async def select_model(callback: CallbackQuery, state: FSMContext):
 async def cmd_model_exit(message: Message, state: FSMContext):
     await state.clear()
     chat_mode[message.from_user.id] = False
+    # Clear history and current model, but DO NOT reset msg_count or is_auth
     await db.execute("DELETE FROM history WHERE user_id = ?", (message.from_user.id,))
-    # Reset msg_count so user can try again
-    await db.execute("UPDATE users SET msg_count = 0, is_auth = 0 WHERE user_id = ?", (message.from_user.id,))
+    await db.execute("UPDATE users SET current_model_id = NULL WHERE user_id = ?", (message.from_user.id,))
     await show_user_panel(message, message.from_user.id)
 
 @router.message(Command("admin"))
