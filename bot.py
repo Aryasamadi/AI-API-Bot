@@ -1928,14 +1928,16 @@ async def admin_save_model_only(message: Message, state: FSMContext):
     kb = InlineKeyboardMarkup(inline_keyboard=[[finish_btn]])
     await message.answer(await get_text(message.from_user.id, "model_added_continue"), reply_markup=kb)
 
+# ===== FIXED: after adding model, go to admin panel (not router details) =====
 @router.callback_query(F.data.startswith("addmod_done_"))
 async def admin_add_model_done(callback: CallbackQuery, state: FSMContext):
     chat_mode[callback.from_user.id] = False
     await state.clear()
-    r_id = callback.data.split("_")[1]
     await callback.answer(await get_text(callback.from_user.id, "add_router_done"), show_alert=True)
-    # Go back to router details
-    await admin_router_details(callback)
+    # Go to admin panel directly
+    admin_text = await get_text(callback.from_user.id, "admin_menu")
+    kb = await admin_panel_keyboard(callback.from_user.id)
+    await callback.message.answer(admin_text, reply_markup=kb)
 
 @router.callback_query(F.data == "admin_add_router")
 async def add_router_start(callback: CallbackQuery, state: FSMContext):
