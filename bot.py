@@ -1185,6 +1185,9 @@ async def is_user_authorized_for_chat(user_id):
         await db.execute("UPDATE users SET msg_count = msg_count + 1 WHERE user_id = ?", (user_id,))
         return True, None
     else:
+        # If just reached limit, increment msg_count so next time wrong password message appears
+        if msg_count == limit:
+            await db.execute("UPDATE users SET msg_count = msg_count + 1 WHERE user_id = ?", (user_id,))
         return False, (limit, msg_count)
 
 async def check_channel_join(user_id):
@@ -1338,6 +1341,8 @@ async def show_user_panel(target, user_id, page=0, is_admin_view=False, edit=Fal
 async def cmd_start(message: Message, state: FSMContext):
     await state.clear()
     chat_mode[message.from_user.id] = False
+    # Reset authorization state for this user when they start
+    await db.execute("UPDATE users SET is_auth = 0, msg_count = 0 WHERE user_id = ?", (message.from_user.id,))
     user_exists = await db.fetchone("SELECT lang FROM users WHERE user_id = ?", (message.from_user.id,))
     if not user_exists:
         await db.execute("INSERT OR IGNORE INTO users (user_id, lang, msg_count) VALUES (?, ?, 0)", (message.from_user.id, "en"))
@@ -1409,7 +1414,8 @@ async def select_model(callback: CallbackQuery, state: FSMContext):
         await callback.answer(await get_text(user_id, "model_not_found"), show_alert=True)
         return
     model_name = row[0]
-    await db.execute("UPDATE users SET current_model_id = ? WHERE user_id = ?", (model_id, user_id))
+    # Reset msg_count when selecting a new model so user can try again with limit if they were blocked
+    await db.execute("UPDATE users SET current_model_id = ?, msg_count = 0, is_auth = 0 WHERE user_id = ?", (model_id, user_id))
     await db.execute("DELETE FROM history WHERE user_id = ?", (user_id,))
     chat_mode[user_id] = True
     chat_start_txt = await get_text(user_id, "chat_started")
@@ -1422,6 +1428,8 @@ async def cmd_model_exit(message: Message, state: FSMContext):
     await state.clear()
     chat_mode[message.from_user.id] = False
     await db.execute("DELETE FROM history WHERE user_id = ?", (message.from_user.id,))
+    # Reset msg_count so user can try again
+    await db.execute("UPDATE users SET msg_count = 0, is_auth = 0 WHERE user_id = ?", (message.from_user.id,))
     await show_user_panel(message, message.from_user.id)
 
 @router.message(Command("admin"))
@@ -1888,6 +1896,7 @@ async def admin_add_model_done(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     r_id = callback.data.split("_")[1]
     await callback.answer(await get_text(callback.from_user.id, "add_router_done"), show_alert=True)
+    # Go back to router details
     await admin_router_details(callback)
 
 @router.callback_query(F.data == "admin_add_router")
@@ -1943,7 +1952,7 @@ async def add_router_model_finish(message: Message, state: FSMContext):
 async def add_router_done(callback: CallbackQuery, state: FSMContext):
     chat_mode[callback.from_user.id] = False
     await state.clear()
-    # FIX: show admin panel directly instead of calling cmd_admin
+    # Show admin panel
     admin_text = await get_text(callback.from_user.id, "admin_menu")
     kb = await admin_panel_keyboard(callback.from_user.id)
     await callback.message.answer(admin_text, reply_markup=kb)
@@ -1970,7 +1979,7 @@ async def contact_admin_callback(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(intro)
     await callback.answer()
 
-# ------------------------------ Main chat handler (FIXED - no forward for unknown commands) ------------------------------
+# ------------------------------ Main chat handler (FIXED) ------------------------------
 @router.message()
 async def process_user_chat(message: Message, state: FSMContext):
     user_id = message.from_user.id
@@ -2021,8 +2030,7 @@ async def process_user_chat(message: Message, state: FSMContext):
             return
         else:
             # Not a password
-            # If the user typed something (not a command) and this is not the first time they are blocked,
-            # show "incorrect password" message only if they already had msg_count > limit (i.e., already blocked before)
+            # If the user typed something (not a command) and they have already seen the initial limit message
             if message.text and not message.text.startswith('/') and msg_count > limit:
                 await message.answer(await get_text(user_id, "pwd_err"))
                 # Show the block message with contact button
@@ -2035,7 +2043,7 @@ async def process_user_chat(message: Message, state: FSMContext):
                 kb = InlineKeyboardMarkup(inline_keyboard=[[contact_btn]])
                 await message.answer(block_msg, reply_markup=kb)
             else:
-                # Show the block message with contact button
+                # Show the initial block message
                 block_msg = await get_text(user_id, "limit_blocked")
                 block_msg = block_msg.format(limit=limit)
                 contact_btn = InlineKeyboardButton(
