@@ -1021,9 +1021,13 @@ def cancel_admin_keyboard(user_id, text_back):
     return InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=text_back, callback_data="admin_back")]])
 
 # ------------------------------
-# User panel
+# User panel - edited to support edit mode
 # ------------------------------
-async def show_user_panel(message, user_id, page=0, is_admin_view=False):
+async def show_user_panel(target, user_id, page=0, is_admin_view=False, edit=False):
+    """
+    target: can be a Message or CallbackQuery (we treat them similarly)
+    edit: if True, we edit the existing message instead of sending new.
+    """
     joined, channel = await check_channel_join(user_id)
     if not joined:
         txt = await get_text(user_id, "must_join")
@@ -1031,7 +1035,10 @@ async def show_user_panel(message, user_id, page=0, is_admin_view=False):
             [InlineKeyboardButton(text=await get_text(user_id, "btn_join_channel"), url=f"https://t.me/{channel.replace('@', '')}")],
             [InlineKeyboardButton(text=await get_text(user_id, "btn_check_join"), callback_data="check_join_channel")]
         ])
-        await message.answer(f"{txt}\n{channel}", reply_markup=kb)
+        if edit and hasattr(target, 'message') and hasattr(target.message, 'edit_text'):
+            await target.message.edit_text(f"{txt}\n{channel}", reply_markup=kb)
+        else:
+            await target.answer(f"{txt}\n{channel}", reply_markup=kb)
         return
 
     all_models = await db.fetchall("SELECT id, model_name FROM models ORDER BY id")
@@ -1064,19 +1071,30 @@ async def show_user_panel(message, user_id, page=0, is_admin_view=False):
     if nav_buttons:
         buttons.append(nav_buttons)
 
-    if is_admin_view:
+    # Admin panel button: only if user is admin and not already in admin view
+    if user_id == ADMIN_ID and not is_admin_view:
+        admin_btn_text = await get_text(user_id, "btn_admin_panel")
+        buttons.append([InlineKeyboardButton(text=admin_btn_text, callback_data="go_admin_panel")])
+    elif is_admin_view:
+        # In admin view, show back to admin panel button
         back_text = await get_text(user_id, "btn_back_main")
         buttons.append([InlineKeyboardButton(text=back_text, callback_data="admin_back")])
-    else:
-        if user_id == ADMIN_ID:
-            admin_btn_text = await get_text(user_id, "btn_admin_panel")
-            buttons.append([InlineKeyboardButton(text=admin_btn_text, callback_data="go_admin_panel")])
 
     kb = InlineKeyboardMarkup(inline_keyboard=buttons)
     select_text = await get_text(user_id, "select_model")
     if total == 0:
         select_text = await get_text(user_id, "no_models_user") if not is_admin_view else await get_text(user_id, "no_models_admin")
-    await message.answer(select_text, reply_markup=kb)
+
+    if edit:
+        # Edit the existing message
+        if hasattr(target, 'message') and hasattr(target.message, 'edit_text'):
+            await target.message.edit_text(select_text, reply_markup=kb)
+        else:
+            # fallback
+            await target.answer(select_text, reply_markup=kb)
+    else:
+        # Send new message
+        await target.answer(select_text, reply_markup=kb)
 
 # ------------------------------
 # Handlers for commands (with and without slash)
@@ -1280,15 +1298,27 @@ async def admin_stats(callback: CallbackQuery):
 
 @router.callback_query(F.data == "admin_switch_user")
 async def admin_switch_user(callback: CallbackQuery):
-    await callback.message.delete()
-    await show_user_panel(callback.message, callback.from_user.id, is_admin_view=True)
+    # Edit the current message to user panel view (admin view is true)
+    await show_user_panel(callback, callback.from_user.id, is_admin_view=True, edit=True)
     await callback.answer()
 
 @router.callback_query(F.data.startswith("userpage_"))
 async def user_page_callback(callback: CallbackQuery):
     page = int(callback.data.split("_")[1])
-    await callback.message.delete()
-    await show_user_panel(callback.message, callback.from_user.id, page=page, is_admin_view=True)
+    # Determine if user is admin to show admin panel button appropriately
+    is_admin = (callback.from_user.id == ADMIN_ID)
+    # Edit the message with new page, but NOT in admin view unless they came from admin panel
+    # However we need to know if we are in admin view. We'll use the presence of "admin_view" in callback data or a separate flag.
+    # For simplicity, we assume that if the user is admin, they might be in admin view if they clicked from admin panel.
+    # We can pass a flag via callback data, but we'll just check if the previous message had admin back button.
+    # To be safe, we will always set is_admin_view=False for user page navigation unless we are in admin mode.
+    # But we need to retain admin view if the user was in admin panel and clicked user mode.
+    # We'll store a flag in state or in callback data. Since we don't have it, we'll use a simple approach:
+    # We'll pass the current admin view flag via a separate callback data part.
+    # Alternatively, we can just always allow the user to see the admin panel button if they are admin.
+    # The previous fix ensures that the admin panel button appears only when is_admin_view=False, so we keep that.
+    # So for userpage, we set is_admin_view=False (user mode) and let the show_user_panel decide whether to show admin button.
+    await show_user_panel(callback, callback.from_user.id, page=page, is_admin_view=False, edit=True)
     await callback.answer()
 
 # ------------------------------
@@ -1529,27 +1559,50 @@ async def admin_confirm_delete(callback: CallbackQuery):
     await callback.answer(msg, show_alert=True)
     await admin_routers_list(callback)
 
+# ------------------------------
+# Admin: Add Model to existing router (with persistence)
+# ------------------------------
 @router.callback_query(F.data.startswith("addmod_"))
 async def admin_add_model_only(callback: CallbackQuery, state: FSMContext):
     r_id = callback.data.split("_")[1]
     await state.update_data(r_id=r_id)
     txt = await get_text(callback.from_user.id, "send_model_for_router")
+    # Add a cancel button that goes back to router details
     btn_back = await get_text(callback.from_user.id, "btn_back")
-    buttons = [[InlineKeyboardButton(text=btn_back, callback_data=f"router_{r_id}")]]
-    await callback.message.edit_text(txt, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="✅ Done (پایان)", callback_data=f"addmod_done_{r_id}")],
+        [InlineKeyboardButton(text=btn_back, callback_data=f"router_{r_id}")]
+    ])
+    await callback.message.edit_text(txt + "\n\n(برای پایان، دکمه‌ی 'Done' را بزنید یا 'done' تایپ کنید)", reply_markup=kb)
     await state.set_state(BotStates.admin_add_model_only)
+
+@router.callback_query(F.data.startswith("addmod_done_"))
+async def admin_add_model_done(callback: CallbackQuery, state: FSMContext):
+    # Finish adding models
+    await state.clear()
+    r_id = callback.data.split("_")[1]
+    await callback.answer("✅ افزودن مدل‌ها تمام شد.")
+    # Go back to router details
+    # Simulate clicking router details
+    await admin_router_details(callback)
 
 @router.message(BotStates.admin_add_model_only)
 async def admin_save_model_only(message: Message, state: FSMContext):
     data = await state.get_data()
-    await db.execute("INSERT INTO models (router_id, model_name) VALUES (?, ?)", (data['r_id'], message.text.strip()))
-    txt = await get_text(message.from_user.id, "router_added")
-    await message.answer(txt)
-    await state.clear()
-    await cmd_admin(message, state)
+    r_id = data['r_id']
+    model_name = message.text.strip()
+    if model_name.lower() == 'done':
+        # Finish
+        await state.clear()
+        await message.answer("✅ افزودن مدل‌ها تمام شد.")
+        await cmd_admin(message, state)
+        return
+    await db.execute("INSERT INTO models (router_id, model_name) VALUES (?, ?)", (r_id, model_name))
+    await message.answer("✅ مدل اضافه شد. نام مدل بعدی را وارد کنید، یا 'done' را تایپ کنید، یا دکمه‌ی Done را بزنید.")
+    # state remains
 
 # ------------------------------
-# Admin: Add Router
+# Admin: Add Router (with persistence)
 # ------------------------------
 @router.callback_query(F.data == "admin_add_router")
 async def add_router_start(callback: CallbackQuery, state: FSMContext):
@@ -1577,22 +1630,41 @@ async def add_router_key(message: Message, state: FSMContext):
     await state.update_data(api_key=message.text.strip())
     txt = await get_text(message.from_user.id, "send_model")
     btn_back = await get_text(message.from_user.id, "btn_back_main")
-    await message.answer(txt, reply_markup=cancel_admin_keyboard(message.from_user.id, btn_back))
+    # We'll provide a cancel button that goes back to admin menu
+    await message.answer(txt + "\n\n(برای پایان، 'done' را تایپ کنید)", reply_markup=cancel_admin_keyboard(message.from_user.id, btn_back))
     await state.set_state(BotStates.admin_add_router_model)
 
 @router.message(BotStates.admin_add_router_model)
 async def add_router_model_finish(message: Message, state: FSMContext):
     data = await state.get_data()
-    res = await db.execute("INSERT INTO routers (domain, base_url, api_key) VALUES (?, ?, ?)", (data['domain'], data['base_url'], data['api_key']))
-    r_id = res['lastrowid']
-    await db.execute("INSERT INTO models (router_id, model_name) VALUES (?, ?)", (r_id, message.text.strip()))
-    txt = await get_text(message.from_user.id, "router_added")
-    await message.answer(txt)
-    await state.clear()
-    await cmd_admin(message, state)
+    model_name = message.text.strip()
+    if model_name.lower() == 'done':
+        # Finish the whole process: but we need to save router only if models were added.
+        # Check if we have stored a router_id
+        if 'router_saved' in data and data.get('router_saved'):
+            await message.answer("✅ روتر و مدل‌ها با موفقیت ثبت شدند.")
+        else:
+            await message.answer("⚠️ هیچ مدلی ثبت نشد. روتر ذخیره نشد.")
+        await state.clear()
+        await cmd_admin(message, state)
+        return
+
+    # If router not saved yet, save it now
+    if 'router_saved' not in data or not data.get('router_saved'):
+        res = await db.execute("INSERT INTO routers (domain, base_url, api_key) VALUES (?, ?, ?)",
+                               (data['domain'], data['base_url'], data['api_key']))
+        r_id = res['lastrowid']
+        await state.update_data(router_id=r_id, router_saved=True)
+    else:
+        r_id = data['router_id']
+
+    # Insert the model
+    await db.execute("INSERT INTO models (router_id, model_name) VALUES (?, ?)", (r_id, model_name))
+    await message.answer("✅ مدل اضافه شد. نام مدل بعدی را وارد کنید، یا 'done' برای پایان.")
+    # state remains
 
 # ------------------------------
-# Main chat handler
+# Main chat handler - fixed invalid command
 # ------------------------------
 @router.message()
 async def process_user_chat(message: Message, state: FSMContext):
@@ -1617,14 +1689,11 @@ async def process_user_chat(message: Message, state: FSMContext):
     """, (user_id,))
 
     if not active_model:
-        models = await db.fetchall("SELECT id, model_name FROM models")
-        if not models:
-            txt = await get_text(user_id, "invalid_command")
-            return await message.answer(txt)
-        buttons = [[InlineKeyboardButton(text=m_name, callback_data=f"selmod_{m_id}")] for m_id, m_name in models]
+        # Instead of showing list of models, show a friendly message and redirect to user panel
         invalid_txt = await get_text(user_id, "invalid_command")
-        select_txt = await get_text(user_id, "pls_select_model")
-        await message.answer(f"{invalid_txt}\n\n{select_txt}", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+        await message.answer(invalid_txt)
+        # Show the user panel (model selection)
+        await show_user_panel(message, user_id)
         return
 
     m_name, url_base, key = active_model
