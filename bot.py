@@ -1928,7 +1928,6 @@ async def cmd_contact_admin(message: Message, state: FSMContext):
     chat_mode[user_id] = False
     await state.set_state(BotStates.contact_admin)
     intro = await get_text(user_id, "contact_intro")
-    # Send only the intro, no extra text
     await message.answer(intro)
 
 @router.callback_query(F.data == "contact_admin")
@@ -1941,12 +1940,12 @@ async def contact_admin_callback(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(intro)
     await callback.answer()
 
-# ------------------------------ Main chat handler (modified for contact admin and password entry) ------------------------------
+# ------------------------------ Main chat handler (FIXED: priority for limit check) ------------------------------
 @router.message()
 async def process_user_chat(message: Message, state: FSMContext):
     user_id = message.from_user.id
 
-    # First, check if user is in contact_admin state
+    # ===== 1. Check if user is in contact_admin state =====
     current_state = await state.get_state()
     if current_state == BotStates.contact_admin:
         # Forward the message to admin
@@ -1955,23 +1954,21 @@ async def process_user_chat(message: Message, state: FSMContext):
         forward_text = forward_text.format(name=message.from_user.full_name, user_id=user_id, text=text)
         await bot.send_message(ADMIN_ID, forward_text)
         # Send end message and auto-end session
-        end_msg = await get_text(user_id, "contact_end_auto")  # new key for auto end message
+        end_msg = await get_text(user_id, "contact_end_auto")
         await message.answer(end_msg)
         # Clear state and show model panel
         await state.clear()
         await show_user_panel(message, user_id)
         return
 
-    # Handle admin replies: if admin replies to a forwarded message, send reply to user
+    # ===== 2. Handle admin replies (if admin replies to a forwarded message) =====
     if message.from_user.id == ADMIN_ID and message.reply_to_message:
         replied = message.reply_to_message
         if replied.text and ("User ID:" in replied.text or "شناسه:" in replied.text or "ID:" in replied.text):
-            # Try to extract user ID from the replied message
             text = replied.text
             match = re.search(r'(?:User ID|شناسه|ID):\s*(\d+)', text)
             if match:
                 target_user_id = int(match.group(1))
-                # Send admin's reply to that user
                 reply_text = await get_text(target_user_id, "contact_admin_reply")
                 reply_text = reply_text.format(text=message.text)
                 await bot.send_message(target_user_id, reply_text)
@@ -1979,9 +1976,9 @@ async def process_user_chat(message: Message, state: FSMContext):
                 return
         # If not a forwarded message, ignore
 
-    # If user is in chat mode (selected model) then process as before
+    # ===== 3. Check if user is in chat mode (has selected a model) =====
+    # If not, treat as unknown command and show panel
     if not chat_mode.get(user_id, False):
-        # Not in chat mode: treat as unknown command, forward to admin, show panel
         username = message.from_user.username or "NoUsername"
         text = message.text or message.caption or "[non-text message]"
         forward_text = await get_text(ADMIN_ID, "forward_to_admin")
@@ -1992,7 +1989,7 @@ async def process_user_chat(message: Message, state: FSMContext):
         await show_user_panel(message, user_id)
         return
 
-    # Channel join check
+    # ===== 4. Channel join check =====
     joined, channels = await check_channel_join(user_id)
     if not joined:
         txt = await get_text(user_id, "must_join")
@@ -2007,7 +2004,7 @@ async def process_user_chat(message: Message, state: FSMContext):
         chat_mode[user_id] = False
         return
 
-    # Check if user has selected a model
+    # ===== 5. Check if user has selected a model =====
     active_model = await db.fetchone("""
         SELECT m.model_name, r.base_url, r.api_key
         FROM users u
@@ -2028,28 +2025,27 @@ async def process_user_chat(message: Message, state: FSMContext):
         await show_user_panel(message, user_id)
         return
 
-    # Authorization check
+    # ===== 6. Authorization check (LIMIT) - PRIORITY =====
     allowed, limit_or_none = await is_user_authorized_for_chat(user_id)
     if not allowed:
-        # User reached the limit. Check if the message is the password
+        # User is not authorized (limit reached)
+        # Check if the message is the password
         pwd_row = await db.fetchone("SELECT value FROM settings WHERE key = 'global_password'")
         global_pwd = pwd_row[0] if pwd_row else None
         if global_pwd and message.text and message.text.strip() == global_pwd:
             # Password entered correctly
             await db.execute("UPDATE users SET is_auth = 1, msg_count = 0 WHERE user_id = ?", (user_id,))
             await message.answer(await get_text(user_id, "pwd_ok"))
-            # Now they are authorized, so we re-run the chat logic? We'll let the message be processed.
-            # We need to re-check authorization after updating.
+            # Now they are authorized, re-check and allow the message to be processed
             allowed, _ = await is_user_authorized_for_chat(user_id)
             if allowed:
-                # Proceed to chat
+                # Proceed to chat (fall through)
                 pass
             else:
-                # Should not happen
                 await message.answer(await get_text(user_id, "pwd_err"))
                 return
         else:
-            # Blocked, show limit message with contact button
+            # Not a password: show limit message with contact button
             block_msg = await get_text(user_id, "limit_blocked")
             contact_btn = InlineKeyboardButton(
                 text=await get_text(user_id, "contact_button"),
@@ -2057,10 +2053,10 @@ async def process_user_chat(message: Message, state: FSMContext):
             )
             kb = InlineKeyboardMarkup(inline_keyboard=[[contact_btn]])
             await message.answer(block_msg, reply_markup=kb)
-            chat_mode[user_id] = False
+            chat_mode[user_id] = False  # Exit chat mode to avoid further messages being processed
             return
 
-    # Proceed with chat (if allowed after password check)
+    # ===== 7. Proceed with chat (if allowed) =====
     m_name, url_base, key = active_model
     url = url_base.strip().rstrip('/')
     if not url.endswith("/chat/completions"):
