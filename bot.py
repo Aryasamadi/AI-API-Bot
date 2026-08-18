@@ -316,7 +316,9 @@ LANGS = {
         "contact_admin_reply": "📩 Reply from admin:\n{text}",
         "admin_reply_sent": "✅ Reply sent to user.",
         # password wrong while blocked
-        "pwd_prompt_wrong": "⛔ Please enter the correct password:"
+        "pwd_prompt_wrong": "⛔ Please enter the correct password:",
+        # invalid model
+        "invalid_model": "❌ This model is no longer available. Please select another one."
     },
     "fa": {
         "name": "🇮🇷🇦🇫 فارسی",
@@ -418,7 +420,9 @@ LANGS = {
         "contact_admin_reply": "📩 پاسخ از مدیر:\n{text}",
         "admin_reply_sent": "✅ پاسخ به کاربر ارسال شد.",
         # password wrong while blocked
-        "pwd_prompt_wrong": "⛔ رمز عبور صحیح را وارد کنید:"
+        "pwd_prompt_wrong": "⛔ رمز عبور صحیح را وارد کنید:",
+        # invalid model
+        "invalid_model": "❌ این مدل دیگر در دسترس نیست. لطفاً مدل دیگری انتخاب کنید."
     },
     "ru": {
         "name": "🇷🇺 Русский",
@@ -520,7 +524,9 @@ LANGS = {
         "contact_admin_reply": "📩 Ответ от администратора:\n{text}",
         "admin_reply_sent": "✅ Ответ отправлен пользователю.",
         # password wrong while blocked
-        "pwd_prompt_wrong": "⛔ Введите правильный пароль:"
+        "pwd_prompt_wrong": "⛔ Введите правильный пароль:",
+        # invalid model
+        "invalid_model": "❌ Эта модель больше недоступна. Пожалуйста, выберите другую."
     },
     "ar": {
         "name": "🇸🇦 العربية",
@@ -622,7 +628,9 @@ LANGS = {
         "contact_admin_reply": "📩 رد من المسؤول:\n{text}",
         "admin_reply_sent": "✅ تم إرسال الرد إلى المستخدم.",
         # password wrong while blocked
-        "pwd_prompt_wrong": "⛔ أدخل كلمة المرور الصحيحة:"
+        "pwd_prompt_wrong": "⛔ أدخل كلمة المرور الصحيحة:",
+        # invalid model
+        "invalid_model": "❌ هذا النموذج غير متوفر الآن. يرجى اختيار نموذج آخر."
     },
     "hi": {
         "name": "🇮🇳 हिन्दी",
@@ -724,7 +732,9 @@ LANGS = {
         "contact_admin_reply": "📩 व्यवस्थापक का उत्तर:\n{text}",
         "admin_reply_sent": "✅ उत्तर उपयोगकर्ता को भेज दिया गया।",
         # password wrong while blocked
-        "pwd_prompt_wrong": "⛔ सही पासवर्ड दर्ज करें:"
+        "pwd_prompt_wrong": "⛔ सही पासवर्ड दर्ज करें:",
+        # invalid model
+        "invalid_model": "❌ यह मॉडल अब उपलब्ध नहीं है। कृपया दूसरा मॉडल चुनें।"
     },
     "tr": {
         "name": "🇹🇷 Türkçe",
@@ -826,7 +836,9 @@ LANGS = {
         "contact_admin_reply": "📩 Yöneticiden yanıt:\n{text}",
         "admin_reply_sent": "✅ Yanıt kullanıcıya gönderildi.",
         # password wrong while blocked
-        "pwd_prompt_wrong": "⛔ Doğru şifreyi girin:"
+        "pwd_prompt_wrong": "⛔ Doğru şifreyi girin:",
+        # invalid model
+        "invalid_model": "❌ Bu model artık mevcut değil. Lütfen başka bir model seçin."
     },
     "fr": {
         "name": "🇫🇷 Français",
@@ -928,7 +940,9 @@ LANGS = {
         "contact_admin_reply": "📩 Réponse de l'administrateur :\n{text}",
         "admin_reply_sent": "✅ Réponse envoyée à l'utilisateur.",
         # password wrong while blocked
-        "pwd_prompt_wrong": "⛔ Veuillez entrer le mot de passe correct :"
+        "pwd_prompt_wrong": "⛔ Veuillez entrer le mot de passe correct :",
+        # invalid model
+        "invalid_model": "❌ Ce modèle n'est plus disponible. Veuillez en choisir un autre."
     },
     "de": {
         "name": "🇩🇪 Deutsch",
@@ -1030,7 +1044,9 @@ LANGS = {
         "contact_admin_reply": "📩 Antwort vom Administrator:\n{text}",
         "admin_reply_sent": "✅ Antwort an Benutzer gesendet.",
         # password wrong while blocked
-        "pwd_prompt_wrong": "⛔ Bitte geben Sie das richtige Passwort ein:"
+        "pwd_prompt_wrong": "⛔ Bitte geben Sie das richtige Passwort ein:",
+        # invalid model
+        "invalid_model": "❌ Dieses Modell ist nicht mehr verfügbar. Bitte wählen Sie ein anderes."
     },
     "zh": {
         "name": "🇨🇳 中文",
@@ -1132,7 +1148,9 @@ LANGS = {
         "contact_admin_reply": "📩 管理员的回复：\n{text}",
         "admin_reply_sent": "✅ 回复已发送给用户。",
         # password wrong while blocked
-        "pwd_prompt_wrong": "⛔ 请输入正确的密码："
+        "pwd_prompt_wrong": "⛔ 请输入正确的密码：",
+        # invalid model
+        "invalid_model": "❌ 此模型不再可用。请选择其他模型。"
     }
 }
 
@@ -1265,7 +1283,7 @@ async def admin_database_keyboard(user_id):
 def cancel_admin_keyboard(user_id, text_back):
     return InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=text_back, callback_data="admin_back")]])
 
-# ------------------------------ User panel ------------------------------
+# ------------------------------ User panel (FIXED: only show valid models with routers) ------------------------------
 async def show_user_panel(target, user_id, page=0, is_admin_view=False, edit=False):
     chat_mode[user_id] = False
 
@@ -1285,7 +1303,14 @@ async def show_user_panel(target, user_id, page=0, is_admin_view=False, edit=Fal
             await target.answer(txt, reply_markup=kb)
         return
 
-    all_models = await db.fetchall("SELECT id, model_name FROM models ORDER BY id")
+    # ONLY show models that have a valid router with api_key
+    all_models = await db.fetchall("""
+        SELECT m.id, m.model_name
+        FROM models m
+        JOIN routers r ON m.router_id = r.id
+        WHERE r.api_key IS NOT NULL AND r.api_key != ''
+        ORDER BY m.id
+    """)
     total = len(all_models)
     per_page = 12
     max_page = max(0, (total - 1) // per_page) if total > 0 else 0
@@ -1341,8 +1366,9 @@ async def show_user_panel(target, user_id, page=0, is_admin_view=False, edit=Fal
 async def cmd_start(message: Message, state: FSMContext):
     await state.clear()
     chat_mode[message.from_user.id] = False
-    # Reset authorization state when starting fresh
-    await db.execute("UPDATE users SET is_auth = 0, msg_count = 0 WHERE user_id = ?", (message.from_user.id,))
+    # DO NOT reset msg_count or is_auth - only reset current_model_id and history
+    await db.execute("UPDATE users SET current_model_id = NULL WHERE user_id = ?", (message.from_user.id,))
+    await db.execute("DELETE FROM history WHERE user_id = ?", (message.from_user.id,))
     user_exists = await db.fetchone("SELECT lang FROM users WHERE user_id = ?", (message.from_user.id,))
     if not user_exists:
         await db.execute("INSERT OR IGNORE INTO users (user_id, lang, msg_count) VALUES (?, ?, 0)", (message.from_user.id, "en"))
@@ -1404,17 +1430,29 @@ async def go_admin_panel(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text(admin_text, reply_markup=kb)
     await callback.answer()
 
+# ===== FIXED: select_model with validation =====
 @router.callback_query(F.data.startswith("selmod_"))
 async def select_model(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     model_id = callback.data.split("_")[1]
     user_id = callback.from_user.id
-    row = await db.fetchone("SELECT model_name FROM models WHERE id = ?", (model_id,))
+    
+    # Validate that this model actually exists AND has a valid router
+    row = await db.fetchone("""
+        SELECT m.model_name, r.id
+        FROM models m
+        JOIN routers r ON m.router_id = r.id
+        WHERE m.id = ? AND r.api_key IS NOT NULL AND r.api_key != ''
+    """, (model_id,))
+    
     if not row:
-        await callback.answer(await get_text(user_id, "model_not_found"), show_alert=True)
+        await callback.answer(await get_text(user_id, "invalid_model"), show_alert=True)
+        # Show the panel again to let user choose another model
+        await show_user_panel(callback, user_id, edit=True)
         return
+    
     model_name = row[0]
-    # Update model but DO NOT reset msg_count or is_auth
+    # Update current model, reset history but DO NOT reset msg_count or is_auth
     await db.execute("UPDATE users SET current_model_id = ? WHERE user_id = ?", (model_id, user_id))
     await db.execute("DELETE FROM history WHERE user_id = ?", (user_id,))
     chat_mode[user_id] = True
@@ -1427,8 +1465,8 @@ async def select_model(callback: CallbackQuery, state: FSMContext):
 async def cmd_model_exit(message: Message, state: FSMContext):
     await state.clear()
     chat_mode[message.from_user.id] = False
-    # Clear history and current model, but DO NOT reset msg_count or is_auth
     await db.execute("DELETE FROM history WHERE user_id = ?", (message.from_user.id,))
+    # Clear current model but DO NOT reset msg_count or is_auth
     await db.execute("UPDATE users SET current_model_id = NULL WHERE user_id = ?", (message.from_user.id,))
     await show_user_panel(message, message.from_user.id)
 
@@ -1979,7 +2017,7 @@ async def contact_admin_callback(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(intro)
     await callback.answer()
 
-# ------------------------------ Main chat handler (FIXED) ------------------------------
+# ------------------------------ Main chat handler (FIXED - no reset on /start, invalid model check) ------------------------------
 @router.message()
 async def process_user_chat(message: Message, state: FSMContext):
     user_id = message.from_user.id
@@ -2078,19 +2116,20 @@ async def process_user_chat(message: Message, state: FSMContext):
         chat_mode[user_id] = False
         return
 
-    # ===== 6. Check if user has selected a model =====
+    # ===== 6. Check if user has selected a valid model =====
     active_model = await db.fetchone("""
         SELECT m.model_name, r.base_url, r.api_key
         FROM users u
         JOIN models m ON u.current_model_id = m.id
         JOIN routers r ON m.router_id = r.id
-        WHERE u.user_id = ?
+        WHERE u.user_id = ? AND r.api_key IS NOT NULL AND r.api_key != ''
     """, (user_id,))
 
     if not active_model:
+        # Invalid model or no router
         chat_mode[user_id] = False
-        unknown_txt = await get_text(user_id, "unknown_command")
-        await message.answer(unknown_txt)
+        invalid_txt = await get_text(user_id, "invalid_model")
+        await message.answer(invalid_txt)
         await show_user_panel(message, user_id)
         return
 
