@@ -304,7 +304,8 @@ LANGS = {
         "add_router_done": "✅ Router and models registered successfully.",
         "loading_data": "⏳ Loading data... {progress}%",
         "data_loaded": "✅ Data loaded successfully.",
-        "error_occurred": "❌ An error occurred while loading data. Please try again later."
+        "error_occurred": "❌ An error occurred while loading data. Please try again later.",
+        "error_detail": "❌ Error details: {error}"
     },
     "fa": {
         "name": "🇮🇷🇦🇫 فارسی",
@@ -394,7 +395,8 @@ LANGS = {
         "add_router_done": "✅ روتر و مدل‌ها با موفقیت ثبت شدند.",
         "loading_data": "⏳ در حال بارگذاری داده‌ها... {progress}%",
         "data_loaded": "✅ داده‌ها با موفقیت بارگذاری شدند.",
-        "error_occurred": "❌ خطایی در بارگذاری داده‌ها رخ داد. لطفاً بعداً تلاش کنید."
+        "error_occurred": "❌ خطایی در بارگذاری داده‌ها رخ داد. لطفاً بعداً تلاش کنید.",
+        "error_detail": "❌ جزئیات خطا: {error}"
     },
     "ru": {
         "name": "🇷🇺 Русский",
@@ -484,7 +486,8 @@ LANGS = {
         "add_router_done": "✅ Роутер и модели успешно зарегистрированы.",
         "loading_data": "⏳ Загрузка данных... {progress}%",
         "data_loaded": "✅ Данные успешно загружены.",
-        "error_occurred": "❌ Произошла ошибка при загрузке данных. Попробуйте позже."
+        "error_occurred": "❌ Произошла ошибка при загрузке данных. Попробуйте позже.",
+        "error_detail": "❌ Детали ошибки: {error}"
     },
     "ar": {
         "name": "🇸🇦 العربية",
@@ -574,7 +577,8 @@ LANGS = {
         "add_router_done": "✅ تم تسجيل الموجه والنماذج بنجاح.",
         "loading_data": "⏳ جاري تحميل البيانات... {progress}%",
         "data_loaded": "✅ تم تحميل البيانات بنجاح.",
-        "error_occurred": "❌ حدث خطأ أثناء تحميل البيانات. يرجى المحاولة لاحقاً."
+        "error_occurred": "❌ حدث خطأ أثناء تحميل البيانات. يرجى المحاولة لاحقاً.",
+        "error_detail": "❌ تفاصيل الخطأ: {error}"
     },
     "hi": {
         "name": "🇮🇳 हिन्दी",
@@ -664,7 +668,8 @@ LANGS = {
         "add_router_done": "✅ राउटर और मॉडल सफलतापूर्वक पंजीकृत हो गए।",
         "loading_data": "⏳ डेटा लोड हो रहा है... {progress}%",
         "data_loaded": "✅ डेटा सफलतापूर्वक लोड हो गया।",
-        "error_occurred": "❌ डेटा लोड करते समय त्रुटि हुई। कृपया बाद में प्रयास करें।"
+        "error_occurred": "❌ डेटा लोड करते समय त्रुटि हुई। कृपया बाद में प्रयास करें।",
+        "error_detail": "❌ त्रुटि विवरण: {error}"
     },
     "tr": {
         "name": "🇹🇷 Türkçe",
@@ -754,7 +759,8 @@ LANGS = {
         "add_router_done": "✅ Yönlendirici ve modeller başarıyla kaydedildi.",
         "loading_data": "⏳ Veri yükleniyor... {progress}%",
         "data_loaded": "✅ Veriler başarıyla yüklendi.",
-        "error_occurred": "❌ Veri yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin."
+        "error_occurred": "❌ Veri yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.",
+        "error_detail": "❌ Hata ayrıntıları: {error}"
     },
     "fr": {
         "name": "🇫🇷 Français",
@@ -844,7 +850,8 @@ LANGS = {
         "add_router_done": "✅ Routeur et modèles enregistrés avec succès.",
         "loading_data": "⏳ Chargement des données... {progress}%",
         "data_loaded": "✅ Données chargées avec succès.",
-        "error_occurred": "❌ Une erreur est survenue lors du chargement des données. Veuillez réessayer plus tard."
+        "error_occurred": "❌ Une erreur est survenue lors du chargement des données. Veuillez réessayer plus tard.",
+        "error_detail": "❌ Détails de l'erreur : {error}"
     },
     "de": {
         "name": "🇩🇪 Deutsch",
@@ -934,7 +941,8 @@ LANGS = {
         "add_router_done": "✅ Router und Modelle erfolgreich registriert.",
         "loading_data": "⏳ Daten werden geladen... {progress}%",
         "data_loaded": "✅ Daten erfolgreich geladen.",
-        "error_occurred": "❌ Beim Laden der Daten ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut."
+        "error_occurred": "❌ Beim Laden der Daten ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+        "error_detail": "❌ Fehlerdetails: {error}"
     },
     "zh": {
         "name": "🇨🇳 中文",
@@ -1024,7 +1032,8 @@ LANGS = {
         "add_router_done": "✅ 路由和模型注册成功。",
         "loading_data": "⏳ 正在加载数据... {progress}%",
         "data_loaded": "✅ 数据加载成功。",
-        "error_occurred": "❌ 加载数据时出错，请稍后重试。"
+        "error_occurred": "❌ 加载数据时出错，请稍后重试。",
+        "error_detail": "❌ 错误详情：{error}"
     }
 }
 
@@ -1650,14 +1659,20 @@ async def admin_view_data(callback: CallbackQuery):
             await callback.message.answer(text, parse_mode="Markdown", reply_markup=kb)
         await callback.answer()
     except Exception as e:
-        logging.error(f"Error in admin_view_data: {e}")
+        logging.exception(f"Error in admin_view_data for user {user_id}: {e}")
         if progress_msg:
             try:
                 await progress_msg.delete()
             except:
                 pass
+        # Show detailed error to user (but not too much)
         error_txt = await get_text(user_id, "error_occurred")
+        # Optionally, show a bit of detail (can be removed if you prefer generic)
+        # We'll send a separate message with error detail for debugging
+        detail_txt = await get_text(user_id, "error_detail")
+        detail_txt = detail_txt.format(error=str(e)[:200])  # limit length
         await callback.message.answer(error_txt)
+        await callback.message.answer(detail_txt)
         await callback.answer()
 
 # ------------------------------ Router and Model Management ------------------------------
