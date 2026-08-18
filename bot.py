@@ -222,7 +222,7 @@ LANGS = {
         "welcome_back": "Welcome back, {name}!",
         "welcome_first": "👋 Welcome! Use /help to see available commands.",
         "locked": "⛔ Unauthorized. Please enter the password:",
-        "pwd_ok": "✅ Password accepted!",
+        "pwd_ok": "✅ Password accepted! Continue chatting...",
         "pwd_err": "❌ Incorrect password. Please try again.",
         "pwd_none": "🔓 Password requirement removed. Bot is public.",
         "pwd_set": "✅ New password set: `{}`",
@@ -296,7 +296,7 @@ LANGS = {
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (no models)\n",
         "unknown_command": "❌ Unknown command. Please select a model first using the buttons below:",
-        "blocked_unauthorized": "⛔ You have used your {limit} request limit. Please enter the password:",
+        "blocked_unauthorized": "⛔ You have used your {limit} free requests. Please enter the password:",
         "forward_to_admin": "Unknown command from @{username} (ID: {user_id}): {text}",
         "model_added_continue": "✅ Model added. Enter next model name, or press 'Finish' button.",
         "finish": "✅ Finish",
@@ -310,7 +310,7 @@ LANGS = {
         "limit_blocked": "⛔ You have used your {limit} free requests. Please enter the password:",
         "contact_intro": "Please write your request as a complete message to the administrator:",
         "contact_confirm": "✅ Your message was sent. We will respond as soon as possible. To contact again, send /man.",
-        "contact_end_auto": "✅ Session ended. Your message was sent. We will respond as soon as possible. To contact again, send /man.",
+        "contact_end_auto": "✅ Sent. We will respond as soon as possible.\nTo contact again, send /man.",
         "contact_forward": "Message from user {name} (ID: {user_id}):\n{text}",
         "contact_button": "📞 Contact Admin",
         "contact_admin_reply": "📩 Reply from admin:\n{text}",
@@ -322,7 +322,7 @@ LANGS = {
         "welcome_back": "خوش برگشتی، {name}!",
         "welcome_first": "👋 خوش آمدی! برای دیدن راهنما از دستور /help استفاده کن.",
         "locked": "⛔ شما کاربر غیرمجاز هستید. لطفاً رمز عبور را وارد کنید:",
-        "pwd_ok": "✅ رمز عبور تایید شد!",
+        "pwd_ok": "✅ رمز عبور تایید شد! به چت ادامه بده...",
         "pwd_err": "❌ رمز اشتباه است. دوباره تلاش کنید.",
         "pwd_none": "🔓 قفل ربات برداشته شد. استفاده برای همه آزاد است.",
         "pwd_set": "✅ رمز عبور جدید تنظیم شد: `{}`",
@@ -396,7 +396,7 @@ LANGS = {
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (هیچ مدلی وجود ندارد)\n",
         "unknown_command": "❌ دستور ناشناس. لطفاً ابتدا یک مدل را با استفاده از دکمه‌های زیر انتخاب کنید:",
-        "blocked_unauthorized": "⛔ شما {limit} بار درخواست خود را استفاده کردید. رمز عبور را وارد کنید:",
+        "blocked_unauthorized": "⛔ شما از {limit} بار درخواست رایگان خود را استفاده کردید. رمز عبور را وارد کنید:",
         "forward_to_admin": "دستور ناشناس از @{username} (شناسه: {user_id}): {text}",
         "model_added_continue": "✅ مدل اضافه شد. نام مدل بعدی را وارد کنید، یا دکمهٔ «پایان» را بزنید.",
         "finish": "✅ پایان",
@@ -410,7 +410,7 @@ LANGS = {
         "limit_blocked": "⛔ شما از {limit} بار درخواست رایگان خود را استفاده کردید. رمز عبور را وارد کنید:",
         "contact_intro": "لطفاً درخواست خود را در قالب یک پیام کامل برای مدیر بنویسید:",
         "contact_confirm": "✅ پیام شما ارسال شد. در اسرع وقت پاسخ خواهیم داد. برای ارتباط مجدد /man را ارسال کنید.",
-        "contact_end_auto": "✅ نشست پایان یافت. پیام شما ارسال شد. در اسرع وقت پاسخ خواهیم داد. برای ارتباط مجدد /man را ارسال کنید.",
+        "contact_end_auto": "ارسال شد ✅ در اسرع وقت پاسخ خواهیم داد.\nبرای ارتباط مجدد /man را ارسال کنید.",
         "contact_forward": "پیام از کاربر {name} (شناسه: {user_id}):\n{text}",
         "contact_button": "📞 تماس با مدیر",
         "contact_admin_reply": "📩 پاسخ از مدیر:\n{text}",
@@ -422,7 +422,7 @@ LANGS = {
         "welcome_back": "С возвращением, {name}!",
         "welcome_first": "👋 Добро пожаловать! Используйте /help для списка команд.",
         "locked": "⛔ Доступ ограничен. Введите пароль:",
-        "pwd_ok": "✅ Пароль принят!",
+        "pwd_ok": "✅ Пароль принят! Продолжайте общение...",
         "pwd_err": "❌ Неверный пароль. Попробуйте снова.",
         "pwd_none": "🔓 Пароль удален. Бот общедоступен.",
         "pwd_set": "✅ Новый пароль: `{}`",
@@ -496,7 +496,7 @@ LANGS = {
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (нет моделей)\n",
         "unknown_command": "❌ Неизвестная команда. Пожалуйста, сначала выберите модель с помощью кнопок ниже:",
-        "blocked_unauthorized": "⛔ Вы использовали лимит {limit} запросов. Введите пароль:",
+        "blocked_unauthorized": "⛔ Вы использовали {limit} бесплатных запросов. Введите пароль:",
         "forward_to_admin": "Неизвестная команда от @{username} (ID: {user_id}): {text}",
         "model_added_continue": "✅ Модель добавлена. Введите следующее имя модели или нажмите кнопку «Готово».",
         "finish": "✅ Готово",
@@ -510,7 +510,7 @@ LANGS = {
         "limit_blocked": "⛔ Вы использовали {limit} бесплатных запросов. Введите пароль:",
         "contact_intro": "Пожалуйста, напишите ваш запрос в виде полного сообщения администратору:",
         "contact_confirm": "✅ Ваше сообщение отправлено. Мы ответим в ближайшее время. Для повторного обращения отправьте /man.",
-        "contact_end_auto": "✅ Сессия завершена. Ваше сообщение отправлено. Мы ответим в ближайшее время. Для повторного обращения отправьте /man.",
+        "contact_end_auto": "Отправлено ✅ Мы ответим в ближайшее время.\nДля повторного обращения отправьте /man.",
         "contact_forward": "Сообщение от пользователя {name} (ID: {user_id}):\n{text}",
         "contact_button": "📞 Связаться с администратором",
         "contact_admin_reply": "📩 Ответ от администратора:\n{text}",
@@ -522,7 +522,7 @@ LANGS = {
         "welcome_back": "أهلاً بك مجدداً، {name}!",
         "welcome_first": "👋 مرحباً! استخدم /help لعرض الأوامر.",
         "locked": "⛔ غير مصرح. أدخل كلمة المرور:",
-        "pwd_ok": "✅ تم القبول!",
+        "pwd_ok": "✅ تم القبول! استمر في المحادثة...",
         "pwd_err": "❌ كلمة مرور خاطئة. حاول مرة أخرى.",
         "pwd_none": "🔓 تمت إزالة كلمة المرور.",
         "pwd_set": "✅ كلمة المرور الجديدة: `{}`",
@@ -596,7 +596,7 @@ LANGS = {
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (لا توجد نماذج)\n",
         "unknown_command": "❌ أمر غير معروف. يرجى اختيار نموذج أولاً باستخدام الأزرار أدناه:",
-        "blocked_unauthorized": "⛔ لقد استخدمت حد {limit} طلب. أدخل كلمة المرور:",
+        "blocked_unauthorized": "⛔ لقد استخدمت {limit} طلب مجاني. أدخل كلمة المرور:",
         "forward_to_admin": "أمر غير معروف من @{username} (ID: {user_id}): {text}",
         "model_added_continue": "✅ تمت إضافة النموذج. أدخل اسم النموذج التالي، أو اضغط على زر «إنهاء».",
         "finish": "✅ إنهاء",
@@ -610,7 +610,7 @@ LANGS = {
         "limit_blocked": "⛔ لقد استخدمت {limit} طلب مجاني. أدخل كلمة المرور:",
         "contact_intro": "يرجى كتابة طلبك كرسالة كاملة للمسؤول:",
         "contact_confirm": "✅ تم إرسال رسالتك. سوف نرد في أقرب وقت. للتواصل مرة أخرى، أرسل /man.",
-        "contact_end_auto": "✅ انتهت الجلسة. تم إرسال رسالتك. سوف نرد في أقرب وقت. للتواصل مرة أخرى، أرسل /man.",
+        "contact_end_auto": "تم الإرسال ✅ سوف نرد في أقرب وقت.\nللتواصل مرة أخرى، أرسل /man.",
         "contact_forward": "رسالة من المستخدم {name} (ID: {user_id}):\n{text}",
         "contact_button": "📞 اتصل بالمسؤول",
         "contact_admin_reply": "📩 رد من المسؤول:\n{text}",
@@ -622,7 +622,7 @@ LANGS = {
         "welcome_back": "वापसी पर स्वागत है, {name}!",
         "welcome_first": "👋 स्वागत है! कमांड देखने के लिए /help का उपयोग करें।",
         "locked": "🔑 पासवर्ड दर्ज करें:",
-        "pwd_ok": "✅ स्वीकृत!",
+        "pwd_ok": "✅ पासवर्ड स्वीकृत! चैट जारी रखें...",
         "pwd_err": "❌ गलत पासवर्ड। फिर से प्रयास करें।",
         "pwd_none": "🔓 पासवर्ड हटाया गया।",
         "pwd_set": "✅ नया पासवर्ड: `{}`",
@@ -696,7 +696,7 @@ LANGS = {
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (कोई मॉडल नहीं)\n",
         "unknown_command": "❌ अज्ञात कमांड। कृपया पहले नीचे दिए गए बटनों का उपयोग करके एक मॉडल चुनें:",
-        "blocked_unauthorized": "⛔ आपने अपनी {limit} अनुरोध सीमा का उपयोग कर लिया है। कृपया पासवर्ड दर्ज करें:",
+        "blocked_unauthorized": "⛔ आपने {limit} निःशुल्क अनुरोधों का उपयोग कर लिया है। कृपया पासवर्ड दर्ज करें:",
         "forward_to_admin": "@{username} (ID: {user_id}) से अज्ञात कमांड: {text}",
         "model_added_continue": "✅ मॉडल जोड़ा गया। अगला मॉडल नाम दर्ज करें, या 'समाप्त' बटन दबाएँ।",
         "finish": "✅ समाप्त",
@@ -710,7 +710,7 @@ LANGS = {
         "limit_blocked": "⛔ आपने {limit} निःशुल्क अनुरोधों का उपयोग कर लिया है। कृपया पासवर्ड दर्ज करें:",
         "contact_intro": "कृपया अपना अनुरोध व्यवस्थापक को पूर्ण संदेश के रूप में लिखें:",
         "contact_confirm": "✅ आपका संदेश भेज दिया गया है। हम जल्द से जल्द जवाब देंगे। पुनः संपर्क के लिए /man भेजें।",
-        "contact_end_auto": "✅ आपका सत्र समाप्त हो गया। आपका संदेश भेज दिया गया है। हम जल्द से जल्द जवाब देंगे। पुनः संपर्क के लिए /man भेजें।",
+        "contact_end_auto": "भेजा गया ✅ हम जल्द से जल्द जवाब देंगे।\nपुनः संपर्क के लिए /man भेजें।",
         "contact_forward": "उपयोगकर्ता {name} (ID: {user_id}) से संदेश:\n{text}",
         "contact_button": "📞 व्यवस्थापक से संपर्क करें",
         "contact_admin_reply": "📩 व्यवस्थापक का उत्तर:\n{text}",
@@ -722,7 +722,7 @@ LANGS = {
         "welcome_back": "Tekrar hoş geldiniz, {name}!",
         "welcome_first": "👋 Hoş geldiniz! Komutları görmek için /help kullanın.",
         "locked": "⛔ Şifreyi girin:",
-        "pwd_ok": "✅ Kabul edildi!",
+        "pwd_ok": "✅ Şifre kabul edildi! Sohbete devam edin...",
         "pwd_err": "❌ Yanlış şifre. Tekrar deneyin.",
         "pwd_none": "🔓 Şifre kaldırıldı.",
         "pwd_set": "✅ Yeni şifre: `{}`",
@@ -796,7 +796,7 @@ LANGS = {
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (model yok)\n",
         "unknown_command": "❌ Bilinmeyen komut. Lütfen önce aşağıdaki butonlardan bir model seçin:",
-        "blocked_unauthorized": "⛔ {limit} istek sınırınızı kullandınız. Lütfen şifreyi girin:",
+        "blocked_unauthorized": "⛔ {limit} ücretsiz istek hakkınızı kullandınız. Lütfen şifreyi girin:",
         "forward_to_admin": "@{username} (ID: {user_id}) adlı kullanıcıdan bilinmeyen komut: {text}",
         "model_added_continue": "✅ Model eklendi. Sonraki model adını girin veya 'Bitir' butonuna basın.",
         "finish": "✅ Bitir",
@@ -810,7 +810,7 @@ LANGS = {
         "limit_blocked": "⛔ {limit} ücretsiz istek hakkınızı kullandınız. Lütfen şifreyi girin:",
         "contact_intro": "Lütfen talebinizi yöneticiye tam bir mesaj olarak yazın:",
         "contact_confirm": "✅ Mesajınız gönderildi. En kısa sürede cevap vereceğiz. Tekrar iletişim için /man gönderin.",
-        "contact_end_auto": "✅ Oturum sona erdi. Mesajınız gönderildi. En kısa sürede cevap vereceğiz. Tekrar iletişim için /man gönderin.",
+        "contact_end_auto": "Gönderildi ✅ En kısa sürede cevap vereceğiz.\nTekrar iletişim için /man gönderin.",
         "contact_forward": "{name} kullanıcısından (ID: {user_id}) mesaj:\n{text}",
         "contact_button": "📞 Yöneticiyle iletişime geç",
         "contact_admin_reply": "📩 Yöneticiden yanıt:\n{text}",
@@ -822,7 +822,7 @@ LANGS = {
         "welcome_back": "Bon retour, {name} !",
         "welcome_first": "👋 Bienvenue ! Utilisez /help pour voir les commandes.",
         "locked": "⛔ Entrez le mot de passe :",
-        "pwd_ok": "✅ Accepté !",
+        "pwd_ok": "✅ Mot de passe accepté ! Continuez la discussion...",
         "pwd_err": "❌ Mot de passe incorrect. Essayez encore.",
         "pwd_none": "🔓 MDP supprimé.",
         "pwd_set": "✅ Nouveau MDP : `{}`",
@@ -896,7 +896,7 @@ LANGS = {
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (aucun modèle)\n",
         "unknown_command": "❌ Commande inconnue. Veuillez d'abord sélectionner un modèle à l'aide des boutons ci-dessous :",
-        "blocked_unauthorized": "⛔ Vous avez utilisé votre limite de {limit} requêtes. Veuillez entrer le mot de passe :",
+        "blocked_unauthorized": "⛔ Vous avez utilisé vos {limit} demandes gratuites. Veuillez entrer le mot de passe :",
         "forward_to_admin": "Commande inconnue de @{username} (ID: {user_id}) : {text}",
         "model_added_continue": "✅ Modèle ajouté. Entrez le nom du modèle suivant, ou appuyez sur le bouton « Terminer ».",
         "finish": "✅ Terminer",
@@ -910,7 +910,7 @@ LANGS = {
         "limit_blocked": "⛔ Vous avez utilisé vos {limit} demandes gratuites. Veuillez entrer le mot de passe :",
         "contact_intro": "Veuillez écrire votre demande sous forme de message complet à l'administrateur :",
         "contact_confirm": "✅ Votre message a été envoyé. Nous répondrons dans les plus brefs délais. Pour recontacter, envoyez /man.",
-        "contact_end_auto": "✅ Session terminée. Votre message a été envoyé. Nous répondrons dans les plus brefs délais. Pour recontacter, envoyez /man.",
+        "contact_end_auto": "Envoyé ✅ Nous répondrons dans les plus brefs délais.\nPour recontacter, envoyez /man.",
         "contact_forward": "Message de l'utilisateur {name} (ID: {user_id}) :\n{text}",
         "contact_button": "📞 Contacter l'administrateur",
         "contact_admin_reply": "📩 Réponse de l'administrateur :\n{text}",
@@ -922,7 +922,7 @@ LANGS = {
         "welcome_back": "Willkommen, {name}!",
         "welcome_first": "👋 Willkommen! Nutze /help für Befehle.",
         "locked": "⛔ Passwort eingeben:",
-        "pwd_ok": "✅ Akzeptiert!",
+        "pwd_ok": "✅ Passwort akzeptiert! Setzen Sie die Unterhaltung fort...",
         "pwd_err": "❌ Falsches Passwort. Versuche es erneut.",
         "pwd_none": "🔓 Passwort entfernt.",
         "pwd_set": "✅ Neues Passwort: `{}`",
@@ -996,7 +996,7 @@ LANGS = {
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (keine Modelle)\n",
         "unknown_command": "❌ Unbekannter Befehl. Bitte wählen Sie zuerst ein Modell mit den untenstehenden Buttons:",
-        "blocked_unauthorized": "⛔ Sie haben Ihr Limit von {limit} Anfragen erreicht. Bitte geben Sie das Passwort ein:",
+        "blocked_unauthorized": "⛔ Sie haben Ihre {limit} kostenlosen Anfragen aufgebraucht. Bitte geben Sie das Passwort ein:",
         "forward_to_admin": "Unbekannter Befehl von @{username} (ID: {user_id}): {text}",
         "model_added_continue": "✅ Modell hinzugefügt. Geben Sie den nächsten Modellnamen ein oder drücken Sie die Schaltfläche 'Fertig'.",
         "finish": "✅ Fertig",
@@ -1010,7 +1010,7 @@ LANGS = {
         "limit_blocked": "⛔ Sie haben Ihre {limit} kostenlosen Anfragen aufgebraucht. Bitte geben Sie das Passwort ein:",
         "contact_intro": "Bitte schreiben Sie Ihre Anfrage als vollständige Nachricht an den Administrator:",
         "contact_confirm": "✅ Ihre Nachricht wurde gesendet. Wir werden so schnell wie möglich antworten. Für erneute Kontaktaufnahme senden Sie /man.",
-        "contact_end_auto": "✅ Sitzung beendet. Ihre Nachricht wurde gesendet. Wir werden so schnell wie möglich antworten. Für erneute Kontaktaufnahme senden Sie /man.",
+        "contact_end_auto": "Gesendet ✅ Wir werden so schnell wie möglich antworten.\nFür erneute Kontaktaufnahme senden Sie /man.",
         "contact_forward": "Nachricht von Benutzer {name} (ID: {user_id}):\n{text}",
         "contact_button": "📞 Administrator kontaktieren",
         "contact_admin_reply": "📩 Antwort vom Administrator:\n{text}",
@@ -1022,7 +1022,7 @@ LANGS = {
         "welcome_back": "欢迎，{name}！",
         "welcome_first": "👋 欢迎！使用 /help 查看命令。",
         "locked": "⛔ 请输入密码：",
-        "pwd_ok": "✅ 密码正确！",
+        "pwd_ok": "✅ 密码正确！继续聊天...",
         "pwd_err": "❌ 密码错误。请重试。",
         "pwd_none": "🔓 密码已移除。",
         "pwd_set": "✅ 新密码：`{}`",
@@ -1096,7 +1096,7 @@ LANGS = {
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (无模型)\n",
         "unknown_command": "❌ 未知命令。请先使用下方按钮选择一个模型：",
-        "blocked_unauthorized": "⛔ 您已达到 {limit} 次请求上限。请输入密码：",
+        "blocked_unauthorized": "⛔ 您已用完 {limit} 次免费请求。请输入密码：",
         "forward_to_admin": "来自 @{username}（ID: {user_id}）的未知命令：{text}",
         "model_added_continue": "✅ 模型已添加。输入下一个模型名称，或按「完成」按钮。",
         "finish": "✅ 完成",
@@ -1110,7 +1110,7 @@ LANGS = {
         "limit_blocked": "⛔ 您已用完 {limit} 次免费请求。请输入密码：",
         "contact_intro": "请将您的请求以完整消息的形式写给管理员：",
         "contact_confirm": "✅ 您的消息已发送。我们会尽快回复。如需再次联系，请发送 /man。",
-        "contact_end_auto": "✅ 会话已结束。您的消息已发送。我们会尽快回复。如需再次联系，请发送 /man。",
+        "contact_end_auto": "已发送 ✅ 我们会尽快回复。\n如需再次联系，请发送 /man。",
         "contact_forward": "来自用户 {name}（ID: {user_id}）的消息：\n{text}",
         "contact_button": "📞 联系管理员",
         "contact_admin_reply": "📩 管理员的回复：\n{text}",
@@ -1167,7 +1167,7 @@ async def is_user_authorized_for_chat(user_id):
         await db.execute("UPDATE users SET msg_count = msg_count + 1 WHERE user_id = ?", (user_id,))
         return True, None
     else:
-        return False, limit
+        return False, (limit, msg_count)  # also return current msg_count to know if just reached limit
 
 async def check_channel_join(user_id):
     if user_id == ADMIN_ID:
@@ -1978,15 +1978,15 @@ async def process_user_chat(message: Message, state: FSMContext):
                 reply_text = await get_text(target_user_id, "contact_admin_reply")
                 reply_text = reply_text.format(text=message.text)
                 await bot.send_message(target_user_id, reply_text)
-                # Send confirmation to admin in his own language
                 confirm_text = await get_text(ADMIN_ID, "admin_reply_sent")
                 await message.reply(confirm_text)
                 return
 
     # ===== 3. Check authorization (LIMIT) =====
-    allowed, limit_or_none = await is_user_authorized_for_chat(user_id)
+    allowed, limit_data = await is_user_authorized_for_chat(user_id)
     if not allowed:
         # User is not authorized (limit reached)
+        limit, msg_count = limit_data
         pwd_row = await db.fetchone("SELECT value FROM settings WHERE key = 'global_password'")
         global_pwd = pwd_row[0] if pwd_row else None
         # Check if this message is the password
@@ -1994,14 +1994,14 @@ async def process_user_chat(message: Message, state: FSMContext):
             # Correct password
             await db.execute("UPDATE users SET is_auth = 1, msg_count = 0 WHERE user_id = ?", (user_id,))
             await message.answer(await get_text(user_id, "pwd_ok"))
-            # Do NOT change chat_mode, keep it as is (so user can continue chat)
-            # Just return to avoid processing the password message again
+            # Do NOT change chat_mode; user can continue
             return
         else:
-            # Not a password: show limit message with contact button
-            limit = limit_or_none if limit_or_none else 2
-            # If the user typed something (not a command), show "Incorrect password" first
-            if message.text and not message.text.startswith('/') and global_pwd:
+            # Not a password
+            # If the user typed something (not a command) and this is not the first time they are blocked,
+            # show "incorrect password" message only if they already had msg_count > limit (i.e., already blocked before)
+            # If msg_count == limit (they just reached the limit), don't show "incorrect password" yet.
+            if message.text and not message.text.startswith('/') and msg_count > limit:
                 await message.answer(await get_text(user_id, "pwd_err"))
             block_msg = await get_text(user_id, "limit_blocked")
             block_msg = block_msg.format(limit=limit)
@@ -2011,7 +2011,6 @@ async def process_user_chat(message: Message, state: FSMContext):
             )
             kb = InlineKeyboardMarkup(inline_keyboard=[[contact_btn]])
             await message.answer(block_msg, reply_markup=kb)
-            # Do NOT change chat_mode; keep user in chat mode if they were
             return
 
     # ===== 4. If we reach here, user is authorized =====
