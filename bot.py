@@ -1063,7 +1063,7 @@ async def check_auth(user_id):
         return True
     return False
 
-# Flag to track if user is in chat mode (has selected a model and not issued a bot command)
+# Flag to track if user is in chat mode (has selected a model and not issued any bot command)
 # We'll use a simple dictionary in memory, but it's better to store in DB or state.
 # For simplicity, we'll use a dict with user_id -> bool
 chat_mode = {}
@@ -1615,8 +1615,10 @@ async def admin_view_data(callback: CallbackQuery):
     user_id = callback.from_user.id
     progress_msg = None
     try:
-        # Send initial progress message
-        progress_msg = await callback.message.answer(await get_text(user_id, "loading_data").format(progress=0))
+        # Send initial progress message - FIXED: parentheses around await
+        progress_msg = await callback.message.answer(
+            (await get_text(user_id, "loading_data")).format(progress=0)
+        )
         # Simulate progress
         total_steps = 20
         for i in range(1, total_steps + 1):
@@ -1624,7 +1626,10 @@ async def admin_view_data(callback: CallbackQuery):
             if progress > 100:
                 progress = 100
             try:
-                await progress_msg.edit_text(await get_text(user_id, "loading_data").format(progress=progress))
+                # FIXED: parentheses around await
+                await progress_msg.edit_text(
+                    (await get_text(user_id, "loading_data")).format(progress=progress)
+                )
             except Exception:
                 pass  # ignore if message can't be edited
             await asyncio.sleep(0.15)
@@ -1665,12 +1670,9 @@ async def admin_view_data(callback: CallbackQuery):
                 await progress_msg.delete()
             except:
                 pass
-        # Show detailed error to user (but not too much)
         error_txt = await get_text(user_id, "error_occurred")
-        # Optionally, show a bit of detail (can be removed if you prefer generic)
-        # We'll send a separate message with error detail for debugging
         detail_txt = await get_text(user_id, "error_detail")
-        detail_txt = detail_txt.format(error=str(e)[:200])  # limit length
+        detail_txt = detail_txt.format(error=str(e)[:200])
         await callback.message.answer(error_txt)
         await callback.message.answer(detail_txt)
         await callback.answer()
