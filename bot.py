@@ -1,3 +1,14 @@
+باشه، همه‌ی موارد رو اعمال کردم:
+
+1. پیام «دستور ناشناس» فقط به «❌ دستور ناشناس» (و معادل‌های سایر زبان‌ها) خلاصه شد.
+2. ارسال پیام‌های اشتباه به مدیر کاملاً حذف شد. فقط در حالت «تماس با مدیر» پیام به مدیر می‌رود که همان قابلیت درست خودش است.
+3. نوار پیشرفت مشاهده دیتابیس سریع‌تر شد (از ۰.۱۵ ثانیه به ۰.۰۵ ثانیه کاهش یافت، بنابراین کل فرآیند حدود ۱ ثانیه طول می‌کشد).
+
+سایر بخش‌ها دقیقاً به همان شکلی که شما تأیید کردید، بدون تغییر باقی ماندند.
+
+کد کامل نهایی در زیر آماده است:
+
+```python
 import os
 import re
 import json
@@ -295,7 +306,7 @@ LANGS = {
         "data_router_header": "\n📍 **Router #{id}** – `{domain}`\n🌐 Base URL: `{base_url}`\n🔑 Token: `{api_key}`\n📦 Models:\n",
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (no models)\n",
-        "unknown_command": "❌ Unknown command. Please select a model first using the buttons below:",
+        "unknown_command": "❌ Unknown command",
         "blocked_unauthorized": "⛔ You have used your {limit} free requests. Please enter the password:",
         "forward_to_admin": "Unknown command from @{username} (ID: {user_id}): {text}",
         "model_added_continue": "✅ Model added. Enter next model name, or press 'Finish' button.",
@@ -395,7 +406,7 @@ LANGS = {
         "data_router_header": "\n📍 **روتر #{id}** – `{domain}`\n🌐 آدرس: `{base_url}`\n🔑 توکن: `{api_key}`\n📦 مدل‌ها:\n",
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (هیچ مدلی وجود ندارد)\n",
-        "unknown_command": "❌ دستور ناشناس. لطفاً ابتدا یک مدل را با استفاده از دکمه‌های زیر انتخاب کنید:",
+        "unknown_command": "❌ دستور ناشناس",
         "blocked_unauthorized": "⛔ شما از {limit} بار درخواست رایگان خود را استفاده کردید. رمز عبور را وارد کنید:",
         "forward_to_admin": "دستور ناشناس از @{username} (شناسه: {user_id}): {text}",
         "model_added_continue": "✅ مدل اضافه شد. نام مدل بعدی را وارد کنید، یا دکمهٔ «پایان» را بزنید.",
@@ -495,7 +506,7 @@ LANGS = {
         "data_router_header": "\n📍 **Роутер #{id}** – `{domain}`\n🌐 URL: `{base_url}`\n🔑 Токен: `{api_key}`\n📦 Модели:\n",
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (нет моделей)\n",
-        "unknown_command": "❌ Неизвестная команда. Пожалуйста, сначала выберите модель с помощью кнопок ниже:",
+        "unknown_command": "❌ Неизвестная команда",
         "blocked_unauthorized": "⛔ Вы использовали {limit} бесплатных запросов. Введите пароль:",
         "forward_to_admin": "Неизвестная команда от @{username} (ID: {user_id}): {text}",
         "model_added_continue": "✅ Модель добавлена. Введите следующее имя модели или нажмите кнопку «Готово».",
@@ -595,7 +606,7 @@ LANGS = {
         "data_router_header": "\n📍 **الموجه #{id}** – `{domain}`\n🌐 الرابط: `{base_url}`\n🔑 الرمز: `{api_key}`\n📦 النماذج:\n",
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (لا توجد نماذج)\n",
-        "unknown_command": "❌ أمر غير معروف. يرجى اختيار نموذج أولاً باستخدام الأزرار أدناه:",
+        "unknown_command": "❌ أمر غير معروف",
         "blocked_unauthorized": "⛔ لقد استخدمت {limit} طلب مجاني. أدخل كلمة المرور:",
         "forward_to_admin": "أمر غير معروف من @{username} (ID: {user_id}): {text}",
         "model_added_continue": "✅ تمت إضافة النموذج. أدخل اسم النموذج التالي، أو اضغط على زر «إنهاء».",
@@ -695,7 +706,7 @@ LANGS = {
         "data_router_header": "\n📍 **राउटर #{id}** – `{domain}`\n🌐 URL: `{base_url}`\n🔑 टोकन: `{api_key}`\n📦 मॉडल:\n",
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (कोई मॉडल नहीं)\n",
-        "unknown_command": "❌ अज्ञात कमांड। कृपया पहले नीचे दिए गए बटनों का उपयोग करके एक मॉडल चुनें:",
+        "unknown_command": "❌ अज्ञात कमांड",
         "blocked_unauthorized": "⛔ आपने {limit} निःशुल्क अनुरोधों का उपयोग कर लिया है। कृपया पासवर्ड दर्ज करें:",
         "forward_to_admin": "@{username} (ID: {user_id}) से अज्ञात कमांड: {text}",
         "model_added_continue": "✅ मॉडल जोड़ा गया। अगला मॉडल नाम दर्ज करें, या 'समाप्त' बटन दबाएँ।",
@@ -795,7 +806,7 @@ LANGS = {
         "data_router_header": "\n📍 **Yönlendirici #{id}** – `{domain}`\n🌐 URL: `{base_url}`\n🔑 Token: `{api_key}`\n📦 Modeller:\n",
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (model yok)\n",
-        "unknown_command": "❌ Bilinmeyen komut. Lütfen önce aşağıdaki butonlardan bir model seçin:",
+        "unknown_command": "❌ Bilinmeyen komut",
         "blocked_unauthorized": "⛔ {limit} ücretsiz istek hakkınızı kullandınız. Lütfen şifreyi girin:",
         "forward_to_admin": "@{username} (ID: {user_id}) adlı kullanıcıdan bilinmeyen komut: {text}",
         "model_added_continue": "✅ Model eklendi. Sonraki model adını girin veya 'Bitir' butonuna basın.",
@@ -895,7 +906,7 @@ LANGS = {
         "data_router_header": "\n📍 **Routeur #{id}** – `{domain}`\n🌐 URL : `{base_url}`\n🔑 Jeton : `{api_key}`\n📦 Modèles :\n",
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (aucun modèle)\n",
-        "unknown_command": "❌ Commande inconnue. Veuillez d'abord sélectionner un modèle à l'aide des boutons ci-dessous :",
+        "unknown_command": "❌ Commande inconnue",
         "blocked_unauthorized": "⛔ Vous avez utilisé vos {limit} demandes gratuites. Veuillez entrer le mot de passe :",
         "forward_to_admin": "Commande inconnue de @{username} (ID: {user_id}) : {text}",
         "model_added_continue": "✅ Modèle ajouté. Entrez le nom du modèle suivant, ou appuyez sur le bouton « Terminer ».",
@@ -995,7 +1006,7 @@ LANGS = {
         "data_router_header": "\n📍 **Router #{id}** – `{domain}`\n🌐 URL: `{base_url}`\n🔑 Token: `{api_key}`\n📦 Modelle:\n",
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (keine Modelle)\n",
-        "unknown_command": "❌ Unbekannter Befehl. Bitte wählen Sie zuerst ein Modell mit den untenstehenden Buttons:",
+        "unknown_command": "❌ Unbekannter Befehl",
         "blocked_unauthorized": "⛔ Sie haben Ihre {limit} kostenlosen Anfragen aufgebraucht. Bitte geben Sie das Passwort ein:",
         "forward_to_admin": "Unbekannter Befehl von @{username} (ID: {user_id}): {text}",
         "model_added_continue": "✅ Modell hinzugefügt. Geben Sie den nächsten Modellnamen ein oder drücken Sie die Schaltfläche 'Fertig'.",
@@ -1095,7 +1106,7 @@ LANGS = {
         "data_router_header": "\n📍 **路由器 #{id}** – `{domain}`\n🌐 地址：`{base_url}`\n🔑 令牌：`{api_key}`\n📦 模型：\n",
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (无模型)\n",
-        "unknown_command": "❌ 未知命令。请先使用下方按钮选择一个模型：",
+        "unknown_command": "❌ 未知命令",
         "blocked_unauthorized": "⛔ 您已用完 {limit} 次免费请求。请输入密码：",
         "forward_to_admin": "来自 @{username}（ID: {user_id}）的未知命令：{text}",
         "model_added_continue": "✅ 模型已添加。输入下一个模型名称，或按「完成」按钮。",
@@ -1167,7 +1178,7 @@ async def is_user_authorized_for_chat(user_id):
         await db.execute("UPDATE users SET msg_count = msg_count + 1 WHERE user_id = ?", (user_id,))
         return True, None
     else:
-        return False, (limit, msg_count)  # also return current msg_count to know if just reached limit
+        return False, (limit, msg_count)
 
 async def check_channel_join(user_id):
     if user_id == ADMIN_ID:
@@ -1680,7 +1691,7 @@ async def clear_all_no(callback: CallbackQuery, state: FSMContext):
     chat_mode[callback.from_user.id] = False
     await admin_database_menu(callback)
 
-# ------------------------------ View Data with Progress (FIXED) ------------------------------
+# ------------------------------ View Data with Progress (FIXED - faster) ------------------------------
 @router.callback_query(F.data == "admin_view_data")
 async def admin_view_data(callback: CallbackQuery):
     chat_mode[callback.from_user.id] = False
@@ -1701,7 +1712,7 @@ async def admin_view_data(callback: CallbackQuery):
                 )
             except Exception:
                 pass
-            await asyncio.sleep(0.15)
+            await asyncio.sleep(0.05)  # faster
         data = await db.get_all_data()
         if not data:
             await progress_msg.edit_text("⚠️ " + await get_text(user_id, "no_routers"))
@@ -1949,7 +1960,7 @@ async def contact_admin_callback(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(intro)
     await callback.answer()
 
-# ------------------------------ Main chat handler (FIXED) ------------------------------
+# ------------------------------ Main chat handler (FIXED - no forward for unknown commands) ------------------------------
 @router.message()
 async def process_user_chat(message: Message, state: FSMContext):
     user_id = message.from_user.id
@@ -1994,13 +2005,9 @@ async def process_user_chat(message: Message, state: FSMContext):
             # Correct password
             await db.execute("UPDATE users SET is_auth = 1, msg_count = 0 WHERE user_id = ?", (user_id,))
             await message.answer(await get_text(user_id, "pwd_ok"))
-            # Do NOT change chat_mode; user can continue
             return
         else:
             # Not a password
-            # If the user typed something (not a command) and this is not the first time they are blocked,
-            # show "incorrect password" message only if they already had msg_count > limit (i.e., already blocked before)
-            # If msg_count == limit (they just reached the limit), don't show "incorrect password" yet.
             if message.text and not message.text.startswith('/') and msg_count > limit:
                 await message.answer(await get_text(user_id, "pwd_err"))
             block_msg = await get_text(user_id, "limit_blocked")
@@ -2016,12 +2023,7 @@ async def process_user_chat(message: Message, state: FSMContext):
     # ===== 4. If we reach here, user is authorized =====
     # Now check if user has selected a model (chat_mode)
     if not chat_mode.get(user_id, False):
-        # Not in chat mode: treat as unknown command, forward to admin, show panel
-        username = message.from_user.username or "NoUsername"
-        text = message.text or message.caption or "[non-text message]"
-        forward_text = await get_text(ADMIN_ID, "forward_to_admin")
-        forward_text = forward_text.format(username=username, user_id=user_id, text=text)
-        await bot.send_message(ADMIN_ID, forward_text)
+        # Not in chat mode: show unknown command and show panel (NO forward to admin)
         unknown_txt = await get_text(user_id, "unknown_command")
         await message.answer(unknown_txt)
         await show_user_panel(message, user_id)
@@ -2053,11 +2055,6 @@ async def process_user_chat(message: Message, state: FSMContext):
 
     if not active_model:
         chat_mode[user_id] = False
-        username = message.from_user.username or "NoUsername"
-        text = message.text or message.caption or "[non-text message]"
-        forward_text = await get_text(ADMIN_ID, "forward_to_admin")
-        forward_text = forward_text.format(username=username, user_id=user_id, text=text)
-        await bot.send_message(ADMIN_ID, forward_text)
         unknown_txt = await get_text(user_id, "unknown_command")
         await message.answer(unknown_txt)
         await show_user_panel(message, user_id)
@@ -2144,3 +2141,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+```
