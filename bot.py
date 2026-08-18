@@ -1904,6 +1904,7 @@ async def admin_confirm_delete(callback: CallbackQuery):
     await callback.answer(msg, show_alert=True)
     await admin_routers_list(callback)
 
+# ===== FIXED: Add Model flow with proper Finish handling =====
 @router.callback_query(F.data.startswith("addmod_"))
 async def admin_add_model_only(callback: CallbackQuery, state: FSMContext):
     chat_mode[callback.from_user.id] = False
@@ -1928,16 +1929,16 @@ async def admin_save_model_only(message: Message, state: FSMContext):
     kb = InlineKeyboardMarkup(inline_keyboard=[[finish_btn]])
     await message.answer(await get_text(message.from_user.id, "model_added_continue"), reply_markup=kb)
 
-# ===== FIXED: after adding model, go to admin panel (not router details) =====
+# ===== FIXED: Finish button now goes to main admin panel and edits message =====
 @router.callback_query(F.data.startswith("addmod_done_"))
 async def admin_add_model_done(callback: CallbackQuery, state: FSMContext):
     chat_mode[callback.from_user.id] = False
     await state.clear()
-    await callback.answer(await get_text(callback.from_user.id, "add_router_done"), show_alert=True)
-    # Go to admin panel directly
+    # Edit the current message (the one with the "Finish" button) to show admin panel
     admin_text = await get_text(callback.from_user.id, "admin_menu")
     kb = await admin_panel_keyboard(callback.from_user.id)
-    await callback.message.answer(admin_text, reply_markup=kb)
+    await callback.message.edit_text(admin_text, reply_markup=kb)
+    await callback.answer(await get_text(callback.from_user.id, "add_router_done"), show_alert=True)
 
 @router.callback_query(F.data == "admin_add_router")
 async def add_router_start(callback: CallbackQuery, state: FSMContext):
@@ -1992,10 +1993,10 @@ async def add_router_model_finish(message: Message, state: FSMContext):
 async def add_router_done(callback: CallbackQuery, state: FSMContext):
     chat_mode[callback.from_user.id] = False
     await state.clear()
-    # Show admin panel
+    # Edit the current message to show admin panel
     admin_text = await get_text(callback.from_user.id, "admin_menu")
     kb = await admin_panel_keyboard(callback.from_user.id)
-    await callback.message.answer(admin_text, reply_markup=kb)
+    await callback.message.edit_text(admin_text, reply_markup=kb)
     await callback.answer()
 
 # ------------------------------ Contact Admin Handlers ------------------------------
