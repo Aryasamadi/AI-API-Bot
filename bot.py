@@ -307,8 +307,8 @@ LANGS = {
         "error_occurred": "❌ An error occurred while loading data. Please try again later.",
         "error_detail": "❌ Error details: {error}",
         # Contact admin
-        "limit_blocked": "⛔ You have used your {limit} request limit. Please enter the password:",
-        "contact_intro": "Please write your message to the administrator:",
+        "limit_blocked": "⛔ You have used your {limit} free requests. Please enter the password:",
+        "contact_intro": "Please write your request as a complete message to the administrator:",
         "contact_confirm": "✅ Your message was sent. We will respond as soon as possible. To contact again, send /man.",
         "contact_end_auto": "✅ Session ended. Your message was sent. We will respond as soon as possible. To contact again, send /man.",
         "contact_forward": "Message from user {name} (ID: {user_id}):\n{text}",
@@ -407,8 +407,8 @@ LANGS = {
         "error_occurred": "❌ خطایی در بارگذاری داده‌ها رخ داد. لطفاً بعداً تلاش کنید.",
         "error_detail": "❌ جزئیات خطا: {error}",
         # Contact admin
-        "limit_blocked": "⛔ شما {limit} بار درخواست خود را استفاده کردید. رمز عبور را وارد کنید:",
-        "contact_intro": "لطفاً پیام خود را برای مدیر بنویسید:",
+        "limit_blocked": "⛔ شما از {limit} بار درخواست رایگان خود را استفاده کردید. رمز عبور را وارد کنید:",
+        "contact_intro": "لطفاً درخواست خود را در قالب یک پیام کامل برای مدیر بنویسید:",
         "contact_confirm": "✅ پیام شما ارسال شد. در اسرع وقت پاسخ خواهیم داد. برای ارتباط مجدد /man را ارسال کنید.",
         "contact_end_auto": "✅ نشست پایان یافت. پیام شما ارسال شد. در اسرع وقت پاسخ خواهیم داد. برای ارتباط مجدد /man را ارسال کنید.",
         "contact_forward": "پیام از کاربر {name} (شناسه: {user_id}):\n{text}",
@@ -507,8 +507,8 @@ LANGS = {
         "error_occurred": "❌ Произошла ошибка при загрузке данных. Попробуйте позже.",
         "error_detail": "❌ Детали ошибки: {error}",
         # Contact admin
-        "limit_blocked": "⛔ Вы использовали лимит {limit} запросов. Введите пароль:",
-        "contact_intro": "Напишите сообщение администратору:",
+        "limit_blocked": "⛔ Вы использовали {limit} бесплатных запросов. Введите пароль:",
+        "contact_intro": "Пожалуйста, напишите ваш запрос в виде полного сообщения администратору:",
         "contact_confirm": "✅ Ваше сообщение отправлено. Мы ответим в ближайшее время. Для повторного обращения отправьте /man.",
         "contact_end_auto": "✅ Сессия завершена. Ваше сообщение отправлено. Мы ответим в ближайшее время. Для повторного обращения отправьте /man.",
         "contact_forward": "Сообщение от пользователя {name} (ID: {user_id}):\n{text}",
@@ -607,8 +607,8 @@ LANGS = {
         "error_occurred": "❌ حدث خطأ أثناء تحميل البيانات. يرجى المحاولة لاحقاً.",
         "error_detail": "❌ تفاصيل الخطأ: {error}",
         # Contact admin
-        "limit_blocked": "⛔ لقد استخدمت حد {limit} طلب. أدخل كلمة المرور:",
-        "contact_intro": "اكتب رسالتك إلى المسؤول:",
+        "limit_blocked": "⛔ لقد استخدمت {limit} طلب مجاني. أدخل كلمة المرور:",
+        "contact_intro": "يرجى كتابة طلبك كرسالة كاملة للمسؤول:",
         "contact_confirm": "✅ تم إرسال رسالتك. سوف نرد في أقرب وقت. للتواصل مرة أخرى، أرسل /man.",
         "contact_end_auto": "✅ انتهت الجلسة. تم إرسال رسالتك. سوف نرد في أقرب وقت. للتواصل مرة أخرى، أرسل /man.",
         "contact_forward": "رسالة من المستخدم {name} (ID: {user_id}):\n{text}",
@@ -707,8 +707,8 @@ LANGS = {
         "error_occurred": "❌ डेटा लोड करते समय त्रुटि हुई। कृपया बाद में प्रयास करें।",
         "error_detail": "❌ त्रुटि विवरण: {error}",
         # Contact admin
-        "limit_blocked": "⛔ आपने अपनी {limit} अनुरोध सीमा का उपयोग कर लिया है। कृपया पासवर्ड दर्ज करें:",
-        "contact_intro": "कृपया व्यवस्थापक को अपना संदेश लिखें:",
+        "limit_blocked": "⛔ आपने {limit} निःशुल्क अनुरोधों का उपयोग कर लिया है। कृपया पासवर्ड दर्ज करें:",
+        "contact_intro": "कृपया अपना अनुरोध व्यवस्थापक को पूर्ण संदेश के रूप में लिखें:",
         "contact_confirm": "✅ आपका संदेश भेज दिया गया है। हम जल्द से जल्द जवाब देंगे। पुनः संपर्क के लिए /man भेजें।",
         "contact_end_auto": "✅ आपका सत्र समाप्त हो गया। आपका संदेश भेज दिया गया है। हम जल्द से जल्द जवाब देंगे। पुनः संपर्क के लिए /man भेजें।",
         "contact_forward": "उपयोगकर्ता {name} (ID: {user_id}) से संदेश:\n{text}",
@@ -807,8 +807,8 @@ LANGS = {
         "error_occurred": "❌ Veri yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.",
         "error_detail": "❌ Hata ayrıntıları: {error}",
         # Contact admin
-        "limit_blocked": "⛔ {limit} istek sınırınızı kullandınız. Lütfen şifreyi girin:",
-        "contact_intro": "Lütfen yöneticiye mesajınızı yazın:",
+        "limit_blocked": "⛔ {limit} ücretsiz istek hakkınızı kullandınız. Lütfen şifreyi girin:",
+        "contact_intro": "Lütfen talebinizi yöneticiye tam bir mesaj olarak yazın:",
         "contact_confirm": "✅ Mesajınız gönderildi. En kısa sürede cevap vereceğiz. Tekrar iletişim için /man gönderin.",
         "contact_end_auto": "✅ Oturum sona erdi. Mesajınız gönderildi. En kısa sürede cevap vereceğiz. Tekrar iletişim için /man gönderin.",
         "contact_forward": "{name} kullanıcısından (ID: {user_id}) mesaj:\n{text}",
@@ -907,8 +907,8 @@ LANGS = {
         "error_occurred": "❌ Une erreur est survenue lors du chargement des données. Veuillez réessayer plus tard.",
         "error_detail": "❌ Détails de l'erreur : {error}",
         # Contact admin
-        "limit_blocked": "⛔ Vous avez utilisé votre limite de {limit} requêtes. Veuillez entrer le mot de passe :",
-        "contact_intro": "Écrivez votre message à l'administrateur :",
+        "limit_blocked": "⛔ Vous avez utilisé vos {limit} demandes gratuites. Veuillez entrer le mot de passe :",
+        "contact_intro": "Veuillez écrire votre demande sous forme de message complet à l'administrateur :",
         "contact_confirm": "✅ Votre message a été envoyé. Nous répondrons dans les plus brefs délais. Pour recontacter, envoyez /man.",
         "contact_end_auto": "✅ Session terminée. Votre message a été envoyé. Nous répondrons dans les plus brefs délais. Pour recontacter, envoyez /man.",
         "contact_forward": "Message de l'utilisateur {name} (ID: {user_id}) :\n{text}",
@@ -1007,8 +1007,8 @@ LANGS = {
         "error_occurred": "❌ Beim Laden der Daten ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
         "error_detail": "❌ Fehlerdetails: {error}",
         # Contact admin
-        "limit_blocked": "⛔ Sie haben Ihr Limit von {limit} Anfragen erreicht. Bitte geben Sie das Passwort ein:",
-        "contact_intro": "Schreiben Sie Ihre Nachricht an den Administrator:",
+        "limit_blocked": "⛔ Sie haben Ihre {limit} kostenlosen Anfragen aufgebraucht. Bitte geben Sie das Passwort ein:",
+        "contact_intro": "Bitte schreiben Sie Ihre Anfrage als vollständige Nachricht an den Administrator:",
         "contact_confirm": "✅ Ihre Nachricht wurde gesendet. Wir werden so schnell wie möglich antworten. Für erneute Kontaktaufnahme senden Sie /man.",
         "contact_end_auto": "✅ Sitzung beendet. Ihre Nachricht wurde gesendet. Wir werden so schnell wie möglich antworten. Für erneute Kontaktaufnahme senden Sie /man.",
         "contact_forward": "Nachricht von Benutzer {name} (ID: {user_id}):\n{text}",
@@ -1107,8 +1107,8 @@ LANGS = {
         "error_occurred": "❌ 加载数据时出错，请稍后重试。",
         "error_detail": "❌ 错误详情：{error}",
         # Contact admin
-        "limit_blocked": "⛔ 您已达到 {limit} 次请求上限。请输入密码：",
-        "contact_intro": "请给管理员写消息：",
+        "limit_blocked": "⛔ 您已用完 {limit} 次免费请求。请输入密码：",
+        "contact_intro": "请将您的请求以完整消息的形式写给管理员：",
         "contact_confirm": "✅ 您的消息已发送。我们会尽快回复。如需再次联系，请发送 /man。",
         "contact_end_auto": "✅ 会话已结束。您的消息已发送。我们会尽快回复。如需再次联系，请发送 /man。",
         "contact_forward": "来自用户 {name}（ID: {user_id}）的消息：\n{text}",
@@ -1983,7 +1983,7 @@ async def process_user_chat(message: Message, state: FSMContext):
                 await message.reply(confirm_text)
                 return
 
-    # ===== 3. Check authorization (LIMIT) BEFORE ANYTHING ELSE =====
+    # ===== 3. Check authorization (LIMIT) =====
     allowed, limit_or_none = await is_user_authorized_for_chat(user_id)
     if not allowed:
         # User is not authorized (limit reached)
@@ -1994,20 +1994,15 @@ async def process_user_chat(message: Message, state: FSMContext):
             # Correct password
             await db.execute("UPDATE users SET is_auth = 1, msg_count = 0 WHERE user_id = ?", (user_id,))
             await message.answer(await get_text(user_id, "pwd_ok"))
-            # Now they are authorized, allow the message to be processed
-            # Re-check authorization and if allowed, fall through to chat processing
-            allowed, _ = await is_user_authorized_for_chat(user_id)
-            if allowed:
-                # Proceed to chat (will handle after this block)
-                pass
-            else:
-                await message.answer(await get_text(user_id, "pwd_err"))
-                return
+            # Do NOT change chat_mode, keep it as is (so user can continue chat)
+            # Just return to avoid processing the password message again
+            return
         else:
             # Not a password: show limit message with contact button
             limit = limit_or_none if limit_or_none else 2
-            # First, if the message was not empty and not a password, we might want to show a password error only if the user typed something (but not a command)
-            # We'll just show the limit message again.
+            # If the user typed something (not a command), show "Incorrect password" first
+            if message.text and not message.text.startswith('/') and global_pwd:
+                await message.answer(await get_text(user_id, "pwd_err"))
             block_msg = await get_text(user_id, "limit_blocked")
             block_msg = block_msg.format(limit=limit)
             contact_btn = InlineKeyboardButton(
@@ -2015,11 +2010,8 @@ async def process_user_chat(message: Message, state: FSMContext):
                 callback_data="contact_admin"
             )
             kb = InlineKeyboardMarkup(inline_keyboard=[[contact_btn]])
-            # If the user typed something (not a command), we could show "Incorrect password" first
-            if message.text and not message.text.startswith('/'):
-                await message.answer(await get_text(user_id, "pwd_err"))
             await message.answer(block_msg, reply_markup=kb)
-            chat_mode[user_id] = False
+            # Do NOT change chat_mode; keep user in chat mode if they were
             return
 
     # ===== 4. If we reach here, user is authorized =====
