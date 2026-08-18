@@ -214,7 +214,7 @@ def shorten_model_name(name: str, max_len: int = 25) -> str:
                 return base
     return name[:max_len] + '…'
 
-# ------------------------------ FULL MULTI‑LANGUAGE DICTIONARY (ALL LANGUAGES, ALL KEYS) ------------------------------
+# ------------------------------ MULTI‑LANGUAGE DICTIONARY (ALL LANGUAGES, ALL KEYS) ------------------------------
 LANGS = {
     "en": {
         "name": "🇬🇧 English",
@@ -287,8 +287,8 @@ LANGS = {
         "btn_admin_panel": "⚙️ Admin Panel",
         "no_cloud_db": "⚠️ No external cloud database is configured. Using local SQLite.",
         "no_routers": "⚠️ No API routers have been added yet.",
-        "help_user": "📖 Available Commands\n\n🚀 /start • start ➜ Start\n🌐 /lang • lang ➜ Language\n🤖 /model • model ➜ Clear chat & select new model\n❓ /help • help ➜ Help\n✨ Choose and start 🚀",
-        "help_admin": "🌐 /lang • lang ➜ Language\n👤 /user • user ➜ User mode\n🤖 /model • model ➜ Clear cache & models\n❓ /help • help ➜ Help\n✨ Choose and start 🚀",
+        "help_user": "📖 Available Commands\n\n🚀 /start • start ➜ Start\n🌐 /lang • lang ➜ Language\n🤖 /model • model ➜ Clear chat & select new model\n📞 /man • man ➜ Contact admin\n❓ /help • help ➜ Help\n\n✨ Choose and start 🚀",
+        "help_admin": "🌐 /lang • lang ➜ Language\n👤 /user • user ➜ User mode\n🤖 /model • model ➜ Clear cache & models\n📞 /man • man ➜ Contact admin\n❓ /help • help ➜ Help\n✨ Choose and start 🚀",
         "stats_text": "📊 **Bot Statistics**\n\n👤 Users: `{users}`\n📢 Force Channel(s): `{channel}`\n🤖 Models: `{models}`\n🗂️ Routers: `{routers}`\n🔑 Tokens: `{tokens}`\n🔐 Password: `{pwd_status}`",
         "btn_view_data": "📋 View All Data",
         "all_data_title": "📋 **All Routers, Models and Tokens**\n\n",
@@ -296,7 +296,7 @@ LANGS = {
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (no models)\n",
         "unknown_command": "❌ Unknown command. Please select a model first using the buttons below:",
-        "blocked_unauthorized": "⛔ You have reached the limit of {limit} test messages. Please obtain the access key from the administrator to unlock all models.",
+        "blocked_unauthorized": "⛔ You've reached the test message limit. Please enter the password to unlock, or contact admin.",
         "forward_to_admin": "Unknown command from @{username} (ID: {user_id}): {text}",
         "model_added_continue": "✅ Model added. Enter next model name, or press 'Finish' button.",
         "finish": "✅ Finish",
@@ -306,13 +306,15 @@ LANGS = {
         "data_loaded": "✅ Data loaded successfully.",
         "error_occurred": "❌ An error occurred while loading data. Please try again later.",
         "error_detail": "❌ Error details: {error}",
-        # new keys for contact admin
-        "limit_blocked": "⛔ You've reached the test message limit. Contact admin to get full access.",
+        # Contact admin
+        "limit_blocked": "⛔ You've reached the test message limit. Please enter the password to unlock, or contact admin.",
         "contact_intro": "Please write your message to the administrator:",
-        "contact_confirm": "✅ Your message was sent. Please wait for the admin's response.",
-        "contact_end": "✅ Your session has ended.",
+        "contact_confirm": "✅ Your message was sent. Please wait for the admin's reply.",
+        "contact_end": "🔚 End Session",
+        "contact_end_msg": "✅ Your session has ended. You can now select a model.",
         "contact_forward": "Message from user {name} (ID: {user_id}):\n{text}",
-        "contact_button": "📞 Contact Admin"
+        "contact_button": "📞 Contact Admin",
+        "contact_admin_reply": "📩 Reply from admin:\n{text}"
     },
     "fa": {
         "name": "🇮🇷🇦🇫 فارسی",
@@ -385,8 +387,8 @@ LANGS = {
         "btn_admin_panel": "⚙️ پنل مدیریت",
         "no_cloud_db": "⚠️ هیچ دیتابیس ابری پیکربندی نشده است. از حافظه محلی SQLite استفاده می‌شود.",
         "no_routers": "⚠️ هنوز هیچ API ثبت نشده است.",
-        "help_user": "📖 دستورات موجود\n\n🚀 /start • start➜ شروع\n🌐 /lang • lang ➜  زبان\n🤖 /model • model ➜ پاک‌سازی چت و انتخاب مدل جدید\n❓ /help • help ➜  راهنما\n✨ انتخاب کن و شروع کن 🚀",
-        "help_admin": "🌐 /lang • lang ➜ زبان\n👤 /user • user ➜ کاربری\n🤖 /model • model ➜ پاک‌سازی کش و مدل‌ها\n❓ /help • help ➜ راهنما\n✨ انتخاب کن و شروع کن 🚀",
+        "help_user": "📖 دستورات موجود\n\n🚀 /start • start➜ شروع\n🌐 /lang • lang ➜ زبان\n🤖 /model • model ➜ پاک‌سازی چت و انتخاب مدل جدید\n📞 /man • man ➜ تماس با مدیر\n❓ /help • help ➜ راهنما\n\n✨ انتخاب کن و شروع کن 🚀",
+        "help_admin": "🌐 /lang • lang ➜ زبان\n👤 /user • user ➜ کاربری\n🤖 /model • model ➜ پاک‌سازی کش و مدل‌ها\n📞 /man • man ➜ تماس با مدیر\n❓ /help • help ➜ راهنما\n✨ انتخاب کن و شروع کن 🚀",
         "stats_text": "📊 **آمار ربات**\n\n👤 کاربران: `{users}`\n📢 کانال‌های اجباری: `{channel}`\n🤖 مدل‌ها: `{models}`\n🗂️ روترها: `{routers}`\n🔑 توکن‌ها: `{tokens}`\n🔐 رمز عبور: `{pwd_status}`",
         "btn_view_data": "📋 مشاهده داده‌ها",
         "all_data_title": "📋 **همه روترها، مدل‌ها و توکن‌ها**\n\n",
@@ -394,7 +396,7 @@ LANGS = {
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (هیچ مدلی وجود ندارد)\n",
         "unknown_command": "❌ دستور ناشناس. لطفاً ابتدا یک مدل را با استفاده از دکمه‌های زیر انتخاب کنید:",
-        "blocked_unauthorized": "⛔ شما به حد مجاز {limit} پیام آزمایشی رسیده‌اید. لطفاً کلید دسترسی را از مدیر دریافت کنید تا همه مدل‌ها برای شما باز شود.",
+        "blocked_unauthorized": "⛔ شما به حد مجاز پیام‌های آزمایشی رسیده‌اید. لطفاً رمز عبور را وارد کنید یا با مدیر تماس بگیرید.",
         "forward_to_admin": "دستور ناشناس از @{username} (شناسه: {user_id}): {text}",
         "model_added_continue": "✅ مدل اضافه شد. نام مدل بعدی را وارد کنید، یا دکمهٔ «پایان» را بزنید.",
         "finish": "✅ پایان",
@@ -404,13 +406,15 @@ LANGS = {
         "data_loaded": "✅ داده‌ها با موفقیت بارگذاری شدند.",
         "error_occurred": "❌ خطایی در بارگذاری داده‌ها رخ داد. لطفاً بعداً تلاش کنید.",
         "error_detail": "❌ جزئیات خطا: {error}",
-        # new keys for contact admin
-        "limit_blocked": "⛔ محدودیت پیام‌های آزمایشی به پایان رسید. برای دریافت دسترسی کامل، با مدیر تماس بگیرید.",
+        # Contact admin
+        "limit_blocked": "⛔ شما به حد مجاز پیام‌های آزمایشی رسیده‌اید. لطفاً رمز عبور را وارد کنید یا با مدیر تماس بگیرید.",
         "contact_intro": "لطفاً پیام خود را برای مدیر بنویسید:",
-        "contact_confirm": "✅ پیام شما ارسال شد. منتظر پاسخ مدیر باشید.",
-        "contact_end": "✅ نشست شما پایان یافت.",
+        "contact_confirm": "✅ پیام شما به مدیر ارسال شد. منتظر پاسخ مدیر باشید.",
+        "contact_end": "🔚 پایان نشست",
+        "contact_end_msg": "✅ نشست شما پایان یافت. اکنون می‌توانید یک مدل انتخاب کنید.",
         "contact_forward": "پیام از کاربر {name} (شناسه: {user_id}):\n{text}",
-        "contact_button": "📞 تماس با مدیر"
+        "contact_button": "📞 تماس با مدیر",
+        "contact_admin_reply": "📩 پاسخ از مدیر:\n{text}"
     },
     "ru": {
         "name": "🇷🇺 Русский",
@@ -483,8 +487,8 @@ LANGS = {
         "btn_admin_panel": "⚙️ Панель администратора",
         "no_cloud_db": "⚠️ Внешняя облачная БД не настроена. Используется локальный SQLite.",
         "no_routers": "⚠️ API-роутеры ещё не добавлены.",
-        "help_user": "📖 Доступные команды\n\n🚀 /start • start ➜ Начать\n🌐 /lang • lang ➜ Язык\n🤖 /model • model ➜ Очистить чат и выбрать модель\n❓ /help • help ➜ Помощь\n\n✨ Выбери и начни 🚀",
-        "help_admin": "🌐 /lang • lang ➜ Язык\n👤 /user • user ➜ Пользовательский режим\n🤖 /model • model ➜ Очистить кэш и модели\n❓ /help • help ➜ Помощь\n✨ Выбери и начни 🚀",
+        "help_user": "📖 Доступные команды\n\n🚀 /start • start ➜ Начать\n🌐 /lang • lang ➜ Язык\n🤖 /model • model ➜ Очистить чат и выбрать модель\n📞 /man • man ➜ Связаться с администратором\n❓ /help • help ➜ Помощь\n\n✨ Выбери и начни 🚀",
+        "help_admin": "🌐 /lang • lang ➜ Язык\n👤 /user • user ➜ Пользовательский режим\n🤖 /model • model ➜ Очистить кэш и модели\n📞 /man • man ➜ Связаться с администратором\n❓ /help • help ➜ Помощь\n✨ Выбери и начни 🚀",
         "stats_text": "📊 **Статистика бота**\n\n👤 Пользователи: `{users}`\n📢 Канал(ы): `{channel}`\n🤖 Модели: `{models}`\n🗂️ Роутеры: `{routers}`\n🔑 Токены: `{tokens}`\n🔐 Пароль: `{pwd_status}`",
         "btn_view_data": "📋 Просмотр данных",
         "all_data_title": "📋 **Все роутеры, модели и токены**\n\n",
@@ -492,7 +496,7 @@ LANGS = {
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (нет моделей)\n",
         "unknown_command": "❌ Неизвестная команда. Пожалуйста, сначала выберите модель с помощью кнопок ниже:",
-        "blocked_unauthorized": "⛔ Вы достигли лимита в {limit} тестовых сообщений. Получите ключ доступа у администратора, чтобы разблокировать все модели.",
+        "blocked_unauthorized": "⛔ Вы достигли лимита тестовых сообщений. Введите пароль для разблокировки или свяжитесь с администратором.",
         "forward_to_admin": "Неизвестная команда от @{username} (ID: {user_id}): {text}",
         "model_added_continue": "✅ Модель добавлена. Введите следующее имя модели или нажмите кнопку «Готово».",
         "finish": "✅ Готово",
@@ -502,12 +506,15 @@ LANGS = {
         "data_loaded": "✅ Данные успешно загружены.",
         "error_occurred": "❌ Произошла ошибка при загрузке данных. Попробуйте позже.",
         "error_detail": "❌ Детали ошибки: {error}",
-        "limit_blocked": "⛔ Вы достигли лимита тестовых сообщений. Свяжитесь с администратором для полного доступа.",
+        # Contact admin
+        "limit_blocked": "⛔ Вы достигли лимита тестовых сообщений. Введите пароль для разблокировки или свяжитесь с администратором.",
         "contact_intro": "Напишите сообщение администратору:",
         "contact_confirm": "✅ Ваше сообщение отправлено. Ожидайте ответа администратора.",
-        "contact_end": "✅ Ваша сессия завершена.",
+        "contact_end": "🔚 Завершить сеанс",
+        "contact_end_msg": "✅ Ваша сессия завершена. Теперь вы можете выбрать модель.",
         "contact_forward": "Сообщение от пользователя {name} (ID: {user_id}):\n{text}",
-        "contact_button": "📞 Связаться с администратором"
+        "contact_button": "📞 Связаться с администратором",
+        "contact_admin_reply": "📩 Ответ от администратора:\n{text}"
     },
     "ar": {
         "name": "🇸🇦 العربية",
@@ -580,8 +587,8 @@ LANGS = {
         "btn_admin_panel": "⚙️ لوحة الإدارة",
         "no_cloud_db": "⚠️ لم يتم تكوين قاعدة بيانات سحابية خارجية. يتم استخدام SQLite المحلي.",
         "no_routers": "⚠️ لم تتم إضافة أي موجه API بعد.",
-        "help_user": "📖 الأوامر المتاحة\n\n🚀 /start • start➜ البدء\n🌐 /lang • lang ➜ اللغة\n🤖 /model • model ➜ مسح المحادثة واختيار نموذج جديد\n❓ /help • help ➜ المساعدة\n\n✨ اختر وابدأ 🚀",
-        "help_admin": "🌐 /lang • lang ➜ اللغة\n👤 /user • user ➜ وضع المستخدم\n🤖 /model • model ➜ مسح الكاش والنماذج\n❓ /help • help ➜ المساعدة\n✨ اختر وابدأ 🚀",
+        "help_user": "📖 الأوامر المتاحة\n\n🚀 /start • start➜ البدء\n🌐 /lang • lang ➜ اللغة\n🤖 /model • model ➜ مسح المحادثة واختيار نموذج جديد\n📞 /man • man ➜ تواصل مع المدير\n❓ /help • help ➜ المساعدة\n\n✨ اختر وابدأ 🚀",
+        "help_admin": "🌐 /lang • lang ➜ اللغة\n👤 /user • user ➜ وضع المستخدم\n🤖 /model • model ➜ مسح الكاش والنماذج\n📞 /man • man ➜ تواصل مع المدير\n❓ /help • help ➜ المساعدة\n✨ اختر وابدأ 🚀",
         "stats_text": "📊 **إحصائيات البوت**\n\n👤 المستخدمون: `{users}`\n📢 القناة(ات) الإجبارية: `{channel}`\n🤖 النماذج: `{models}`\n🗂️ الموجهات: `{routers}`\n🔑 الرموز: `{tokens}`\n🔐 كلمة المرور: `{pwd_status}`",
         "btn_view_data": "📋 عرض البيانات",
         "all_data_title": "📋 **جميع الموجهات والنماذج والرموز**\n\n",
@@ -589,7 +596,7 @@ LANGS = {
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (لا توجد نماذج)\n",
         "unknown_command": "❌ أمر غير معروف. يرجى اختيار نموذج أولاً باستخدام الأزرار أدناه:",
-        "blocked_unauthorized": "⛔ لقد وصلت إلى الحد الأقصى لـ {limit} رسائل اختبارية. يرجى الحصول على مفتاح الوصول من المسؤول لفتح جميع النماذج.",
+        "blocked_unauthorized": "⛔ لقد وصلت إلى حد الرسائل الاختبارية. يرجى إدخال كلمة المرور للفتح أو التواصل مع المدير.",
         "forward_to_admin": "أمر غير معروف من @{username} (ID: {user_id}): {text}",
         "model_added_continue": "✅ تمت إضافة النموذج. أدخل اسم النموذج التالي، أو اضغط على زر «إنهاء».",
         "finish": "✅ إنهاء",
@@ -599,12 +606,15 @@ LANGS = {
         "data_loaded": "✅ تم تحميل البيانات بنجاح.",
         "error_occurred": "❌ حدث خطأ أثناء تحميل البيانات. يرجى المحاولة لاحقاً.",
         "error_detail": "❌ تفاصيل الخطأ: {error}",
-        "limit_blocked": "⛔ لقد وصلت إلى حد الرسائل الاختبارية. تواصل مع المسؤول للحصول على الوصول الكامل.",
+        # Contact admin
+        "limit_blocked": "⛔ لقد وصلت إلى حد الرسائل الاختبارية. يرجى إدخال كلمة المرور للفتح أو التواصل مع المدير.",
         "contact_intro": "اكتب رسالتك إلى المسؤول:",
         "contact_confirm": "✅ تم إرسال رسالتك. انتظر رد المسؤول.",
-        "contact_end": "✅ انتهت جلستك.",
+        "contact_end": "🔚 إنهاء الجلسة",
+        "contact_end_msg": "✅ انتهت جلستك. يمكنك الآن اختيار نموذج.",
         "contact_forward": "رسالة من المستخدم {name} (ID: {user_id}):\n{text}",
-        "contact_button": "📞 اتصل بالمسؤول"
+        "contact_button": "📞 اتصل بالمسؤول",
+        "contact_admin_reply": "📩 رد من المسؤول:\n{text}"
     },
     "hi": {
         "name": "🇮🇳 हिन्दी",
@@ -677,8 +687,8 @@ LANGS = {
         "btn_admin_panel": "⚙️ व्यवस्थापक पैनल",
         "no_cloud_db": "⚠️ कोई बाहरी क्लाउड डेटाबेस कॉन्फ़िगर नहीं है। स्थानीय SQLite का उपयोग होगा।",
         "no_routers": "⚠️ अभी तक कोई API राउटर नहीं जोड़ा गया।",
-        "help_user": "📖 उपलब्ध कमांड\n\n🚀 /start • start➜ शुरू करें\n🌐 /lang • lang ➜ भाषा\n🤖 /model • model ➜ चैट साफ़ करें और नया मॉडल चुनें\n❓ /help • help ➜ सहायता\n\n✨ चुनें और शुरू करें 🚀",
-        "help_admin": "🌐 /lang • lang ➜ भाषा\n👤 /user • user ➜ उपयोगकर्ता मोड\n🤖 /model • model ➜ कैश और मॉडल साफ़ करें\n❓ /help • help ➜ सहायता\n✨ चुनें और शुरू करें 🚀",
+        "help_user": "📖 उपलब्ध कमांड\n\n🚀 /start • start➜ शुरू करें\n🌐 /lang • lang ➜ भाषा\n🤖 /model • model ➜ चैट साफ़ करें और नया मॉडल चुनें\n📞 /man • man ➜ व्यवस्थापक से संपर्क करें\n❓ /help • help ➜ सहायता\n\n✨ चुनें और शुरू करें 🚀",
+        "help_admin": "🌐 /lang • lang ➜ भाषा\n👤 /user • user ➜ उपयोगकर्ता मोड\n🤖 /model • model ➜ कैश और मॉडल साफ़ करें\n📞 /man • man ➜ व्यवस्थापक से संपर्क करें\n❓ /help • help ➜ सहायता\n✨ चुनें और शुरू करें 🚀",
         "stats_text": "📊 **बॉट आँकड़े**\n\n👤 उपयोगकर्ता: `{users}`\n📢 अनिवार्य चैनल: `{channel}`\n🤖 मॉडल: `{models}`\n🗂️ राउटर: `{routers}`\n🔑 टोकन: `{tokens}`\n🔐 पासवर्ड: `{pwd_status}`",
         "btn_view_data": "📋 डेटा देखें",
         "all_data_title": "📋 **सभी राउटर, मॉडल और टोकन**\n\n",
@@ -686,7 +696,7 @@ LANGS = {
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (कोई मॉडल नहीं)\n",
         "unknown_command": "❌ अज्ञात कमांड। कृपया पहले नीचे दिए गए बटनों का उपयोग करके एक मॉडल चुनें:",
-        "blocked_unauthorized": "⛔ आप {limit} परीक्षण संदेशों की सीमा तक पहुँच गए हैं। कृपया सभी मॉडलों को अनलॉक करने के लिए व्यवस्थापक से एक्सेस कुंजी प्राप्त करें।",
+        "blocked_unauthorized": "⛔ आप परीक्षण संदेश सीमा तक पहुँच गए हैं। कृपया पासवर्ड दर्ज करें या व्यवस्थापक से संपर्क करें।",
         "forward_to_admin": "@{username} (ID: {user_id}) से अज्ञात कमांड: {text}",
         "model_added_continue": "✅ मॉडल जोड़ा गया। अगला मॉडल नाम दर्ज करें, या 'समाप्त' बटन दबाएँ।",
         "finish": "✅ समाप्त",
@@ -696,12 +706,15 @@ LANGS = {
         "data_loaded": "✅ डेटा सफलतापूर्वक लोड हो गया।",
         "error_occurred": "❌ डेटा लोड करते समय त्रुटि हुई। कृपया बाद में प्रयास करें।",
         "error_detail": "❌ त्रुटि विवरण: {error}",
-        "limit_blocked": "⛔ आप परीक्षण संदेश सीमा तक पहुँच गए हैं। पूर्ण पहुँच के लिए व्यवस्थापक से संपर्क करें।",
+        # Contact admin
+        "limit_blocked": "⛔ आप परीक्षण संदेश सीमा तक पहुँच गए हैं। कृपया पासवर्ड दर्ज करें या व्यवस्थापक से संपर्क करें।",
         "contact_intro": "कृपया व्यवस्थापक को अपना संदेश लिखें:",
         "contact_confirm": "✅ आपका संदेश भेज दिया गया है। कृपया व्यवस्थापक के उत्तर की प्रतीक्षा करें।",
-        "contact_end": "✅ आपका सत्र समाप्त हो गया।",
+        "contact_end": "🔚 सत्र समाप्त करें",
+        "contact_end_msg": "✅ आपका सत्र समाप्त हो गया। अब आप एक मॉडल चुन सकते हैं।",
         "contact_forward": "उपयोगकर्ता {name} (ID: {user_id}) से संदेश:\n{text}",
-        "contact_button": "📞 व्यवस्थापक से संपर्क करें"
+        "contact_button": "📞 व्यवस्थापक से संपर्क करें",
+        "contact_admin_reply": "📩 व्यवस्थापक का उत्तर:\n{text}"
     },
     "tr": {
         "name": "🇹🇷 Türkçe",
@@ -774,8 +787,8 @@ LANGS = {
         "btn_admin_panel": "⚙️ Yönetici Paneli",
         "no_cloud_db": "⚠️ Harici bulut veritabanı yapılandırılmamış. Yerel SQLite kullanılıyor.",
         "no_routers": "⚠️ Henüz hiç API yönlendiricisi eklenmemiş.",
-        "help_user": "📖 Mevcut Komutlar\n\n🚀 /start • start➜ Başlat\n🌐 /lang • lang ➜ Dil\n🤖 /model • model ➜ Sohbeti temizle ve yeni model seç\n❓ /help • help ➜ Yardım\n\n✨ Seç ve başla 🚀",
-        "help_admin": "🌐 /lang • lang ➜ Dil\n👤 /user • user ➜ Kullanıcı modu\n🤖 /model • model ➜ Önbellek ve modelleri temizle\n❓ /help • help ➜ Yardım\n✨ Seç ve başla 🚀",
+        "help_user": "📖 Mevcut Komutlar\n\n🚀 /start • start➜ Başlat\n🌐 /lang • lang ➜ Dil\n🤖 /model • model ➜ Sohbeti temizle ve yeni model seç\n📞 /man • man ➜ Yöneticiyle iletişime geç\n❓ /help • help ➜ Yardım\n\n✨ Seç ve başla 🚀",
+        "help_admin": "🌐 /lang • lang ➜ Dil\n👤 /user • user ➜ Kullanıcı modu\n🤖 /model • model ➜ Önbellek ve modelleri temizle\n📞 /man • man ➜ Yöneticiyle iletişime geç\n❓ /help • help ➜ Yardım\n✨ Seç ve başla 🚀",
         "stats_text": "📊 **Bot İstatistikleri**\n\n👤 Kullanıcılar: `{users}`\n📢 Zorunlu Kanal(lar): `{channel}`\n🤖 Modeller: `{models}`\n🗂️ Yönlendiriciler: `{routers}`\n🔑 Tokenlar: `{tokens}`\n🔐 Şifre: `{pwd_status}`",
         "btn_view_data": "📋 Verileri Görüntüle",
         "all_data_title": "📋 **Tüm Yönlendiriciler, Modeller ve Tokenlar**\n\n",
@@ -783,7 +796,7 @@ LANGS = {
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (model yok)\n",
         "unknown_command": "❌ Bilinmeyen komut. Lütfen önce aşağıdaki butonlardan bir model seçin:",
-        "blocked_unauthorized": "⛔ {limit} test mesajı sınırına ulaştınız. Tüm modelleri açmak için yöneticiden erişim anahtarını alın.",
+        "blocked_unauthorized": "⛔ Test mesajı sınırına ulaştınız. Lütfen şifreyi girin veya yönetici ile iletişime geçin.",
         "forward_to_admin": "@{username} (ID: {user_id}) adlı kullanıcıdan bilinmeyen komut: {text}",
         "model_added_continue": "✅ Model eklendi. Sonraki model adını girin veya 'Bitir' butonuna basın.",
         "finish": "✅ Bitir",
@@ -793,12 +806,15 @@ LANGS = {
         "data_loaded": "✅ Veriler başarıyla yüklendi.",
         "error_occurred": "❌ Veri yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.",
         "error_detail": "❌ Hata ayrıntıları: {error}",
-        "limit_blocked": "⛔ Test mesajı sınırına ulaştınız. Tam erişim için yönetici ile iletişime geçin.",
+        # Contact admin
+        "limit_blocked": "⛔ Test mesajı sınırına ulaştınız. Lütfen şifreyi girin veya yönetici ile iletişime geçin.",
         "contact_intro": "Lütfen yöneticiye mesajınızı yazın:",
         "contact_confirm": "✅ Mesajınız gönderildi. Lütfen yöneticinin yanıtını bekleyin.",
-        "contact_end": "✅ Oturumunuz sona erdi.",
+        "contact_end": "🔚 Oturumu sonlandır",
+        "contact_end_msg": "✅ Oturumunuz sona erdi. Artık bir model seçebilirsiniz.",
         "contact_forward": "{name} kullanıcısından (ID: {user_id}) mesaj:\n{text}",
-        "contact_button": "📞 Yöneticiyle iletişime geç"
+        "contact_button": "📞 Yöneticiyle iletişime geç",
+        "contact_admin_reply": "📩 Yöneticiden yanıt:\n{text}"
     },
     "fr": {
         "name": "🇫🇷 Français",
@@ -871,8 +887,8 @@ LANGS = {
         "btn_admin_panel": "⚙️ Panneau d'administration",
         "no_cloud_db": "⚠️ Aucune base de données cloud externe configurée. Utilisation de SQLite local.",
         "no_routers": "⚠️ Aucun routeur API n'a encore été ajouté.",
-        "help_user": "📖 Commandes disponibles\n\n🚀 /start • start➜ Démarrer\n🌐 /lang • lang ➜ Langue\n🤖 /model • model ➜ Effacer le chat et choisir un nouveau modèle\n❓ /help • help ➜ Aide\n\n✨ Choisissez et commencez 🚀",
-        "help_admin": "🌐 /lang • lang ➜ Langue\n👤 /user • user ➜ Mode utilisateur\n🤖 /model • model ➜ Vider le cache et les modèles\n❓ /help • help ➜ Aide\n✨ Choisissez et commencez 🚀",
+        "help_user": "📖 Commandes disponibles\n\n🚀 /start • start➜ Démarrer\n🌐 /lang • lang ➜ Langue\n🤖 /model • model ➜ Effacer le chat et choisir un nouveau modèle\n📞 /man • man ➜ Contacter l'administrateur\n❓ /help • help ➜ Aide\n\n✨ Choisissez et commencez 🚀",
+        "help_admin": "🌐 /lang • lang ➜ Langue\n👤 /user • user ➜ Mode utilisateur\n🤖 /model • model ➜ Vider le cache et les modèles\n📞 /man • man ➜ Contacter l'administrateur\n❓ /help • help ➜ Aide\n✨ Choisissez et commencez 🚀",
         "stats_text": "📊 **Statistiques du bot**\n\n👤 Utilisateurs : `{users}`\n📢 Canal(aux) obligatoire(s) : `{channel}`\n🤖 Modèles : `{models}`\n🗂️ Routeurs : `{routers}`\n🔑 Jetons : `{tokens}`\n🔐 Mot de passe : `{pwd_status}`",
         "btn_view_data": "📋 Voir les données",
         "all_data_title": "📋 **Tous les routeurs, modèles et jetons**\n\n",
@@ -880,7 +896,7 @@ LANGS = {
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (aucun modèle)\n",
         "unknown_command": "❌ Commande inconnue. Veuillez d'abord sélectionner un modèle à l'aide des boutons ci-dessous :",
-        "blocked_unauthorized": "⛔ Vous avez atteint la limite de {limit} messages de test. Veuillez obtenir la clé d'accès auprès de l'administrateur pour débloquer tous les modèles.",
+        "blocked_unauthorized": "⛔ Vous avez atteint la limite de messages de test. Veuillez entrer le mot de passe ou contacter l'administrateur.",
         "forward_to_admin": "Commande inconnue de @{username} (ID: {user_id}) : {text}",
         "model_added_continue": "✅ Modèle ajouté. Entrez le nom du modèle suivant, ou appuyez sur le bouton « Terminer ».",
         "finish": "✅ Terminer",
@@ -890,12 +906,15 @@ LANGS = {
         "data_loaded": "✅ Données chargées avec succès.",
         "error_occurred": "❌ Une erreur est survenue lors du chargement des données. Veuillez réessayer plus tard.",
         "error_detail": "❌ Détails de l'erreur : {error}",
-        "limit_blocked": "⛔ Vous avez atteint la limite de messages de test. Contactez l'administrateur pour un accès complet.",
+        # Contact admin
+        "limit_blocked": "⛔ Vous avez atteint la limite de messages de test. Veuillez entrer le mot de passe ou contacter l'administrateur.",
         "contact_intro": "Écrivez votre message à l'administrateur :",
         "contact_confirm": "✅ Votre message a été envoyé. Veuillez attendre la réponse de l'administrateur.",
-        "contact_end": "✅ Votre session est terminée.",
+        "contact_end": "🔚 Terminer la session",
+        "contact_end_msg": "✅ Votre session est terminée. Vous pouvez maintenant choisir un modèle.",
         "contact_forward": "Message de l'utilisateur {name} (ID: {user_id}) :\n{text}",
-        "contact_button": "📞 Contacter l'administrateur"
+        "contact_button": "📞 Contacter l'administrateur",
+        "contact_admin_reply": "📩 Réponse de l'administrateur :\n{text}"
     },
     "de": {
         "name": "🇩🇪 Deutsch",
@@ -968,8 +987,8 @@ LANGS = {
         "btn_admin_panel": "⚙️ Admin-Panel",
         "no_cloud_db": "⚠️ Keine externe Cloud-DB konfiguriert. Lokale SQLite wird verwendet.",
         "no_routers": "⚠️ Es wurden noch keine API-Router hinzugefügt.",
-        "help_user": "📖 Verfügbare Befehle\n\n🚀 /start • start➜ Start\n🌐 /lang • lang ➜ Sprache\n🤖 /model • model ➜ Chat löschen und neues Modell wählen\n❓ /help • help ➜ Hilfe\n\n✨ Wähle und starte 🚀",
-        "help_admin": "🌐 /lang • lang ➜ Sprache\n👤 /user • user ➜ Benutzermodus\n🤖 /model • model ➜ Cache und Modelle löschen\n❓ /help • help ➜ Hilfe\n✨ Wähle und starte 🚀",
+        "help_user": "📖 Verfügbare Befehle\n\n🚀 /start • start➜ Start\n🌐 /lang • lang ➜ Sprache\n🤖 /model • model ➜ Chat löschen und neues Modell wählen\n📞 /man • man ➜ Administrator kontaktieren\n❓ /help • help ➜ Hilfe\n\n✨ Wähle und starte 🚀",
+        "help_admin": "🌐 /lang • lang ➜ Sprache\n👤 /user • user ➜ Benutzermodus\n🤖 /model • model ➜ Cache und Modelle löschen\n📞 /man • man ➜ Administrator kontaktieren\n❓ /help • help ➜ Hilfe\n✨ Wähle und starte 🚀",
         "stats_text": "📊 **Bot-Statistiken**\n\n👤 Benutzer: `{users}`\n📢 Pflichtkanal(e): `{channel}`\n🤖 Modelle: `{models}`\n🗂️ Router: `{routers}`\n🔑 Tokens: `{tokens}`\n🔐 Passwort: `{pwd_status}`",
         "btn_view_data": "📋 Daten anzeigen",
         "all_data_title": "📋 **Alle Router, Modelle und Tokens**\n\n",
@@ -977,7 +996,7 @@ LANGS = {
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (keine Modelle)\n",
         "unknown_command": "❌ Unbekannter Befehl. Bitte wählen Sie zuerst ein Modell mit den untenstehenden Buttons:",
-        "blocked_unauthorized": "⛔ Sie haben das Limit von {limit} Testnachrichten erreicht. Bitte holen Sie sich den Zugangsschlüssel vom Administrator, um alle Modelle freizuschalten.",
+        "blocked_unauthorized": "⛔ Sie haben das Testnachrichten-Limit erreicht. Bitte geben Sie das Passwort ein oder kontaktieren Sie den Administrator.",
         "forward_to_admin": "Unbekannter Befehl von @{username} (ID: {user_id}): {text}",
         "model_added_continue": "✅ Modell hinzugefügt. Geben Sie den nächsten Modellnamen ein oder drücken Sie die Schaltfläche 'Fertig'.",
         "finish": "✅ Fertig",
@@ -987,12 +1006,15 @@ LANGS = {
         "data_loaded": "✅ Daten erfolgreich geladen.",
         "error_occurred": "❌ Beim Laden der Daten ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
         "error_detail": "❌ Fehlerdetails: {error}",
-        "limit_blocked": "⛔ Sie haben das Testnachrichten-Limit erreicht. Kontaktieren Sie den Administrator für vollen Zugriff.",
+        # Contact admin
+        "limit_blocked": "⛔ Sie haben das Testnachrichten-Limit erreicht. Bitte geben Sie das Passwort ein oder kontaktieren Sie den Administrator.",
         "contact_intro": "Schreiben Sie Ihre Nachricht an den Administrator:",
         "contact_confirm": "✅ Ihre Nachricht wurde gesendet. Bitte warten Sie auf die Antwort des Administrators.",
-        "contact_end": "✅ Ihre Sitzung wurde beendet.",
+        "contact_end": "🔚 Sitzung beenden",
+        "contact_end_msg": "✅ Ihre Sitzung wurde beendet. Sie können jetzt ein Modell auswählen.",
         "contact_forward": "Nachricht von Benutzer {name} (ID: {user_id}):\n{text}",
-        "contact_button": "📞 Administrator kontaktieren"
+        "contact_button": "📞 Administrator kontaktieren",
+        "contact_admin_reply": "📩 Antwort vom Administrator:\n{text}"
     },
     "zh": {
         "name": "🇨🇳 中文",
@@ -1065,8 +1087,8 @@ LANGS = {
         "btn_admin_panel": "⚙️ 管理面板",
         "no_cloud_db": "⚠️ 未配置外部云数据库。使用本地 SQLite。",
         "no_routers": "⚠️ 尚未添加任何 API 路由器。",
-        "help_user": "📖 可用命令\n\n🚀 /start • start➜ 开始\n🌐 /lang • lang ➜ 语言\n🤖 /model • model ➜ 清除聊天并选择新模型\n❓ /help • help ➜ 帮助\n\n✨ 选择并开始 🚀",
-        "help_admin": "🌐 /lang • lang ➜ 语言\n👤 /user • user ➜ 用户模式\n🤖 /model • model ➜ 清除缓存和模型\n❓ /help • help ➜ 帮助\n✨ 选择并开始 🚀",
+        "help_user": "📖 可用命令\n\n🚀 /start • start➜ 开始\n🌐 /lang • lang ➜ 语言\n🤖 /model • model ➜ 清除聊天并选择新模型\n📞 /man • man ➜ 联系管理员\n❓ /help • help ➜ 帮助\n\n✨ 选择并开始 🚀",
+        "help_admin": "🌐 /lang • lang ➜ 语言\n👤 /user • user ➜ 用户模式\n🤖 /model • model ➜ 清除缓存和模型\n📞 /man • man ➜ 联系管理员\n❓ /help • help ➜ 帮助\n✨ 选择并开始 🚀",
         "stats_text": "📊 **机器人统计**\n\n👤 用户：`{users}`\n📢 强制频道：`{channel}`\n🤖 模型：`{models}`\n🗂️ 路由器：`{routers}`\n🔑 令牌：`{tokens}`\n🔐 密码：`{pwd_status}`",
         "btn_view_data": "📋 查看数据",
         "all_data_title": "📋 **所有路由器、模型和令牌**\n\n",
@@ -1074,7 +1096,7 @@ LANGS = {
         "data_model_line": "   • `{name}`  {emoji}\n",
         "data_no_models": "   (无模型)\n",
         "unknown_command": "❌ 未知命令。请先使用下方按钮选择一个模型：",
-        "blocked_unauthorized": "⛔ 您已达到 {limit} 条测试消息的上限。请向管理员获取访问密钥以解锁所有模型。",
+        "blocked_unauthorized": "⛔ 您已达到测试消息限制。请输入密码或联系管理员。",
         "forward_to_admin": "来自 @{username}（ID: {user_id}）的未知命令：{text}",
         "model_added_continue": "✅ 模型已添加。输入下一个模型名称，或按「完成」按钮。",
         "finish": "✅ 完成",
@@ -1084,12 +1106,15 @@ LANGS = {
         "data_loaded": "✅ 数据加载成功。",
         "error_occurred": "❌ 加载数据时出错，请稍后重试。",
         "error_detail": "❌ 错误详情：{error}",
-        "limit_blocked": "⛔ 您已达到测试消息限制。请联系管理员获取完整访问权限。",
+        # Contact admin
+        "limit_blocked": "⛔ 您已达到测试消息限制。请输入密码或联系管理员。",
         "contact_intro": "请给管理员写消息：",
         "contact_confirm": "✅ 您的消息已发送。请等待管理员回复。",
-        "contact_end": "✅ 您的会话已结束。",
+        "contact_end": "🔚 结束会话",
+        "contact_end_msg": "✅ 您的会话已结束。您现在可以选择一个模型。",
         "contact_forward": "来自用户 {name}（ID: {user_id}）的消息：\n{text}",
-        "contact_button": "📞 联系管理员"
+        "contact_button": "📞 联系管理员",
+        "contact_admin_reply": "📩 管理员的回复：\n{text}"
     }
 }
 
@@ -1120,8 +1145,6 @@ async def check_auth(user_id):
     return False
 
 # Flag to track if user is in chat mode (has selected a model and not issued any bot command)
-# We'll use a simple dictionary in memory, but it's better to store in DB or state.
-# For simplicity, we'll use a dict with user_id -> bool
 chat_mode = {}
 
 async def is_user_authorized_for_chat(user_id):
@@ -1130,7 +1153,6 @@ async def is_user_authorized_for_chat(user_id):
     pwd_row = await db.fetchone("SELECT value FROM settings WHERE key = 'global_password'")
     global_pwd = pwd_row[0] if pwd_row else None
     if not global_pwd or global_pwd.lower() == 'none':
-        # No password required, everyone is authorized
         return True, None
     # Password exists
     auth_row = await db.fetchone("SELECT is_auth FROM users WHERE user_id = ?", (user_id,))
@@ -1138,14 +1160,14 @@ async def is_user_authorized_for_chat(user_id):
         return True, None
     # Not authorized, check test message limit
     limit_row = await db.fetchone("SELECT value FROM settings WHERE key = 'unauth_limit'")
-    limit = int(limit_row[0]) if limit_row and limit_row[0].isdigit() else 2  # default 2
+    limit = int(limit_row[0]) if limit_row and limit_row[0].isdigit() else 2
     row = await db.fetchone("SELECT msg_count FROM users WHERE user_id = ?", (user_id,))
     msg_count = row[0] if row else 0
     if msg_count < limit:
         await db.execute("UPDATE users SET msg_count = msg_count + 1 WHERE user_id = ?", (user_id,))
         return True, None
     else:
-        return False, limit  # return limit to use in the message
+        return False, limit
 
 async def check_channel_join(user_id):
     if user_id == ADMIN_ID:
@@ -1175,12 +1197,12 @@ class BotStates(StatesGroup):
     admin_add_model_only = State()
     admin_del_model_only = State()
     admin_set_password = State()
-    admin_set_limit = State()               # new state for limit
+    admin_set_limit = State()
     admin_set_channel = State()
     admin_broadcast = State()
     admin_clear_cache_confirm = State()
     admin_clear_all_confirm = State()
-    contact_admin = State()                 # new state for contacting admin
+    contact_admin = State()
 
 # ------------------------------ Keyboard builders ------------------------------
 def lang_keyboard():
@@ -1212,7 +1234,6 @@ async def admin_settings_keyboard(user_id):
 
 async def admin_database_keyboard(user_id):
     builder = InlineKeyboardBuilder()
-    # Order: View Data first, then Clear Cache, then Full Wipe
     builder.button(text=await get_text(user_id, "btn_view_data"), callback_data="admin_view_data")
     builder.button(text=await get_text(user_id, "btn_clear_cache"), callback_data="admin_clear_cache")
     builder.button(text=await get_text(user_id, "btn_clear_all"), callback_data="admin_clear_all")
@@ -1225,7 +1246,6 @@ def cancel_admin_keyboard(user_id, text_back):
 
 # ------------------------------ User panel ------------------------------
 async def show_user_panel(target, user_id, page=0, is_admin_view=False, edit=False):
-    # When user opens user panel, they are exiting chat mode
     chat_mode[user_id] = False
 
     joined, channels = await check_channel_join(user_id)
@@ -1298,8 +1318,8 @@ async def show_user_panel(target, user_id, page=0, is_admin_view=False, edit=Fal
 @router.message(Command("start"))
 @router.message(F.text.lower().in_({"start", "/start"}))
 async def cmd_start(message: Message, state: FSMContext):
-    await state.clear()  # clear any state including contact_admin
-    chat_mode[message.from_user.id] = False  # exit chat mode
+    await state.clear()
+    chat_mode[message.from_user.id] = False
     user_exists = await db.fetchone("SELECT lang FROM users WHERE user_id = ?", (message.from_user.id,))
     if not user_exists:
         await db.execute("INSERT OR IGNORE INTO users (user_id, lang, msg_count) VALUES (?, ?, 0)", (message.from_user.id, "en"))
@@ -1363,7 +1383,6 @@ async def go_admin_panel(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data.startswith("selmod_"))
 async def select_model(callback: CallbackQuery, state: FSMContext):
-    # Clear any contact state when selecting model
     await state.clear()
     model_id = callback.data.split("_")[1]
     user_id = callback.from_user.id
@@ -1374,7 +1393,7 @@ async def select_model(callback: CallbackQuery, state: FSMContext):
     model_name = row[0]
     await db.execute("UPDATE users SET current_model_id = ? WHERE user_id = ?", (model_id, user_id))
     await db.execute("DELETE FROM history WHERE user_id = ?", (user_id,))
-    chat_mode[user_id] = True  # enter chat mode
+    chat_mode[user_id] = True
     chat_start_txt = await get_text(user_id, "chat_started")
     await callback.message.answer(chat_start_txt.format(model_name))
     await callback.answer()
@@ -1506,17 +1525,14 @@ async def admin_pwd_save(message: Message, state: FSMContext):
     chat_mode[message.from_user.id] = False
     new_pwd = message.text.strip()
     if new_pwd.lower() == 'none':
-        # Remove password, set all users as authorized
         await db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('global_password', 'none')")
         await db.execute("UPDATE users SET is_auth = 1")
-        # Also remove or ignore limit
         await db.execute("DELETE FROM settings WHERE key = 'unauth_limit'")
         res_txt = await get_text(message.from_user.id, "pwd_none")
         await message.answer(res_txt)
         await state.clear()
         await cmd_admin(message, state)
         return
-    # Store password temporarily and ask for limit
     await state.update_data(temp_password=new_pwd)
     limit_prompt = await get_text(message.from_user.id, "send_limit_prompt")
     btn_back = await get_text(message.from_user.id, "btn_back")
@@ -1535,7 +1551,6 @@ async def admin_set_limit(message: Message, state: FSMContext):
     if limit < 0:
         await message.answer("❌ Limit cannot be negative. Please enter 0 or more.")
         return
-    # Save password and limit
     data = await state.get_data()
     password = data.get('temp_password')
     if not password:
@@ -1544,9 +1559,7 @@ async def admin_set_limit(message: Message, state: FSMContext):
         return
     await db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('global_password', ?)", (password,))
     await db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('unauth_limit', ?)", (str(limit),))
-    # Set all users as unauthorized (is_auth=0) so they need to enter password
     await db.execute("UPDATE users SET is_auth = 0")
-    # Reset msg_count for all users (optional)
     await db.execute("UPDATE users SET msg_count = 0")
     res_txt = await get_text(message.from_user.id, "pwd_set")
     res_txt = res_txt.format(password)
@@ -1674,30 +1687,25 @@ async def admin_view_data(callback: CallbackQuery):
     user_id = callback.from_user.id
     progress_msg = None
     try:
-        # Send initial progress message - FIXED: parentheses around await
         progress_msg = await callback.message.answer(
             (await get_text(user_id, "loading_data")).format(progress=0)
         )
-        # Simulate progress
         total_steps = 20
         for i in range(1, total_steps + 1):
             progress = i * 5
             if progress > 100:
                 progress = 100
             try:
-                # FIXED: parentheses around await
                 await progress_msg.edit_text(
                     (await get_text(user_id, "loading_data")).format(progress=progress)
                 )
             except Exception:
-                pass  # ignore if message can't be edited
+                pass
             await asyncio.sleep(0.15)
-        # Fetch data
         data = await db.get_all_data()
         if not data:
             await progress_msg.edit_text("⚠️ " + await get_text(user_id, "no_routers"))
             return
-        # Build text
         text = await get_text(user_id, "all_data_title")
         for router in data:
             header = await get_text(user_id, "data_router_header")
@@ -1712,7 +1720,6 @@ async def admin_view_data(callback: CallbackQuery):
             else:
                 text += await get_text(user_id, "data_no_models")
             text += "\n"
-        # Delete progress message and show data
         await progress_msg.delete()
         if len(text) > 4000:
             file = BufferedInputFile(text.encode('utf-8'), filename="all_data.txt")
@@ -1800,10 +1807,7 @@ async def admin_del_model_execute(message: Message, state: FSMContext):
     model_name = message.text.strip()
     res = await db.execute("DELETE FROM models WHERE router_id = ? AND model_name = ?", (data['r_id'], model_name))
     deleted_count = res['rowcount']
-    await db.execute("""
-        UPDATE users SET current_model_id = NULL
-        WHERE current_model_id NOT IN (SELECT id FROM models)
-    """)
+    await db.execute("UPDATE users SET current_model_id = NULL WHERE current_model_id NOT IN (SELECT id FROM models)")
     if deleted_count > 0:
         txt = await get_text(message.from_user.id, "model_deleted")
     else:
@@ -1928,40 +1932,37 @@ async def add_router_done(callback: CallbackQuery, state: FSMContext):
 @router.message(Command("man"))
 @router.message(Command("contactadmin"))
 async def cmd_contact_admin(message: Message, state: FSMContext):
-    """Enter contact admin mode."""
     user_id = message.from_user.id
-    # Clear any existing state and chat mode
     await state.clear()
     chat_mode[user_id] = False
-    # Set state to contact_admin
     await state.set_state(BotStates.contact_admin)
     intro = await get_text(user_id, "contact_intro")
-    # Provide a cancel button? We'll rely on /start or /model to exit, but we can add a small note.
-    await message.answer(intro)
+    # Add a small note that they can send multiple messages
+    await message.answer(intro + "\n\n" + "📩 " + await get_text(user_id, "type_here"))
 
 @router.callback_query(F.data == "contact_admin")
 async def contact_admin_callback(callback: CallbackQuery, state: FSMContext):
-    """Callback from the contact admin button."""
     user_id = callback.from_user.id
     await state.clear()
     chat_mode[user_id] = False
     await state.set_state(BotStates.contact_admin)
     intro = await get_text(user_id, "contact_intro")
-    await callback.message.answer(intro)
+    await callback.message.answer(intro + "\n\n" + "📩 " + await get_text(user_id, "type_here"))
     await callback.answer()
 
 @router.callback_query(F.data == "contact_end")
 async def contact_end_callback(callback: CallbackQuery, state: FSMContext):
-    """End the contact admin session."""
     user_id = callback.from_user.id
     await state.clear()
     chat_mode[user_id] = False
-    end_msg = await get_text(user_id, "contact_end")
-    await callback.message.edit_text(end_msg)  # or answer a new message?
-    # We'll just edit the confirmation message to show end.
+    end_msg = await get_text(user_id, "contact_end_msg")
+    # Show model panel again
+    await callback.message.edit_text(end_msg)
+    # Show model selection
+    await show_user_panel(callback.message, user_id)
     await callback.answer()
 
-# ------------------------------ Main chat handler (modified for contact admin) ------------------------------
+# ------------------------------ Main chat handler (modified for contact admin and password entry) ------------------------------
 @router.message()
 async def process_user_chat(message: Message, state: FSMContext):
     user_id = message.from_user.id
@@ -1974,15 +1975,34 @@ async def process_user_chat(message: Message, state: FSMContext):
         forward_text = await get_text(ADMIN_ID, "contact_forward")
         forward_text = forward_text.format(name=message.from_user.full_name, user_id=user_id, text=text)
         # Send to admin
-        await bot.send_message(ADMIN_ID, forward_text)
+        sent_msg = await bot.send_message(ADMIN_ID, forward_text)
         # Confirm to user
         confirm = await get_text(user_id, "contact_confirm")
-        # Create end button
-        end_button = InlineKeyboardButton(text="🔚 " + await get_text(user_id, "contact_end"), callback_data="contact_end")
+        end_button = InlineKeyboardButton(
+            text=await get_text(user_id, "contact_end"),
+            callback_data="contact_end"
+        )
         kb = InlineKeyboardMarkup(inline_keyboard=[[end_button]])
         await message.answer(confirm, reply_markup=kb)
-        # Keep state, don't clear
+        # Keep state
         return
+
+    # Handle admin replies: if admin replies to a forwarded message, send reply to user
+    if message.from_user.id == ADMIN_ID and message.reply_to_message:
+        replied = message.reply_to_message
+        if replied.text and ("User ID:" in replied.text or "شناسه:" in replied.text or "ID:" in replied.text):
+            # Try to extract user ID from the replied message
+            text = replied.text
+            match = re.search(r'(?:User ID|شناسه|ID):\s*(\d+)', text)
+            if match:
+                target_user_id = int(match.group(1))
+                # Send admin's reply to that user
+                reply_text = await get_text(target_user_id, "contact_admin_reply")
+                reply_text = reply_text.format(text=message.text)
+                await bot.send_message(target_user_id, reply_text)
+                await message.reply("✅ Reply sent to user.")
+                return
+        # If not a forwarded message, ignore
 
     # If user is in chat mode (selected model) then process as before
     if not chat_mode.get(user_id, False):
@@ -2009,7 +2029,7 @@ async def process_user_chat(message: Message, state: FSMContext):
         kb_buttons.append([InlineKeyboardButton(text=await get_text(user_id, "btn_check_join"), callback_data="check_join_channel")])
         kb = InlineKeyboardMarkup(inline_keyboard=kb_buttons)
         await message.answer(txt, reply_markup=kb)
-        chat_mode[user_id] = False  # exit chat mode
+        chat_mode[user_id] = False
         return
 
     # Check if user has selected a model
@@ -2022,7 +2042,6 @@ async def process_user_chat(message: Message, state: FSMContext):
     """, (user_id,))
 
     if not active_model:
-        # Should not happen because chat_mode is False if no model, but just in case
         chat_mode[user_id] = False
         username = message.from_user.username or "NoUsername"
         text = message.text or message.caption or "[non-text message]"
@@ -2037,19 +2056,37 @@ async def process_user_chat(message: Message, state: FSMContext):
     # Authorization check
     allowed, limit_or_none = await is_user_authorized_for_chat(user_id)
     if not allowed:
-        # User reached the limit
-        block_msg = await get_text(user_id, "limit_blocked")  # shortened message
-        # Create a button to contact admin
-        contact_btn = InlineKeyboardButton(
-            text=await get_text(user_id, "contact_button"),
-            callback_data="contact_admin"
-        )
-        kb = InlineKeyboardMarkup(inline_keyboard=[[contact_btn]])
-        await message.answer(block_msg, reply_markup=kb)
-        chat_mode[user_id] = False
-        return
+        # User reached the limit. Check if the message is the password
+        pwd_row = await db.fetchone("SELECT value FROM settings WHERE key = 'global_password'")
+        global_pwd = pwd_row[0] if pwd_row else None
+        if global_pwd and message.text and message.text.strip() == global_pwd:
+            # Password entered correctly
+            await db.execute("UPDATE users SET is_auth = 1, msg_count = 0 WHERE user_id = ?", (user_id,))
+            await message.answer(await get_text(user_id, "pwd_ok"))
+            # Now they are authorized, but they need to re-send their message? We'll just let them continue, but we need to re-run the chat logic.
+            # We'll set chat_mode to True and let the loop continue? Simplest: we can call the same handler again by re-processing? Not possible. We'll just allow the message to be processed now.
+            # So we need to re-check authorization after updating.
+            allowed, _ = await is_user_authorized_for_chat(user_id)
+            if allowed:
+                # Proceed to chat
+                pass
+            else:
+                # Should not happen
+                await message.answer(await get_text(user_id, "pwd_err"))
+                return
+        else:
+            # Blocked, show limit message with contact button
+            block_msg = await get_text(user_id, "limit_blocked")
+            contact_btn = InlineKeyboardButton(
+                text=await get_text(user_id, "contact_button"),
+                callback_data="contact_admin"
+            )
+            kb = InlineKeyboardMarkup(inline_keyboard=[[contact_btn]])
+            await message.answer(block_msg, reply_markup=kb)
+            chat_mode[user_id] = False
+            return
 
-    # Proceed with chat
+    # Proceed with chat (if allowed after password check)
     m_name, url_base, key = active_model
     url = url_base.strip().rstrip('/')
     if not url.endswith("/chat/completions"):
