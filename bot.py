@@ -309,9 +309,8 @@ LANGS = {
         # Contact admin
         "limit_blocked": "⛔ You've reached the test message limit. Please enter the password to unlock, or contact admin.",
         "contact_intro": "Please write your message to the administrator:",
-        "contact_confirm": "✅ Your message was sent. Please wait for the admin's reply.",
-        "contact_end": "🔚 End Session",
-        "contact_end_msg": "✅ Your session has ended. You can now select a model.",
+        "contact_confirm": "✅ Your message was sent. We will respond as soon as possible. To contact again, send /man.",
+        "contact_end_auto": "✅ Session ended. Your message was sent. We will respond as soon as possible. To contact again, send /man.",
         "contact_forward": "Message from user {name} (ID: {user_id}):\n{text}",
         "contact_button": "📞 Contact Admin",
         "contact_admin_reply": "📩 Reply from admin:\n{text}"
@@ -409,9 +408,8 @@ LANGS = {
         # Contact admin
         "limit_blocked": "⛔ شما به حد مجاز پیام‌های آزمایشی رسیده‌اید. لطفاً رمز عبور را وارد کنید یا با مدیر تماس بگیرید.",
         "contact_intro": "لطفاً پیام خود را برای مدیر بنویسید:",
-        "contact_confirm": "✅ پیام شما به مدیر ارسال شد. منتظر پاسخ مدیر باشید.",
-        "contact_end": "🔚 پایان نشست",
-        "contact_end_msg": "✅ نشست شما پایان یافت. اکنون می‌توانید یک مدل انتخاب کنید.",
+        "contact_confirm": "✅ پیام شما ارسال شد. در اسرع وقت پاسخ خواهیم داد. برای ارتباط مجدد /man را ارسال کنید.",
+        "contact_end_auto": "✅ نشست پایان یافت. پیام شما ارسال شد. در اسرع وقت پاسخ خواهیم داد. برای ارتباط مجدد /man را ارسال کنید.",
         "contact_forward": "پیام از کاربر {name} (شناسه: {user_id}):\n{text}",
         "contact_button": "📞 تماس با مدیر",
         "contact_admin_reply": "📩 پاسخ از مدیر:\n{text}"
@@ -509,9 +507,8 @@ LANGS = {
         # Contact admin
         "limit_blocked": "⛔ Вы достигли лимита тестовых сообщений. Введите пароль для разблокировки или свяжитесь с администратором.",
         "contact_intro": "Напишите сообщение администратору:",
-        "contact_confirm": "✅ Ваше сообщение отправлено. Ожидайте ответа администратора.",
-        "contact_end": "🔚 Завершить сеанс",
-        "contact_end_msg": "✅ Ваша сессия завершена. Теперь вы можете выбрать модель.",
+        "contact_confirm": "✅ Ваше сообщение отправлено. Мы ответим в ближайшее время. Для повторного обращения отправьте /man.",
+        "contact_end_auto": "✅ Сессия завершена. Ваше сообщение отправлено. Мы ответим в ближайшее время. Для повторного обращения отправьте /man.",
         "contact_forward": "Сообщение от пользователя {name} (ID: {user_id}):\n{text}",
         "contact_button": "📞 Связаться с администратором",
         "contact_admin_reply": "📩 Ответ от администратора:\n{text}"
@@ -609,9 +606,8 @@ LANGS = {
         # Contact admin
         "limit_blocked": "⛔ لقد وصلت إلى حد الرسائل الاختبارية. يرجى إدخال كلمة المرور للفتح أو التواصل مع المدير.",
         "contact_intro": "اكتب رسالتك إلى المسؤول:",
-        "contact_confirm": "✅ تم إرسال رسالتك. انتظر رد المسؤول.",
-        "contact_end": "🔚 إنهاء الجلسة",
-        "contact_end_msg": "✅ انتهت جلستك. يمكنك الآن اختيار نموذج.",
+        "contact_confirm": "✅ تم إرسال رسالتك. سوف نرد في أقرب وقت. للتواصل مرة أخرى، أرسل /man.",
+        "contact_end_auto": "✅ انتهت الجلسة. تم إرسال رسالتك. سوف نرد في أقرب وقت. للتواصل مرة أخرى، أرسل /man.",
         "contact_forward": "رسالة من المستخدم {name} (ID: {user_id}):\n{text}",
         "contact_button": "📞 اتصل بالمسؤول",
         "contact_admin_reply": "📩 رد من المسؤول:\n{text}"
@@ -709,9 +705,8 @@ LANGS = {
         # Contact admin
         "limit_blocked": "⛔ आप परीक्षण संदेश सीमा तक पहुँच गए हैं। कृपया पासवर्ड दर्ज करें या व्यवस्थापक से संपर्क करें।",
         "contact_intro": "कृपया व्यवस्थापक को अपना संदेश लिखें:",
-        "contact_confirm": "✅ आपका संदेश भेज दिया गया है। कृपया व्यवस्थापक के उत्तर की प्रतीक्षा करें।",
-        "contact_end": "🔚 सत्र समाप्त करें",
-        "contact_end_msg": "✅ आपका सत्र समाप्त हो गया। अब आप एक मॉडल चुन सकते हैं।",
+        "contact_confirm": "✅ आपका संदेश भेज दिया गया है। हम जल्द से जल्द जवाब देंगे। पुनः संपर्क के लिए /man भेजें।",
+        "contact_end_auto": "✅ आपका सत्र समाप्त हो गया। आपका संदेश भेज दिया गया है। हम जल्द से जल्द जवाब देंगे। पुनः संपर्क के लिए /man भेजें।",
         "contact_forward": "उपयोगकर्ता {name} (ID: {user_id}) से संदेश:\n{text}",
         "contact_button": "📞 व्यवस्थापक से संपर्क करें",
         "contact_admin_reply": "📩 व्यवस्थापक का उत्तर:\n{text}"
@@ -809,9 +804,8 @@ LANGS = {
         # Contact admin
         "limit_blocked": "⛔ Test mesajı sınırına ulaştınız. Lütfen şifreyi girin veya yönetici ile iletişime geçin.",
         "contact_intro": "Lütfen yöneticiye mesajınızı yazın:",
-        "contact_confirm": "✅ Mesajınız gönderildi. Lütfen yöneticinin yanıtını bekleyin.",
-        "contact_end": "🔚 Oturumu sonlandır",
-        "contact_end_msg": "✅ Oturumunuz sona erdi. Artık bir model seçebilirsiniz.",
+        "contact_confirm": "✅ Mesajınız gönderildi. En kısa sürede cevap vereceğiz. Tekrar iletişim için /man gönderin.",
+        "contact_end_auto": "✅ Oturum sona erdi. Mesajınız gönderildi. En kısa sürede cevap vereceğiz. Tekrar iletişim için /man gönderin.",
         "contact_forward": "{name} kullanıcısından (ID: {user_id}) mesaj:\n{text}",
         "contact_button": "📞 Yöneticiyle iletişime geç",
         "contact_admin_reply": "📩 Yöneticiden yanıt:\n{text}"
@@ -909,9 +903,8 @@ LANGS = {
         # Contact admin
         "limit_blocked": "⛔ Vous avez atteint la limite de messages de test. Veuillez entrer le mot de passe ou contacter l'administrateur.",
         "contact_intro": "Écrivez votre message à l'administrateur :",
-        "contact_confirm": "✅ Votre message a été envoyé. Veuillez attendre la réponse de l'administrateur.",
-        "contact_end": "🔚 Terminer la session",
-        "contact_end_msg": "✅ Votre session est terminée. Vous pouvez maintenant choisir un modèle.",
+        "contact_confirm": "✅ Votre message a été envoyé. Nous répondrons dans les plus brefs délais. Pour recontacter, envoyez /man.",
+        "contact_end_auto": "✅ Session terminée. Votre message a été envoyé. Nous répondrons dans les plus brefs délais. Pour recontacter, envoyez /man.",
         "contact_forward": "Message de l'utilisateur {name} (ID: {user_id}) :\n{text}",
         "contact_button": "📞 Contacter l'administrateur",
         "contact_admin_reply": "📩 Réponse de l'administrateur :\n{text}"
@@ -1009,9 +1002,8 @@ LANGS = {
         # Contact admin
         "limit_blocked": "⛔ Sie haben das Testnachrichten-Limit erreicht. Bitte geben Sie das Passwort ein oder kontaktieren Sie den Administrator.",
         "contact_intro": "Schreiben Sie Ihre Nachricht an den Administrator:",
-        "contact_confirm": "✅ Ihre Nachricht wurde gesendet. Bitte warten Sie auf die Antwort des Administrators.",
-        "contact_end": "🔚 Sitzung beenden",
-        "contact_end_msg": "✅ Ihre Sitzung wurde beendet. Sie können jetzt ein Modell auswählen.",
+        "contact_confirm": "✅ Ihre Nachricht wurde gesendet. Wir werden so schnell wie möglich antworten. Für erneute Kontaktaufnahme senden Sie /man.",
+        "contact_end_auto": "✅ Sitzung beendet. Ihre Nachricht wurde gesendet. Wir werden so schnell wie möglich antworten. Für erneute Kontaktaufnahme senden Sie /man.",
         "contact_forward": "Nachricht von Benutzer {name} (ID: {user_id}):\n{text}",
         "contact_button": "📞 Administrator kontaktieren",
         "contact_admin_reply": "📩 Antwort vom Administrator:\n{text}"
@@ -1109,9 +1101,8 @@ LANGS = {
         # Contact admin
         "limit_blocked": "⛔ 您已达到测试消息限制。请输入密码或联系管理员。",
         "contact_intro": "请给管理员写消息：",
-        "contact_confirm": "✅ 您的消息已发送。请等待管理员回复。",
-        "contact_end": "🔚 结束会话",
-        "contact_end_msg": "✅ 您的会话已结束。您现在可以选择一个模型。",
+        "contact_confirm": "✅ 您的消息已发送。我们会尽快回复。如需再次联系，请发送 /man。",
+        "contact_end_auto": "✅ 会话已结束。您的消息已发送。我们会尽快回复。如需再次联系，请发送 /man。",
         "contact_forward": "来自用户 {name}（ID: {user_id}）的消息：\n{text}",
         "contact_button": "📞 联系管理员",
         "contact_admin_reply": "📩 管理员的回复：\n{text}"
@@ -1937,8 +1928,8 @@ async def cmd_contact_admin(message: Message, state: FSMContext):
     chat_mode[user_id] = False
     await state.set_state(BotStates.contact_admin)
     intro = await get_text(user_id, "contact_intro")
-    # Add a small note that they can send multiple messages
-    await message.answer(intro + "\n\n" + "📩 " + await get_text(user_id, "type_here"))
+    # Send only the intro, no extra text
+    await message.answer(intro)
 
 @router.callback_query(F.data == "contact_admin")
 async def contact_admin_callback(callback: CallbackQuery, state: FSMContext):
@@ -1947,19 +1938,7 @@ async def contact_admin_callback(callback: CallbackQuery, state: FSMContext):
     chat_mode[user_id] = False
     await state.set_state(BotStates.contact_admin)
     intro = await get_text(user_id, "contact_intro")
-    await callback.message.answer(intro + "\n\n" + "📩 " + await get_text(user_id, "type_here"))
-    await callback.answer()
-
-@router.callback_query(F.data == "contact_end")
-async def contact_end_callback(callback: CallbackQuery, state: FSMContext):
-    user_id = callback.from_user.id
-    await state.clear()
-    chat_mode[user_id] = False
-    end_msg = await get_text(user_id, "contact_end_msg")
-    # Show model panel again
-    await callback.message.edit_text(end_msg)
-    # Show model selection
-    await show_user_panel(callback.message, user_id)
+    await callback.message.answer(intro)
     await callback.answer()
 
 # ------------------------------ Main chat handler (modified for contact admin and password entry) ------------------------------
@@ -1974,17 +1953,13 @@ async def process_user_chat(message: Message, state: FSMContext):
         text = message.text or message.caption or "[non-text message]"
         forward_text = await get_text(ADMIN_ID, "contact_forward")
         forward_text = forward_text.format(name=message.from_user.full_name, user_id=user_id, text=text)
-        # Send to admin
-        sent_msg = await bot.send_message(ADMIN_ID, forward_text)
-        # Confirm to user
-        confirm = await get_text(user_id, "contact_confirm")
-        end_button = InlineKeyboardButton(
-            text=await get_text(user_id, "contact_end"),
-            callback_data="contact_end"
-        )
-        kb = InlineKeyboardMarkup(inline_keyboard=[[end_button]])
-        await message.answer(confirm, reply_markup=kb)
-        # Keep state
+        await bot.send_message(ADMIN_ID, forward_text)
+        # Send end message and auto-end session
+        end_msg = await get_text(user_id, "contact_end_auto")  # new key for auto end message
+        await message.answer(end_msg)
+        # Clear state and show model panel
+        await state.clear()
+        await show_user_panel(message, user_id)
         return
 
     # Handle admin replies: if admin replies to a forwarded message, send reply to user
@@ -2063,9 +2038,8 @@ async def process_user_chat(message: Message, state: FSMContext):
             # Password entered correctly
             await db.execute("UPDATE users SET is_auth = 1, msg_count = 0 WHERE user_id = ?", (user_id,))
             await message.answer(await get_text(user_id, "pwd_ok"))
-            # Now they are authorized, but they need to re-send their message? We'll just let them continue, but we need to re-run the chat logic.
-            # We'll set chat_mode to True and let the loop continue? Simplest: we can call the same handler again by re-processing? Not possible. We'll just allow the message to be processed now.
-            # So we need to re-check authorization after updating.
+            # Now they are authorized, so we re-run the chat logic? We'll let the message be processed.
+            # We need to re-check authorization after updating.
             allowed, _ = await is_user_authorized_for_chat(user_id)
             if allowed:
                 # Proceed to chat
