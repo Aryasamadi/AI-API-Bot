@@ -1770,7 +1770,7 @@ async def clear_all_no(callback: CallbackQuery, state: FSMContext):
     chat_mode[callback.from_user.id] = False
     await admin_database_menu(callback)
 
-# ------------------------------ View Data with Progress (FIXED - faster) ------------------------------
+# ------------------------------ View Data with Progress ------------------------------
 @router.callback_query(F.data == "admin_view_data")
 async def admin_view_data(callback: CallbackQuery):
     await callback.answer()
@@ -1792,7 +1792,7 @@ async def admin_view_data(callback: CallbackQuery):
                 )
             except Exception:
                 pass
-            await asyncio.sleep(0.05)  # faster
+            await asyncio.sleep(0.05)
         data = await db.get_all_data()
         if not data:
             await progress_msg.edit_text("⚠️ " + await get_text(user_id, "no_routers"))
@@ -1914,7 +1914,7 @@ async def admin_confirm_delete(callback: CallbackQuery):
     await callback.answer(msg, show_alert=True)
     await admin_routers_list(callback)
 
-# ===== FIXED: Add Model flow - now edits the same message and finish goes to router details =====
+# ===== FIXED: Add Model flow =====
 @router.callback_query(F.data.startswith("addmod_"))
 async def admin_add_model_only(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
