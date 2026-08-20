@@ -214,6 +214,7 @@ def shorten_model_name(name: str, max_len: int = 25) -> str:
                 return base
     return name[:max_len] + '…'
 
+# ------------------------------ MULTI‑LANGUAGE DICTIONARY (ALL LANGUAGES, ALL KEYS) ------------------------------
 LANGS = {
     "en": {
         "name": "🇬🇧 English",
@@ -305,6 +306,7 @@ LANGS = {
         "data_loaded": "✅ Data loaded successfully.",
         "error_occurred": "❌ An error occurred while loading data. Please try again later.",
         "error_detail": "❌ Error details: {error}",
+        # Contact admin
         "limit_blocked": "⛔ You have used your {limit} free requests. Please enter the password:",
         "contact_intro": "Please write your request as a complete message to the administrator:",
         "contact_confirm": "✅ Your message was sent. We will respond as soon as possible. To contact again, send /man.",
@@ -313,7 +315,9 @@ LANGS = {
         "contact_button": "📞 Contact Admin",
         "contact_admin_reply": "📩 Reply from admin:\n{text}",
         "admin_reply_sent": "✅ Reply sent to user.",
+        # password wrong while blocked
         "pwd_prompt_wrong": "⛔ Please enter the correct password:",
+        # invalid model
         "invalid_model": "❌ This model is no longer available. Please select another one."
     },
     "fa": {
@@ -406,6 +410,7 @@ LANGS = {
         "data_loaded": "✅ داده‌ها با موفقیت بارگذاری شدند.",
         "error_occurred": "❌ خطایی در بارگذاری داده‌ها رخ داد. لطفاً بعداً تلاش کنید.",
         "error_detail": "❌ جزئیات خطا: {error}",
+        # Contact admin
         "limit_blocked": "⛔ شما از {limit} بار درخواست رایگان خود را استفاده کردید. رمز عبور را وارد کنید:",
         "contact_intro": "لطفاً درخواست خود را در قالب یک پیام کامل برای مدیر بنویسید:",
         "contact_confirm": "✅ پیام شما ارسال شد. در اسرع وقت پاسخ خواهیم داد. برای ارتباط مجدد /man را ارسال کنید.",
@@ -414,7 +419,9 @@ LANGS = {
         "contact_button": "📞 تماس با مدیر",
         "contact_admin_reply": "📩 پاسخ از مدیر:\n{text}",
         "admin_reply_sent": "✅ پاسخ به کاربر ارسال شد.",
+        # password wrong while blocked
         "pwd_prompt_wrong": "⛔ رمز عبور صحیح را وارد کنید:",
+        # invalid model
         "invalid_model": "❌ این مدل دیگر در دسترس نیست. لطفاً مدل دیگری انتخاب کنید."
     },
     "ru": {
@@ -507,6 +514,7 @@ LANGS = {
         "data_loaded": "✅ Данные успешно загружены.",
         "error_occurred": "❌ Произошла ошибка при загрузке данных. Попробуйте позже.",
         "error_detail": "❌ Детали ошибки: {error}",
+        # Contact admin
         "limit_blocked": "⛔ Вы использовали {limit} бесплатных запросов. Введите пароль:",
         "contact_intro": "Пожалуйста, напишите ваш запрос в виде полного сообщения администратору:",
         "contact_confirm": "✅ Ваше сообщение отправлено. Мы ответим в ближайшее время. Для повторного обращения отправьте /man.",
@@ -515,7 +523,9 @@ LANGS = {
         "contact_button": "📞 Связаться с администратором",
         "contact_admin_reply": "📩 Ответ от администратора:\n{text}",
         "admin_reply_sent": "✅ Ответ отправлен пользователю.",
+        # password wrong while blocked
         "pwd_prompt_wrong": "⛔ Введите правильный пароль:",
+        # invalid model
         "invalid_model": "❌ Эта модель больше недоступна. Пожалуйста, выберите другую."
     },
     "ar": {
@@ -608,6 +618,7 @@ LANGS = {
         "data_loaded": "✅ تم تحميل البيانات بنجاح.",
         "error_occurred": "❌ حدث خطأ أثناء تحميل البيانات. يرجى المحاولة لاحقاً.",
         "error_detail": "❌ تفاصيل الخطأ: {error}",
+        # Contact admin
         "limit_blocked": "⛔ لقد استخدمت {limit} طلب مجاني. أدخل كلمة المرور:",
         "contact_intro": "يرجى كتابة طلبك كرسالة كاملة للمسؤول:",
         "contact_confirm": "✅ تم إرسال رسالتك. سوف نرد في أقرب وقت. للتواصل مرة أخرى، أرسل /man.",
@@ -616,7 +627,9 @@ LANGS = {
         "contact_button": "📞 اتصل بالمسؤول",
         "contact_admin_reply": "📩 رد من المسؤول:\n{text}",
         "admin_reply_sent": "✅ تم إرسال الرد إلى المستخدم.",
+        # password wrong while blocked
         "pwd_prompt_wrong": "⛔ أدخل كلمة المرور الصحيحة:",
+        # invalid model
         "invalid_model": "❌ هذا النموذج غير متوفر الآن. يرجى اختيار نموذج آخر."
     },
     "hi": {
@@ -709,6 +722,7 @@ LANGS = {
         "data_loaded": "✅ डेटा सफलतापूर्वक लोड हो गया।",
         "error_occurred": "❌ डेटा लोड करते समय त्रुटि हुई। कृपया बाद में प्रयास करें।",
         "error_detail": "❌ त्रुटि विवरण: {error}",
+        # Contact admin
         "limit_blocked": "⛔ आपने {limit} निःशुल्क अनुरोधों का उपयोग कर लिया है। कृपया पासवर्ड दर्ज करें:",
         "contact_intro": "कृपया अपना अनुरोध व्यवस्थापक को पूर्ण संदेश के रूप में लिखें:",
         "contact_confirm": "✅ आपका संदेश भेज दिया गया है। हम जल्द से जल्द जवाब देंगे। पुनः संपर्क के लिए /man भेजें।",
@@ -717,8 +731,10 @@ LANGS = {
         "contact_button": "📞 व्यवस्थापक से संपर्क करें",
         "contact_admin_reply": "📩 व्यवस्थापक का उत्तर:\n{text}",
         "admin_reply_sent": "✅ उत्तर उपयोगकर्ता को भेज दिया गया।",
+        # password wrong while blocked
         "pwd_prompt_wrong": "⛔ सही पासवर्ड दर्ज करें:",
-        "invalid_model": "❌ यह मॉडल अब उपलब्ध नहीं है। कृपया दूसरा मॉडल चुनें。"
+        # invalid model
+        "invalid_model": "❌ यह मॉडल अब उपलब्ध नहीं है। कृपया दूसरा मॉडल चुनें।"
     },
     "tr": {
         "name": "🇹🇷 Türkçe",
@@ -810,6 +826,7 @@ LANGS = {
         "data_loaded": "✅ Veriler başarıyla yüklendi.",
         "error_occurred": "❌ Veri yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.",
         "error_detail": "❌ Hata ayrıntıları: {error}",
+        # Contact admin
         "limit_blocked": "⛔ {limit} ücretsiz istek hakkınızı kullandınız. Lütfen şifreyi girin:",
         "contact_intro": "Lütfen talebinizi yöneticiye tam bir mesaj olarak yazın:",
         "contact_confirm": "✅ Mesajınız gönderildi. En kısa sürede cevap vereceğiz. Tekrar iletişim için /man gönderin.",
@@ -818,7 +835,9 @@ LANGS = {
         "contact_button": "📞 Yöneticiyle iletişime geç",
         "contact_admin_reply": "📩 Yöneticiden yanıt:\n{text}",
         "admin_reply_sent": "✅ Yanıt kullanıcıya gönderildi.",
+        # password wrong while blocked
         "pwd_prompt_wrong": "⛔ Doğru şifreyi girin:",
+        # invalid model
         "invalid_model": "❌ Bu model artık mevcut değil. Lütfen başka bir model seçin."
     },
     "fr": {
@@ -911,6 +930,7 @@ LANGS = {
         "data_loaded": "✅ Données chargées avec succès.",
         "error_occurred": "❌ Une erreur est survenue lors du chargement des données. Veuillez réessayer plus tard.",
         "error_detail": "❌ Détails de l'erreur : {error}",
+        # Contact admin
         "limit_blocked": "⛔ Vous avez utilisé vos {limit} demandes gratuites. Veuillez entrer le mot de passe :",
         "contact_intro": "Veuillez écrire votre demande sous forme de message complet à l'administrateur :",
         "contact_confirm": "✅ Votre message a été envoyé. Nous répondrons dans les plus brefs délais. Pour recontacter, envoyez /man.",
@@ -919,7 +939,9 @@ LANGS = {
         "contact_button": "📞 Contacter l'administrateur",
         "contact_admin_reply": "📩 Réponse de l'administrateur :\n{text}",
         "admin_reply_sent": "✅ Réponse envoyée à l'utilisateur.",
+        # password wrong while blocked
         "pwd_prompt_wrong": "⛔ Veuillez entrer le mot de passe correct :",
+        # invalid model
         "invalid_model": "❌ Ce modèle n'est plus disponible. Veuillez en choisir un autre."
     },
     "de": {
@@ -1012,6 +1034,7 @@ LANGS = {
         "data_loaded": "✅ Daten erfolgreich geladen.",
         "error_occurred": "❌ Beim Laden der Daten ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
         "error_detail": "❌ Fehlerdetails: {error}",
+        # Contact admin
         "limit_blocked": "⛔ Sie haben Ihre {limit} kostenlosen Anfragen aufgebraucht. Bitte geben Sie das Passwort ein:",
         "contact_intro": "Bitte schreiben Sie Ihre Anfrage als vollständige Nachricht an den Administrator:",
         "contact_confirm": "✅ Ihre Nachricht wurde gesendet. Wir werden so schnell wie möglich antworten. Für erneute Kontaktaufnahme senden Sie /man.",
@@ -1020,7 +1043,9 @@ LANGS = {
         "contact_button": "📞 Administrator kontaktieren",
         "contact_admin_reply": "📩 Antwort vom Administrator:\n{text}",
         "admin_reply_sent": "✅ Antwort an Benutzer gesendet.",
+        # password wrong while blocked
         "pwd_prompt_wrong": "⛔ Bitte geben Sie das richtige Passwort ein:",
+        # invalid model
         "invalid_model": "❌ Dieses Modell ist nicht mehr verfügbar. Bitte wählen Sie ein anderes."
     },
     "zh": {
@@ -1113,6 +1138,7 @@ LANGS = {
         "data_loaded": "✅ 数据加载成功。",
         "error_occurred": "❌ 加载数据时出错，请稍后重试。",
         "error_detail": "❌ 错误详情：{error}",
+        # Contact admin
         "limit_blocked": "⛔ 您已用完 {limit} 次免费请求。请输入密码：",
         "contact_intro": "请将您的请求以完整消息的形式写给管理员：",
         "contact_confirm": "✅ 您的消息已发送。我们会尽快回复。如需再次联系，请发送 /man。",
@@ -1121,24 +1147,24 @@ LANGS = {
         "contact_button": "📞 联系管理员",
         "contact_admin_reply": "📩 管理员的回复：\n{text}",
         "admin_reply_sent": "✅ 回复已发送给用户。",
+        # password wrong while blocked
         "pwd_prompt_wrong": "⛔ 请输入正确的密码：",
+        # invalid model
         "invalid_model": "❌ 此模型不再可用。请选择其他模型。"
     }
 }
 
-async def check_column_exists(table: str, column: str) -> bool:
-    rows = await db.fetchall(f"PRAGMA table_info({table})")
-    for row in rows:
-        if row[1] == column:
-            return True
-    return False
-
+# ------------------------------ Database init and helpers ------------------------------
 async def init_db():
     await db.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY, lang TEXT, is_auth INTEGER DEFAULT 0, current_model_id INTEGER, msg_count INTEGER DEFAULT 0)")
-    if not await check_column_exists("users", "current_model_id"):
+    try:
         await db.execute("ALTER TABLE users ADD COLUMN current_model_id INTEGER")
-    if not await check_column_exists("users", "msg_count"):
+    except:
+        pass
+    try:
         await db.execute("ALTER TABLE users ADD COLUMN msg_count INTEGER DEFAULT 0")
+    except:
+        pass
     await db.execute("CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT)")
     await db.execute("CREATE TABLE IF NOT EXISTS routers (id INTEGER PRIMARY KEY AUTOINCREMENT, domain TEXT, base_url TEXT, api_key TEXT)")
     await db.execute("CREATE TABLE IF NOT EXISTS models (id INTEGER PRIMARY KEY AUTOINCREMENT, router_id INTEGER, model_name TEXT)")
@@ -1154,6 +1180,7 @@ async def check_auth(user_id):
         return True
     return False
 
+# Flag to track if user is in chat mode (has selected a model and not issued any bot command)
 chat_mode = {}
 
 async def is_user_authorized_for_chat(user_id):
@@ -1163,9 +1190,11 @@ async def is_user_authorized_for_chat(user_id):
     global_pwd = pwd_row[0] if pwd_row else None
     if not global_pwd or global_pwd.lower() == 'none':
         return True, None
+    # Password exists
     auth_row = await db.fetchone("SELECT is_auth FROM users WHERE user_id = ?", (user_id,))
     if auth_row and auth_row[0] == 1:
         return True, None
+    # Not authorized, check test message limit
     limit_row = await db.fetchone("SELECT value FROM settings WHERE key = 'unauth_limit'")
     limit = int(limit_row[0]) if limit_row and limit_row[0].isdigit() else 2
     row = await db.fetchone("SELECT msg_count FROM users WHERE user_id = ?", (user_id,))
@@ -1174,6 +1203,7 @@ async def is_user_authorized_for_chat(user_id):
         await db.execute("UPDATE users SET msg_count = msg_count + 1 WHERE user_id = ?", (user_id,))
         return True, None
     else:
+        # If just reached limit, increment msg_count so next time wrong password message appears
         if msg_count == limit:
             await db.execute("UPDATE users SET msg_count = msg_count + 1 WHERE user_id = ?", (user_id,))
         return False, (limit, msg_count)
@@ -1197,6 +1227,7 @@ async def check_channel_join(user_id):
         return False, failed
     return True, None
 
+# ------------------------------ FSM States ------------------------------
 class BotStates(StatesGroup):
     waiting_for_password = State()
     admin_add_router_url = State()
@@ -1212,6 +1243,7 @@ class BotStates(StatesGroup):
     admin_clear_all_confirm = State()
     contact_admin = State()
 
+# ------------------------------ Keyboard builders ------------------------------
 def lang_keyboard():
     builder = InlineKeyboardBuilder()
     for k, v in LANGS.items():
@@ -1225,7 +1257,7 @@ async def admin_panel_keyboard(user_id):
     builder.button(text=await get_text(user_id, "btn_add_router"), callback_data="admin_add_router")
     builder.button(text=await get_text(user_id, "btn_settings"), callback_data="admin_settings_menu")
     builder.button(text=await get_text(user_id, "btn_user_mode"), callback_data="admin_switch_user")
-    builder.adjust(2, 2)
+    builder.adjust(2, 1, 1)
     return builder.as_markup()
 
 async def admin_settings_keyboard(user_id):
@@ -1251,6 +1283,7 @@ async def admin_database_keyboard(user_id):
 def cancel_admin_keyboard(user_id, text_back):
     return InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=text_back, callback_data="admin_back")]])
 
+# ------------------------------ User panel (FIXED: only show valid models with routers) ------------------------------
 async def show_user_panel(target, user_id, page=0, is_admin_view=False, edit=False):
     chat_mode[user_id] = False
 
@@ -1270,6 +1303,7 @@ async def show_user_panel(target, user_id, page=0, is_admin_view=False, edit=Fal
             await target.answer(txt, reply_markup=kb)
         return
 
+    # ONLY show models that have a valid router with api_key
     all_models = await db.fetchall("""
         SELECT m.id, m.model_name
         FROM models m
@@ -1325,487 +1359,778 @@ async def show_user_panel(target, user_id, page=0, is_admin_view=False, edit=Fal
             await target.answer(select_text, reply_markup=kb)
     else:
         await target.answer(select_text, reply_markup=kb)
-@router.callback_query(lambda c: c.data.startswith("addmod_"))
-async def admin_add_mod(callback: CallbackQuery, state: FSMContext):
-    if callback.from_user.id != ADMIN_ID: return
-    rid = int(callback.data.split("_")[1])
-    await state.update_data(router_id=rid)
-    txt = await get_text(ADMIN_ID, "send_model_for_router")
-    back_txt = await get_text(ADMIN_ID, "btn_back")
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=back_txt, callback_data=f"router_{rid}")]
-    ])
-    await callback.message.edit_text(txt, reply_markup=kb)
-    await state.set_state(BotStates.admin_add_model_only)
 
-@router.message(BotStates.admin_add_model_only)
-async def admin_add_model_only_process(message: Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID: return
-    data = await state.get_data()
-    rid = data.get("router_id")
-    if not rid:
-        await state.clear()
-        return
-    model_name = message.text.strip()
-    await db.execute("INSERT INTO models (router_id, model_name) VALUES (?, ?)", (rid, model_name))
-    
-    txt = await get_text(ADMIN_ID, "model_added_continue")
-    finish_txt = await get_text(ADMIN_ID, "finish")
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=finish_txt, callback_data=f"router_{rid}")]
-    ])
-    # The fix: Send a NEW message instead of editing, keeping the state active for unlimited adds
-    await message.answer(txt, reply_markup=kb)
-    # Note: State remains BotStates.admin_add_model_only so we can keep receiving models
-
-@router.callback_query(lambda c: c.data.startswith("delmod_"))
-async def admin_del_mod(callback: CallbackQuery, state: FSMContext):
-    if callback.from_user.id != ADMIN_ID: return
-    rid = int(callback.data.split("_")[1])
-    await state.update_data(router_id=rid)
-    txt = await get_text(ADMIN_ID, "send_del_model")
-    back_txt = await get_text(ADMIN_ID, "btn_back")
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=back_txt, callback_data=f"router_{rid}")]
-    ])
-    await callback.message.edit_text(txt, reply_markup=kb)
-    await state.set_state(BotStates.admin_del_model_only)
-
-@router.message(BotStates.admin_del_model_only)
-async def admin_del_model_only_process(message: Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID: return
-    data = await state.get_data()
-    rid = data.get("router_id")
-    if not rid:
-        await state.clear()
-        return
-    model_name = message.text.strip()
-    row = await db.fetchone("SELECT id FROM models WHERE router_id = ? AND model_name = ?", (rid, model_name))
-    if row:
-        await db.execute("DELETE FROM models WHERE id = ?", (row[0],))
-        txt = await get_text(ADMIN_ID, "model_deleted")
+# ------------------------------ Handlers ------------------------------
+@router.message(Command("start"))
+@router.message(F.text.lower().in_({"start", "/start"}))
+async def cmd_start(message: Message, state: FSMContext):
+    await state.clear()
+    chat_mode[message.from_user.id] = False
+    # DO NOT reset msg_count or is_auth - only reset current_model_id and history
+    await db.execute("UPDATE users SET current_model_id = NULL WHERE user_id = ?", (message.from_user.id,))
+    await db.execute("DELETE FROM history WHERE user_id = ?", (message.from_user.id,))
+    user_exists = await db.fetchone("SELECT lang FROM users WHERE user_id = ?", (message.from_user.id,))
+    if not user_exists:
+        await db.execute("INSERT OR IGNORE INTO users (user_id, lang, msg_count) VALUES (?, ?, 0)", (message.from_user.id, "en"))
+        welcome_first = await get_text(message.from_user.id, "welcome_first")
+        await message.answer(welcome_first)
+        await message.answer("Please select your language:", reply_markup=lang_keyboard())
     else:
-        txt = await get_text(ADMIN_ID, "model_not_found")
+        welcome_txt = await get_text(message.from_user.id, "welcome_back")
+        await message.answer(welcome_txt.format(name=message.from_user.first_name))
+        await show_user_panel(message, message.from_user.id)
+
+@router.message(Command("lang"))
+@router.message(F.text.lower().in_({"lang", "/lang"}))
+async def cmd_lang(message: Message, state: FSMContext):
+    await state.clear()
+    chat_mode[message.from_user.id] = False
+    await message.answer("Please select your language:", reply_markup=lang_keyboard())
+
+@router.callback_query(F.data.startswith("setlang_"))
+async def set_language(callback: CallbackQuery):
+    lang = callback.data.split("_")[1]
+    await db.execute("""
+        INSERT INTO users (user_id, lang) VALUES (?, ?)
+        ON CONFLICT(user_id) DO UPDATE SET lang = excluded.lang
+    """, (callback.from_user.id, lang))
+    await callback.message.delete()
+    chat_mode[callback.from_user.id] = False
+    await show_user_panel(callback.message, callback.from_user.id)
+
+@router.message(Command("user"))
+@router.message(F.text.lower().in_({"user", "/user"}))
+async def cmd_user(message: Message, state: FSMContext):
+    await state.clear()
+    chat_mode[message.from_user.id] = False
+    await show_user_panel(message, message.from_user.id)
+
+@router.callback_query(F.data == "check_join_channel")
+async def check_join_callback(callback: CallbackQuery):
+    joined, channels = await check_channel_join(callback.from_user.id)
+    if joined:
+        ok_txt = await get_text(callback.from_user.id, "join_ok")
+        await callback.answer(ok_txt, show_alert=True)
+        await callback.message.delete()
+        chat_mode[callback.from_user.id] = False
+        await show_user_panel(callback.message, callback.from_user.id)
+    else:
+        fail_txt = await get_text(callback.from_user.id, "join_fail")
+        await callback.answer(fail_txt, show_alert=True)
+
+@router.callback_query(F.data == "go_admin_panel")
+async def go_admin_panel(callback: CallbackQuery, state: FSMContext):
+    if callback.from_user.id != ADMIN_ID:
+        await callback.answer(await get_text(callback.from_user.id, "admin_only"), show_alert=True)
+        return
+    await state.clear()
+    chat_mode[callback.from_user.id] = False
+    admin_text = await get_text(callback.from_user.id, "admin_menu")
+    kb = await admin_panel_keyboard(callback.from_user.id)
+    await callback.message.edit_text(admin_text, reply_markup=kb)
+    await callback.answer()
+
+# ===== FIXED: select_model with validation =====
+@router.callback_query(F.data.startswith("selmod_"))
+async def select_model(callback: CallbackQuery, state: FSMContext):
+    await state.clear()
+    model_id = callback.data.split("_")[1]
+    user_id = callback.from_user.id
     
-    back_txt = await get_text(ADMIN_ID, "btn_back")
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=back_txt, callback_data=f"router_{rid}")]
-    ])
-    await message.answer(txt, reply_markup=kb)
-    await state.clear()
+    # Validate that this model actually exists AND has a valid router
+    row = await db.fetchone("""
+        SELECT m.model_name, r.id
+        FROM models m
+        JOIN routers r ON m.router_id = r.id
+        WHERE m.id = ? AND r.api_key IS NOT NULL AND r.api_key != ''
+    """, (model_id,))
+    
+    if not row:
+        await callback.answer(await get_text(user_id, "invalid_model"), show_alert=True)
+        # Show the panel again to let user choose another model
+        await show_user_panel(callback, user_id, edit=True)
+        return
+    
+    model_name = row[0]
+    # Update current model, reset history but DO NOT reset msg_count or is_auth
+    await db.execute("UPDATE users SET current_model_id = ? WHERE user_id = ?", (model_id, user_id))
+    await db.execute("DELETE FROM history WHERE user_id = ?", (user_id,))
+    chat_mode[user_id] = True
+    chat_start_txt = await get_text(user_id, "chat_started")
+    await callback.message.answer(chat_start_txt.format(model_name))
+    await callback.answer()
 
-@router.callback_query(lambda c: c.data == "admin_settings_menu")
+@router.message(Command("model"))
+@router.message(F.text.lower().in_({"model", "/model"}))
+async def cmd_model_exit(message: Message, state: FSMContext):
+    await state.clear()
+    chat_mode[message.from_user.id] = False
+    await db.execute("DELETE FROM history WHERE user_id = ?", (message.from_user.id,))
+    # Clear current model but DO NOT reset msg_count or is_auth
+    await db.execute("UPDATE users SET current_model_id = NULL WHERE user_id = ?", (message.from_user.id,))
+    await show_user_panel(message, message.from_user.id)
+
+@router.message(Command("admin"))
+@router.message(F.text.lower().in_({"admin", "/admin"}))
+async def cmd_admin(message: Message, state: FSMContext):
+    await state.clear()
+    chat_mode[message.from_user.id] = False
+    if message.from_user.id != ADMIN_ID:
+        err = await get_text(message.from_user.id, "admin_only")
+        return await message.answer(err)
+    admin_text = await get_text(message.from_user.id, "admin_menu")
+    kb = await admin_panel_keyboard(message.from_user.id)
+    await message.answer(admin_text, reply_markup=kb)
+
+@router.message(Command("help"))
+@router.message(F.text.lower().in_({"help", "/help"}))
+async def cmd_help(message: Message, state: FSMContext):
+    await state.clear()
+    chat_mode[message.from_user.id] = False
+    if message.from_user.id == ADMIN_ID:
+        help_text = await get_text(message.from_user.id, "help_admin")
+    else:
+        help_text = await get_text(message.from_user.id, "help_user")
+    await message.answer(help_text, parse_mode="Markdown")
+
+@router.callback_query(F.data == "admin_back")
+async def admin_back(callback: CallbackQuery, state: FSMContext):
+    await state.clear()
+    chat_mode[callback.from_user.id] = False
+    admin_text = await get_text(callback.from_user.id, "admin_menu")
+    kb = await admin_panel_keyboard(callback.from_user.id)
+    await callback.message.edit_text(admin_text, reply_markup=kb)
+
+@router.callback_query(F.data == "admin_settings_menu")
 async def admin_settings_menu(callback: CallbackQuery):
-    if callback.from_user.id != ADMIN_ID: return
-    txt = await get_text(ADMIN_ID, "title_settings")
-    kb = await admin_settings_keyboard(ADMIN_ID)
-    await callback.message.edit_text(txt, reply_markup=kb)
+    chat_mode[callback.from_user.id] = False
+    title = await get_text(callback.from_user.id, "title_settings")
+    kb = await admin_settings_keyboard(callback.from_user.id)
+    await callback.message.edit_text(title, reply_markup=kb)
 
-@router.callback_query(lambda c: c.data == "admin_database_menu")
+@router.callback_query(F.data == "admin_database_menu")
 async def admin_database_menu(callback: CallbackQuery):
-    if callback.from_user.id != ADMIN_ID: return
-    txt = await get_text(ADMIN_ID, "title_settings")
-    kb = await admin_database_keyboard(ADMIN_ID)
-    await callback.message.edit_text(txt, reply_markup=kb)
+    chat_mode[callback.from_user.id] = False
+    title = "🗄️ " + await get_text(callback.from_user.id, "btn_database")
+    kb = await admin_database_keyboard(callback.from_user.id)
+    await callback.message.edit_text(title, reply_markup=kb)
 
-@router.callback_query(lambda c: c.data == "admin_back")
-async def admin_back_main(callback: CallbackQuery, state: FSMContext):
-    if callback.from_user.id != ADMIN_ID: return
-    await state.clear()
-    txt = await get_text(ADMIN_ID, "admin_menu")
-    kb = await admin_panel_keyboard(ADMIN_ID)
-    await callback.message.edit_text(txt, reply_markup=kb)
+@router.callback_query(F.data == "admin_stats")
+async def admin_stats(callback: CallbackQuery):
+    chat_mode[callback.from_user.id] = False
+    users, models, routers, tokens = await db.get_stats()
+    pwd_row = await db.fetchone("SELECT value FROM settings WHERE key = 'global_password'")
+    has_pwd = pwd_row and pwd_row[0] and pwd_row[0].lower() != 'none'
+    pwd_status = "✅ Active" if has_pwd else "❌ Inactive"
+    channel_row = await db.fetchone("SELECT value FROM settings WHERE key = 'force_channel'")
+    channel = channel_row[0] if channel_row and channel_row[0] and channel_row[0].lower() != 'none' else "❌ Not set"
+    lang = await db.fetchone("SELECT lang FROM users WHERE user_id = ?", (callback.from_user.id,))
+    lang_code = lang[0] if lang and lang[0] in LANGS else "en"
+    if lang_code == "fa":
+        pwd_status = "✅ فعال" if has_pwd else "❌ غیرفعال"
+        channel = channel if channel != "❌ Not set" else "❌ تنظیم نشده"
+    elif lang_code == "ru":
+        pwd_status = "✅ Активен" if has_pwd else "❌ Неактивен"
+        channel = channel if channel != "❌ Not set" else "❌ Не установлен"
+    elif lang_code == "ar":
+        pwd_status = "✅ نشط" if has_pwd else "❌ غير نشط"
+        channel = channel if channel != "❌ Not set" else "❌ لم يتم تعيينه"
+    elif lang_code == "hi":
+        pwd_status = "✅ सक्रिय" if has_pwd else "❌ निष्क्रिय"
+        channel = channel if channel != "❌ Not set" else "❌ सेट नहीं"
+    elif lang_code == "tr":
+        pwd_status = "✅ Aktif" if has_pwd else "❌ Pasif"
+        channel = channel if channel != "❌ Not set" else "❌ Ayarlanmamış"
+    elif lang_code == "fr":
+        pwd_status = "✅ Actif" if has_pwd else "❌ Inactif"
+        channel = channel if channel != "❌ Not set" else "❌ Non défini"
+    elif lang_code == "de":
+        pwd_status = "✅ Aktiv" if has_pwd else "❌ Inaktiv"
+        channel = channel if channel != "❌ Not set" else "❌ Nicht gesetzt"
+    elif lang_code == "zh":
+        pwd_status = "✅ 已启用" if has_pwd else "❌ 已禁用"
+        channel = channel if channel != "❌ Not set" else "❌ 未设置"
+    stats_text = await get_text(callback.from_user.id, "stats_text")
+    stats_text = stats_text.format(
+        users=users,
+        channel=channel,
+        models=models,
+        routers=routers,
+        tokens=tokens,
+        pwd_status=pwd_status
+    )
+    btn_back = await get_text(callback.from_user.id, "btn_back")
+    kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=btn_back, callback_data="admin_settings_menu")]])
+    await callback.message.edit_text(stats_text, parse_mode="Markdown", reply_markup=kb)
 
-@router.callback_query(lambda c: c.data == "admin_pwd")
-async def admin_pwd(callback: CallbackQuery, state: FSMContext):
-    if callback.from_user.id != ADMIN_ID: return
-    txt = await get_text(ADMIN_ID, "send_pwd_prompt")
-    back_txt = await get_text(ADMIN_ID, "btn_back")
-    kb = cancel_admin_keyboard(ADMIN_ID, back_txt)
-    await callback.message.edit_text(txt, reply_markup=kb)
+@router.callback_query(F.data == "admin_switch_user")
+async def admin_switch_user(callback: CallbackQuery):
+    chat_mode[callback.from_user.id] = False
+    await show_user_panel(callback, callback.from_user.id, is_admin_view=True, edit=True)
+    await callback.answer()
+
+@router.callback_query(F.data.startswith("userpage_"))
+async def user_page_callback(callback: CallbackQuery):
+    page = int(callback.data.split("_")[1])
+    chat_mode[callback.from_user.id] = False
+    await show_user_panel(callback, callback.from_user.id, page=page, is_admin_view=False, edit=True)
+    await callback.answer()
+
+@router.callback_query(F.data == "admin_pwd")
+async def admin_pwd_start(callback: CallbackQuery, state: FSMContext):
+    chat_mode[callback.from_user.id] = False
+    txt = await get_text(callback.from_user.id, "send_pwd_prompt")
+    btn_back = await get_text(callback.from_user.id, "btn_back")
+    await callback.message.edit_text(txt, reply_markup=cancel_admin_keyboard(callback.from_user.id, btn_back))
     await state.set_state(BotStates.admin_set_password)
 
 @router.message(BotStates.admin_set_password)
-async def admin_pwd_step1(message: Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID: return
-    pwd = message.text.strip()
-    if pwd.lower() == 'none':
-        await db.execute("DELETE FROM settings WHERE key = 'global_password'")
-        txt = await get_text(ADMIN_ID, "pwd_none")
-        await message.answer(txt)
+async def admin_pwd_save(message: Message, state: FSMContext):
+    chat_mode[message.from_user.id] = False
+    new_pwd = message.text.strip()
+    if new_pwd.lower() == 'none':
+        await db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('global_password', 'none')")
+        await db.execute("UPDATE users SET is_auth = 1")
         await db.execute("DELETE FROM settings WHERE key = 'unauth_limit'")
+        res_txt = await get_text(message.from_user.id, "pwd_none")
+        await message.answer(res_txt)
         await state.clear()
-        kb = await admin_settings_keyboard(ADMIN_ID)
-        txt = await get_text(ADMIN_ID, "title_settings")
-        await message.answer(txt, reply_markup=kb)
-    else:
-        await db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('global_password', ?)", (pwd,))
-        txt = await get_text(ADMIN_ID, "pwd_set")
-        await message.answer(txt.format(pwd))
-        limit_prompt = await get_text(ADMIN_ID, "send_limit_prompt")
-        await message.answer(limit_prompt)
-        await state.set_state(BotStates.admin_set_limit)
+        await cmd_admin(message, state)
+        return
+    await state.update_data(temp_password=new_pwd)
+    limit_prompt = await get_text(message.from_user.id, "send_limit_prompt")
+    btn_back = await get_text(message.from_user.id, "btn_back")
+    kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=btn_back, callback_data="admin_back")]])
+    await message.answer(limit_prompt, reply_markup=kb)
+    await state.set_state(BotStates.admin_set_limit)
 
 @router.message(BotStates.admin_set_limit)
-async def admin_pwd_step2(message: Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID: return
-    limit_str = message.text.strip()
-    if not limit_str.isdigit():
-        limit_str = "2"
-    await db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('unauth_limit', ?)", (limit_str,))
-    await message.answer(f"✅ Limit set to {limit_str}")
+async def admin_set_limit(message: Message, state: FSMContext):
+    chat_mode[message.from_user.id] = False
+    limit_text = message.text.strip()
+    if not limit_text.isdigit():
+        await message.answer("❌ Please enter a valid number (e.g., 5).")
+        return
+    limit = int(limit_text)
+    if limit < 0:
+        await message.answer("❌ Limit cannot be negative. Please enter 0 or more.")
+        return
+    data = await state.get_data()
+    password = data.get('temp_password')
+    if not password:
+        await message.answer("❌ Something went wrong. Please try again from the beginning.")
+        await state.clear()
+        return
+    await db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('global_password', ?)", (password,))
+    await db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('unauth_limit', ?)", (str(limit),))
+    await db.execute("UPDATE users SET is_auth = 0")
+    await db.execute("UPDATE users SET msg_count = 0")
+    res_txt = await get_text(message.from_user.id, "pwd_set")
+    res_txt = res_txt.format(password)
+    await message.answer(res_txt)
     await state.clear()
-    kb = await admin_settings_keyboard(ADMIN_ID)
-    txt = await get_text(ADMIN_ID, "title_settings")
-    await message.answer(txt, reply_markup=kb)
+    await cmd_admin(message, state)
 
-@router.callback_query(lambda c: c.data == "admin_channel")
-async def admin_channel(callback: CallbackQuery, state: FSMContext):
-    if callback.from_user.id != ADMIN_ID: return
-    txt = await get_text(ADMIN_ID, "send_channel_prompt")
-    back_txt = await get_text(ADMIN_ID, "btn_back")
-    kb = cancel_admin_keyboard(ADMIN_ID, back_txt)
-    await callback.message.edit_text(txt, reply_markup=kb)
+@router.callback_query(F.data == "admin_channel")
+async def admin_channel_start(callback: CallbackQuery, state: FSMContext):
+    chat_mode[callback.from_user.id] = False
+    txt = await get_text(callback.from_user.id, "send_channel_prompt")
+    btn_back = await get_text(callback.from_user.id, "btn_back")
+    await callback.message.edit_text(txt, reply_markup=cancel_admin_keyboard(callback.from_user.id, btn_back))
     await state.set_state(BotStates.admin_set_channel)
 
 @router.message(BotStates.admin_set_channel)
-async def admin_channel_process(message: Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID: return
-    ch = message.text.strip()
-    if ch.lower() == 'none':
-        await db.execute("DELETE FROM settings WHERE key = 'force_channel'")
-        txt = await get_text(ADMIN_ID, "channel_none")
+async def admin_channel_save(message: Message, state: FSMContext):
+    chat_mode[message.from_user.id] = False
+    new_channel = message.text.strip()
+    if new_channel.lower() == 'none':
+        await db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('force_channel', 'none')")
+        res_txt = await get_text(message.from_user.id, "channel_none")
     else:
-        await db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('force_channel', ?)", (ch,))
-        txt = await get_text(ADMIN_ID, "channel_set")
-        txt = txt.format(ch)
-    
-    await message.answer(txt)
+        channels = [ch.strip() for ch in new_channel.split(',') if ch.strip()]
+        formatted = ','.join([ch if ch.startswith('@') else '@'+ch for ch in channels])
+        await db.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('force_channel', ?)", (formatted,))
+        res_txt = await get_text(message.from_user.id, "channel_set")
+        res_txt = res_txt.format(formatted)
+    await message.answer(res_txt)
     await state.clear()
-    kb = await admin_settings_keyboard(ADMIN_ID)
-    menu_txt = await get_text(ADMIN_ID, "title_settings")
-    await message.answer(menu_txt, reply_markup=kb)
+    await cmd_admin(message, state)
 
-@router.callback_query(lambda c: c.data == "admin_broadcast")
-async def admin_broadcast(callback: CallbackQuery, state: FSMContext):
-    if callback.from_user.id != ADMIN_ID: return
-    txt = await get_text(ADMIN_ID, "send_broadcast")
-    back_txt = await get_text(ADMIN_ID, "btn_back")
-    kb = cancel_admin_keyboard(ADMIN_ID, back_txt)
-    await callback.message.edit_text(txt, reply_markup=kb)
+@router.callback_query(F.data == "admin_broadcast")
+async def admin_broadcast_start(callback: CallbackQuery, state: FSMContext):
+    chat_mode[callback.from_user.id] = False
+    txt = await get_text(callback.from_user.id, "send_broadcast")
+    btn_back = await get_text(callback.from_user.id, "btn_back")
+    await callback.message.edit_text(txt, reply_markup=cancel_admin_keyboard(callback.from_user.id, btn_back))
     await state.set_state(BotStates.admin_broadcast)
 
 @router.message(BotStates.admin_broadcast)
-async def admin_broadcast_process(message: Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID: return
-    users = await db.fetchall("SELECT user_id FROM users")
+async def admin_broadcast_send(message: Message, state: FSMContext):
+    chat_mode[message.from_user.id] = False
     count = 0
+    users = await db.fetchall("SELECT user_id FROM users")
     for u in users:
-        uid = u[0]
-        if uid == ADMIN_ID: continue
         try:
-            await message.copy_to(uid)
+            await bot.send_message(u[0], message.text)
             count += 1
         except:
             pass
-    txt = await get_text(ADMIN_ID, "broadcast_done")
-    await message.answer(txt.format(count))
+    done_txt = await get_text(message.from_user.id, "broadcast_done")
+    await message.answer(done_txt.format(count))
     await state.clear()
-    kb = await admin_settings_keyboard(ADMIN_ID)
-    menu_txt = await get_text(ADMIN_ID, "title_settings")
-    await message.answer(menu_txt, reply_markup=kb)
+    await cmd_admin(message, state)
 
-@router.callback_query(lambda c: c.data == "admin_stats")
-async def admin_stats(callback: CallbackQuery):
-    if callback.from_user.id != ADMIN_ID: return
-    users_row = await db.fetchone("SELECT COUNT(*) FROM users")
-    users = users_row[0] if users_row else 0
-    mods_row = await db.fetchone("SELECT COUNT(*) FROM models")
-    mods = mods_row[0] if mods_row else 0
-    r_row = await db.fetchone("SELECT COUNT(*) FROM routers")
-    routers = r_row[0] if r_row else 0
-    ch_row = await db.fetchone("SELECT value FROM settings WHERE key = 'force_channel'")
-    channel = ch_row[0] if ch_row else "None"
-    pwd_row = await db.fetchone("SELECT value FROM settings WHERE key = 'global_password'")
-    pwd = pwd_row[0] if pwd_row else "None"
-    
-    txt = await get_text(ADMIN_ID, "stats_text")
-    txt = txt.format(users=users, channel=channel, models=mods, routers=routers, tokens="Hidden", pwd_status=pwd)
-    
-    back_txt = await get_text(ADMIN_ID, "btn_back")
-    kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=back_txt, callback_data="admin_settings_menu")]])
-    await callback.message.edit_text(txt, reply_markup=kb, parse_mode=ParseMode.MARKDOWN)
+@router.callback_query(F.data == "admin_clear_cache")
+async def admin_clear_cache_start(callback: CallbackQuery, state: FSMContext):
+    chat_mode[callback.from_user.id] = False
+    confirm_txt = await get_text(callback.from_user.id, "clear_cache_confirm")
+    btn_yes = await get_text(callback.from_user.id, "btn_yes")
+    btn_no = await get_text(callback.from_user.id, "btn_no")
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=btn_yes, callback_data="clear_cache_yes")],
+        [InlineKeyboardButton(text=btn_no, callback_data="clear_cache_no")]
+    ])
+    await callback.message.edit_text(confirm_txt, reply_markup=kb)
+    await state.set_state(BotStates.admin_clear_cache_confirm)
 
-@router.callback_query(lambda c: c.data == "admin_view_data")
+@router.callback_query(F.data == "clear_cache_yes")
+async def clear_cache_yes(callback: CallbackQuery, state: FSMContext):
+    await db.clear_history()
+    done_txt = await get_text(callback.from_user.id, "clear_cache_done")
+    await callback.answer(done_txt, show_alert=True)
+    await state.clear()
+    chat_mode[callback.from_user.id] = False
+    await admin_database_menu(callback)
+
+@router.callback_query(F.data == "clear_cache_no")
+async def clear_cache_no(callback: CallbackQuery, state: FSMContext):
+    cancel_txt = await get_text(callback.from_user.id, "clear_cancelled")
+    await callback.answer(cancel_txt, show_alert=True)
+    await state.clear()
+    chat_mode[callback.from_user.id] = False
+    await admin_database_menu(callback)
+
+@router.callback_query(F.data == "admin_clear_all")
+async def admin_clear_all_start(callback: CallbackQuery, state: FSMContext):
+    chat_mode[callback.from_user.id] = False
+    if not db.use_cloud:
+        no_cloud_msg = await get_text(callback.from_user.id, "no_cloud_db")
+        await callback.answer(no_cloud_msg, show_alert=True)
+        return
+    confirm_txt = await get_text(callback.from_user.id, "clear_all_confirm")
+    btn_yes = await get_text(callback.from_user.id, "btn_yes")
+    btn_no = await get_text(callback.from_user.id, "btn_no")
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=btn_yes, callback_data="clear_all_yes")],
+        [InlineKeyboardButton(text=btn_no, callback_data="clear_all_no")]
+    ])
+    await callback.message.edit_text(confirm_txt, reply_markup=kb)
+    await state.set_state(BotStates.admin_clear_all_confirm)
+
+@router.callback_query(F.data == "clear_all_yes")
+async def clear_all_yes(callback: CallbackQuery, state: FSMContext):
+    await db.truncate_all_tables()
+    done_txt = await get_text(callback.from_user.id, "clear_all_done")
+    await callback.answer(done_txt, show_alert=True)
+    await state.clear()
+    chat_mode[callback.from_user.id] = False
+    await admin_database_menu(callback)
+
+@router.callback_query(F.data == "clear_all_no")
+async def clear_all_no(callback: CallbackQuery, state: FSMContext):
+    cancel_txt = await get_text(callback.from_user.id, "clear_cancelled")
+    await callback.answer(cancel_txt, show_alert=True)
+    await state.clear()
+    chat_mode[callback.from_user.id] = False
+    await admin_database_menu(callback)
+
+# ------------------------------ View Data with Progress (FIXED - faster) ------------------------------
+@router.callback_query(F.data == "admin_view_data")
 async def admin_view_data(callback: CallbackQuery):
-    if callback.from_user.id != ADMIN_ID: return
-    routers = await db.fetchall("SELECT id, domain, base_url, api_key FROM routers")
-    txt = await get_text(ADMIN_ID, "all_data_title")
-    for r in routers:
-        rid, dom, burl, key = r
-        r_header = await get_text(ADMIN_ID, "data_router_header")
-        txt += r_header.format(id=rid, domain=dom, base_url=burl, api_key=key)
-        
-        models = await db.fetchall("SELECT id, model_name FROM models WHERE router_id = ?", (rid,))
-        if models:
-            for m in models:
-                emoji = get_model_emoji(m[1], m[0])
-                m_line = await get_text(ADMIN_ID, "data_model_line")
-                txt += m_line.format(name=m[1], emoji=emoji)
-        else:
-            txt += await get_text(ADMIN_ID, "data_no_models")
-            
-    back_txt = await get_text(ADMIN_ID, "btn_back")
-    kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=back_txt, callback_data="admin_database_menu")]])
-    await callback.message.edit_text(txt, reply_markup=kb, parse_mode=ParseMode.MARKDOWN)
-
-@router.callback_query(lambda c: c.data == "admin_clear_cache")
-async def admin_clear_cache(callback: CallbackQuery, state: FSMContext):
-    if callback.from_user.id != ADMIN_ID: return
-    txt = await get_text(ADMIN_ID, "clear_cache_confirm")
-    yes_txt = await get_text(ADMIN_ID, "btn_yes")
-    no_txt = await get_text(ADMIN_ID, "btn_no")
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=yes_txt, callback_data="conf_clear_cache"),
-         InlineKeyboardButton(text=no_txt, callback_data="admin_database_menu")]
-    ])
-    await callback.message.edit_text(txt, reply_markup=kb)
-
-@router.callback_query(lambda c: c.data == "conf_clear_cache")
-async def conf_clear_cache(callback: CallbackQuery):
-    if callback.from_user.id != ADMIN_ID: return
-    await db.execute("DELETE FROM history")
-    txt = await get_text(ADMIN_ID, "clear_cache_done")
-    await callback.answer(txt, show_alert=True)
-    await admin_database_menu(callback)
-
-@router.callback_query(lambda c: c.data == "admin_clear_all")
-async def admin_clear_all(callback: CallbackQuery):
-    if callback.from_user.id != ADMIN_ID: return
-    txt = await get_text(ADMIN_ID, "clear_all_confirm")
-    yes_txt = await get_text(ADMIN_ID, "btn_yes")
-    no_txt = await get_text(ADMIN_ID, "btn_no")
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=yes_txt, callback_data="conf_clear_all"),
-         InlineKeyboardButton(text=no_txt, callback_data="admin_database_menu")]
-    ])
-    await callback.message.edit_text(txt, reply_markup=kb)
-
-@router.callback_query(lambda c: c.data == "conf_clear_all")
-async def conf_clear_all(callback: CallbackQuery):
-    if callback.from_user.id != ADMIN_ID: return
-    await db.execute("DELETE FROM history")
-    await db.execute("DELETE FROM models")
-    await db.execute("DELETE FROM routers")
-    await db.execute("DELETE FROM settings")
-    await db.execute("DELETE FROM users WHERE user_id != ?", (ADMIN_ID,))
-    txt = await get_text(ADMIN_ID, "clear_all_done")
-    await callback.answer(txt, show_alert=True)
-    await admin_database_menu(callback)
-@router.callback_query(lambda c: c.data == "admin_routers")
-async def admin_routers(callback: CallbackQuery, state: FSMContext = None):
-    if state: await state.clear()
+    chat_mode[callback.from_user.id] = False
     user_id = callback.from_user.id
-    if user_id != ADMIN_ID: return
+    progress_msg = None
+    try:
+        progress_msg = await callback.message.answer(
+            (await get_text(user_id, "loading_data")).format(progress=0)
+        )
+        total_steps = 20
+        for i in range(1, total_steps + 1):
+            progress = i * 5
+            if progress > 100:
+                progress = 100
+            try:
+                await progress_msg.edit_text(
+                    (await get_text(user_id, "loading_data")).format(progress=progress)
+                )
+            except Exception:
+                pass
+            await asyncio.sleep(0.05)  # faster
+        data = await db.get_all_data()
+        if not data:
+            await progress_msg.edit_text("⚠️ " + await get_text(user_id, "no_routers"))
+            return
+        text = await get_text(user_id, "all_data_title")
+        for router in data:
+            header = await get_text(user_id, "data_router_header")
+            header = header.format(id=router['id'], domain=router['domain'], base_url=router['base_url'], api_key=router['api_key'])
+            text += header
+            if router['models']:
+                for m_id, m_name in router['models']:
+                    emoji = get_model_emoji(m_name, m_id)
+                    line = await get_text(user_id, "data_model_line")
+                    line = line.format(name=m_name, emoji=emoji)
+                    text += line
+            else:
+                text += await get_text(user_id, "data_no_models")
+            text += "\n"
+        await progress_msg.delete()
+        if len(text) > 4000:
+            file = BufferedInputFile(text.encode('utf-8'), filename="all_data.txt")
+            await callback.message.answer_document(file, caption="📄 " + await get_text(user_id, "data_loaded"))
+        else:
+            btn_back = await get_text(user_id, "btn_back")
+            kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=btn_back, callback_data="admin_database_menu")]])
+            await callback.message.answer(text, parse_mode="Markdown", reply_markup=kb)
+        await callback.answer()
+    except Exception as e:
+        logging.exception(f"Error in admin_view_data for user {user_id}: {e}")
+        if progress_msg:
+            try:
+                await progress_msg.delete()
+            except:
+                pass
+        error_txt = await get_text(user_id, "error_occurred")
+        detail_txt = await get_text(user_id, "error_detail")
+        detail_txt = detail_txt.format(error=str(e)[:200])
+        await callback.message.answer(error_txt)
+        await callback.message.answer(detail_txt)
+        await callback.answer()
+
+# ------------------------------ Router and Model Management ------------------------------
+@router.callback_query(F.data == "admin_routers")
+async def admin_routers_list(callback: CallbackQuery):
+    chat_mode[callback.from_user.id] = False
     routers = await db.fetchall("SELECT id, domain FROM routers")
     if not routers:
-        txt = await get_text(user_id, "no_routers")
-        await callback.answer(txt, show_alert=True)
+        no_routers_text = await get_text(callback.from_user.id, "no_routers")
+        btn_back = await get_text(callback.from_user.id, "btn_back_main")
+        kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=btn_back, callback_data="admin_back")]])
+        await callback.message.edit_text(no_routers_text, reply_markup=kb)
         return
-    builder = InlineKeyboardBuilder()
-    for rid, rdom in routers:
-        builder.button(text=rdom, callback_data=f"router_{rid}")
-    back_text = await get_text(user_id, "btn_back")
-    builder.button(text=back_text, callback_data="admin_back")
-    builder.adjust(1)
-    title = await get_text(user_id, "title_routers")
-    await callback.message.edit_text(title, reply_markup=builder.as_markup())
+    buttons = []
+    for r_id, domain in routers:
+        buttons.append([InlineKeyboardButton(text=domain, callback_data=f"router_{r_id}")])
+    btn_back = await get_text(callback.from_user.id, "btn_back_main")
+    buttons.append([InlineKeyboardButton(text=btn_back, callback_data="admin_back")])
+    title = await get_text(callback.from_user.id, "title_routers")
+    await callback.message.edit_text(title, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
-@router.callback_query(lambda c: c.data.startswith("router_"))
-async def admin_router_details(callback: CallbackQuery, state: FSMContext = None):
-    if state: await state.clear()
-    user_id = callback.from_user.id
-    if user_id != ADMIN_ID: return
-    rid = int(callback.data.split("_")[1])
-    r_row = await db.fetchone("SELECT domain, base_url, api_key FROM routers WHERE id = ?", (rid,))
-    if not r_row: return
-    domain, base_url, api_key = r_row
-    models = await db.fetchall("SELECT id, model_name FROM models WHERE router_id = ?", (rid,))
-    mods_text = ""
-    if models:
-        for m in models:
-            emoji = get_model_emoji(m[1], m[0])
-            mods_text += f"• `{m[1]}` {emoji}\n"
+@router.callback_query(F.data.startswith("router_"))
+async def admin_router_details(callback: CallbackQuery, state: FSMContext):
+    await state.clear()  # Clear any pending state (e.g., add model)
+    chat_mode[callback.from_user.id] = False
+    r_id = callback.data.split("_")[1]
+    r = await db.fetchone("SELECT domain, base_url, api_key FROM routers WHERE id = ?", (r_id,))
+    models = await db.fetchall("SELECT id, model_name FROM models WHERE router_id = ?", (r_id,))
+    if not r:
+        return
+    model_lines = []
+    for m_id, m_name in models:
+        emoji = get_model_emoji(m_name, m_id)
+        model_lines.append(f"`{m_name}`  {emoji}")
+    model_text = "\n".join(model_lines) if model_lines else "(no models)"
+    txt_template = await get_text(callback.from_user.id, "router_details")
+    msg = txt_template.format(r[0], r[1], r[2], model_text)
+    btn_add = await get_text(callback.from_user.id, "btn_add_mod")
+    btn_del_mod = await get_text(callback.from_user.id, "btn_del_mod")
+    btn_del = await get_text(callback.from_user.id, "btn_del_router")
+    btn_back = await get_text(callback.from_user.id, "btn_back")
+    buttons = [
+        [InlineKeyboardButton(text=btn_add, callback_data=f"addmod_{r_id}"),
+         InlineKeyboardButton(text=btn_del_mod, callback_data=f"delmodprompt_{r_id}")],
+        [InlineKeyboardButton(text=btn_del, callback_data=f"askdel_{r_id}")],
+        [InlineKeyboardButton(text=btn_back, callback_data="admin_routers")]
+    ]
+    await callback.message.edit_text(msg, parse_mode="Markdown", reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+
+@router.callback_query(F.data.startswith("delmodprompt_"))
+async def admin_del_model_prompt(callback: CallbackQuery, state: FSMContext):
+    chat_mode[callback.from_user.id] = False
+    r_id = callback.data.split("_")[1]
+    await state.update_data(r_id=r_id)
+    txt = await get_text(callback.from_user.id, "send_del_model")
+    btn_back = await get_text(callback.from_user.id, "btn_back")
+    buttons = [[InlineKeyboardButton(text=btn_back, callback_data=f"router_{r_id}")]]
+    await callback.message.edit_text(txt, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
+    await state.set_state(BotStates.admin_del_model_only)
+
+@router.message(BotStates.admin_del_model_only)
+async def admin_del_model_execute(message: Message, state: FSMContext):
+    chat_mode[message.from_user.id] = False
+    data = await state.get_data()
+    model_name = message.text.strip()
+    res = await db.execute("DELETE FROM models WHERE router_id = ? AND model_name = ?", (data['r_id'], model_name))
+    deleted_count = res['rowcount']
+    await db.execute("UPDATE users SET current_model_id = NULL WHERE current_model_id NOT IN (SELECT id FROM models)")
+    if deleted_count > 0:
+        txt = await get_text(message.from_user.id, "model_deleted")
     else:
-        mods_text = "None\n"
-    txt = await get_text(user_id, "router_details")
-    txt = txt.format(domain, base_url, api_key, mods_text)
-    builder = InlineKeyboardBuilder()
-    builder.button(text=await get_text(user_id, "btn_add_mod"), callback_data=f"addmod_{rid}")
-    builder.button(text=await get_text(user_id, "btn_del_mod"), callback_data=f"delmod_{rid}")
-    builder.button(text=await get_text(user_id, "btn_del_router"), callback_data=f"delrouter_{rid}")
-    builder.button(text=await get_text(user_id, "btn_back"), callback_data="admin_routers")
-    builder.adjust(2, 1, 1)
-    await callback.message.edit_text(txt, reply_markup=builder.as_markup(), parse_mode=ParseMode.MARKDOWN)
+        txt = await get_text(message.from_user.id, "model_not_found")
+    await message.answer(txt)
+    await state.clear()
+    await cmd_admin(message, state)
 
-@router.callback_query(lambda c: c.data.startswith("delrouter_"))
-async def admin_del_router(callback: CallbackQuery):
-    if callback.from_user.id != ADMIN_ID: return
-    rid = int(callback.data.split("_")[1])
-    txt = await get_text(ADMIN_ID, "del_confirm_msg")
-    builder = InlineKeyboardBuilder()
-    builder.button(text=await get_text(ADMIN_ID, "btn_yes"), callback_data=f"confdelrouter_{rid}")
-    builder.button(text=await get_text(ADMIN_ID, "btn_no"), callback_data=f"router_{rid}")
-    builder.adjust(2)
-    await callback.message.edit_text(txt, reply_markup=builder.as_markup())
+@router.callback_query(F.data.startswith("askdel_"))
+async def admin_ask_delete(callback: CallbackQuery):
+    chat_mode[callback.from_user.id] = False
+    r_id = callback.data.split("_")[1]
+    msg = await get_text(callback.from_user.id, "del_confirm_msg")
+    btn_yes = await get_text(callback.from_user.id, "btn_yes")
+    btn_no = await get_text(callback.from_user.id, "btn_no")
+    buttons = [
+        [InlineKeyboardButton(text=btn_yes, callback_data=f"confirmdel_{r_id}")],
+        [InlineKeyboardButton(text=btn_no, callback_data=f"router_{r_id}")]
+    ]
+    await callback.message.edit_text(msg, reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons))
 
-@router.callback_query(lambda c: c.data.startswith("confdelrouter_"))
-async def admin_conf_del_router(callback: CallbackQuery, state: FSMContext = None):
-    if callback.from_user.id != ADMIN_ID: return
-    rid = int(callback.data.split("_")[1])
-    await db.execute("DELETE FROM models WHERE router_id = ?", (rid,))
-    await db.execute("DELETE FROM routers WHERE id = ?", (rid,))
-    await callback.answer(await get_text(ADMIN_ID, "del_success"), show_alert=True)
-    await admin_routers(callback, state)
-@router.callback_query(lambda c: c.data == "admin_add_router")
-async def admin_add_router(callback: CallbackQuery, state: FSMContext):
-    if callback.from_user.id != ADMIN_ID: return
-    txt = await get_text(ADMIN_ID, "send_url")
-    back_txt = await get_text(ADMIN_ID, "btn_back")
-    kb = cancel_admin_keyboard(ADMIN_ID, back_txt)
+@router.callback_query(F.data.startswith("confirmdel_"))
+async def admin_confirm_delete(callback: CallbackQuery):
+    chat_mode[callback.from_user.id] = False
+    r_id = callback.data.split("_")[1]
+    await db.execute("DELETE FROM routers WHERE id = ?", (r_id,))
+    await db.execute("DELETE FROM models WHERE router_id = ?", (r_id,))
+    await db.execute("UPDATE users SET current_model_id = NULL WHERE current_model_id NOT IN (SELECT id FROM models)")
+    msg = await get_text(callback.from_user.id, "del_success")
+    await callback.answer(msg, show_alert=True)
+    await admin_routers_list(callback)
+
+# ===== FIXED: Add Model flow - now edits the same message =====
+@router.callback_query(F.data.startswith("addmod_"))
+async def admin_add_model_only(callback: CallbackQuery, state: FSMContext):
+    chat_mode[callback.from_user.id] = False
+    r_id = callback.data.split("_")[1]
+    # Store router id and the message id we are editing
+    await state.update_data(r_id=r_id, main_message_id=callback.message.message_id)
+    txt = await get_text(callback.from_user.id, "send_model_for_router")
+    btn_back = await get_text(callback.from_user.id, "btn_back")
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=btn_back, callback_data=f"router_{r_id}")]
+    ])
     await callback.message.edit_text(txt, reply_markup=kb)
+    await state.set_state(BotStates.admin_add_model_only)
+    await callback.answer()
+
+@router.message(BotStates.admin_add_model_only)
+async def admin_save_model_only(message: Message, state: FSMContext):
+    chat_mode[message.from_user.id] = False
+    data = await state.get_data()
+    r_id = data['r_id']
+    main_msg_id = data.get('main_message_id')
+    model_name = message.text.strip()
+    await db.execute("INSERT INTO models (router_id, model_name) VALUES (?, ?)", (r_id, model_name))
+    finish_btn = InlineKeyboardButton(
+        text=await get_text(message.from_user.id, "finish"),
+        callback_data=f"addmod_done_{r_id}"
+    )
+    kb = InlineKeyboardMarkup(inline_keyboard=[[finish_btn]])
+    # Edit the main message instead of sending a new one
+    if main_msg_id:
+        try:
+            await bot.edit_message_text(
+                chat_id=message.chat.id,
+                message_id=main_msg_id,
+                text=await get_text(message.from_user.id, "model_added_continue"),
+                reply_markup=kb
+            )
+        except Exception as e:
+            logging.error(f"Failed to edit main message in add_model: {e}")
+            # Fallback: send new message
+            await message.answer(
+                await get_text(message.from_user.id, "model_added_continue"),
+                reply_markup=kb
+            )
+    else:
+        await message.answer(
+            await get_text(message.from_user.id, "model_added_continue"),
+            reply_markup=kb
+        )
+
+@router.callback_query(F.data.startswith("addmod_done_"))
+async def admin_add_model_done(callback: CallbackQuery, state: FSMContext):
+    chat_mode[callback.from_user.id] = False
+    await state.clear()
+    # Edit the main message (the one with Finish button) to show admin panel
+    admin_text = await get_text(callback.from_user.id, "admin_menu")
+    kb = await admin_panel_keyboard(callback.from_user.id)
+    await callback.message.edit_text(admin_text, reply_markup=kb)
+    await callback.answer(await get_text(callback.from_user.id, "add_router_done"), show_alert=True)
+
+@router.callback_query(F.data == "admin_add_router")
+async def add_router_start(callback: CallbackQuery, state: FSMContext):
+    chat_mode[callback.from_user.id] = False
+    txt = await get_text(callback.from_user.id, "send_url")
+    btn_back = await get_text(callback.from_user.id, "btn_back_main")
+    await callback.message.edit_text(txt, reply_markup=cancel_admin_keyboard(callback.from_user.id, btn_back))
     await state.set_state(BotStates.admin_add_router_url)
 
 @router.message(BotStates.admin_add_router_url)
-async def admin_add_router_url_process(message: Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID: return
+async def add_router_url(message: Message, state: FSMContext):
+    chat_mode[message.from_user.id] = False
     url = message.text.strip()
-    if not url.startswith("http"):
-        txt = await get_text(ADMIN_ID, "invalid_url")
-        await message.answer(txt)
-        return
-    parsed = urlparse(url)
-    domain = parsed.netloc
-    await state.update_data(router_url=url, router_domain=domain)
-    
-    txt = await get_text(ADMIN_ID, "url_detected")
-    txt = txt.format(domain)
-    back_txt = await get_text(ADMIN_ID, "btn_back")
-    kb = cancel_admin_keyboard(ADMIN_ID, back_txt)
-    await message.answer(txt, reply_markup=kb)
+    if not url.startswith(("http://", "https://")):
+        err_txt = await get_text(message.from_user.id, "invalid_url")
+        btn_back = await get_text(message.from_user.id, "btn_back_main")
+        return await message.answer(err_txt, reply_markup=cancel_admin_keyboard(message.from_user.id, btn_back))
+    domain = urlparse(url).netloc or url
+    await state.update_data(base_url=url, domain=domain)
+    txt = await get_text(message.from_user.id, "url_detected")
+    btn_back = await get_text(message.from_user.id, "btn_back_main")
+    await message.answer(txt.format(domain), reply_markup=cancel_admin_keyboard(message.from_user.id, btn_back))
     await state.set_state(BotStates.admin_add_router_key)
 
 @router.message(BotStates.admin_add_router_key)
-async def admin_add_router_key_process(message: Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID: return
-    key = message.text.strip()
-    await state.update_data(router_key=key)
-    txt = await get_text(ADMIN_ID, "send_model")
-    back_txt = await get_text(ADMIN_ID, "btn_back")
-    kb = cancel_admin_keyboard(ADMIN_ID, back_txt)
-    await message.answer(txt, reply_markup=kb)
+async def add_router_key(message: Message, state: FSMContext):
+    chat_mode[message.from_user.id] = False
+    await state.update_data(api_key=message.text.strip())
+    txt = await get_text(message.from_user.id, "send_model")
+    btn_back = await get_text(message.from_user.id, "btn_back_main")
+    await message.answer(txt, reply_markup=cancel_admin_keyboard(message.from_user.id, btn_back))
     await state.set_state(BotStates.admin_add_router_model)
 
 @router.message(BotStates.admin_add_router_model)
-async def admin_add_router_model_process(message: Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID: return
-    model_name = message.text.strip()
+async def add_router_model_finish(message: Message, state: FSMContext):
+    chat_mode[message.from_user.id] = False
     data = await state.get_data()
-    url = data.get("router_url")
-    domain = data.get("router_domain")
-    key = data.get("router_key")
-    
-    # Check if router exists or create it
-    rid = data.get("router_id")
-    if not rid:
-        await db.execute("INSERT INTO routers (domain, base_url, api_key) VALUES (?, ?, ?)", (domain, url, key))
-        # Get the new router id
-        r_row = await db.fetchone("SELECT id FROM routers WHERE domain = ? AND base_url = ? AND api_key = ? ORDER BY id DESC LIMIT 1", (domain, url, key))
-        if r_row:
-            rid = r_row[0]
-            await state.update_data(router_id=rid)
-    
-    if rid:
-        await db.execute("INSERT INTO models (router_id, model_name) VALUES (?, ?)", (rid, model_name))
-        
-    txt = await get_text(ADMIN_ID, "router_added_continue")
-    finish_txt = await get_text(ADMIN_ID, "finish")
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=finish_txt, callback_data="admin_add_router_finish")]
-    ])
-    # The fix: Send a NEW message instead of editing, keeping the state active for unlimited adds
-    await message.answer(txt, reply_markup=kb)
+    model_name = message.text.strip()
+    if 'router_saved' not in data or not data.get('router_saved'):
+        res = await db.execute("INSERT INTO routers (domain, base_url, api_key) VALUES (?, ?, ?)",
+                               (data['domain'], data['base_url'], data['api_key']))
+        r_id = res['lastrowid']
+        await state.update_data(router_id=r_id, router_saved=True)
+    else:
+        r_id = data['router_id']
+    await db.execute("INSERT INTO models (router_id, model_name) VALUES (?, ?)", (r_id, model_name))
+    finish_btn = InlineKeyboardButton(text=await get_text(message.from_user.id, "finish"), callback_data="add_router_done")
+    kb = InlineKeyboardMarkup(inline_keyboard=[[finish_btn]])
+    await message.answer(await get_text(message.from_user.id, "router_added_continue"), reply_markup=kb)
 
-@router.callback_query(lambda c: c.data == "admin_add_router_finish")
-async def admin_add_router_finish(callback: CallbackQuery, state: FSMContext):
-    if callback.from_user.id != ADMIN_ID: return
+@router.callback_query(F.data == "add_router_done")
+async def add_router_done(callback: CallbackQuery, state: FSMContext):
+    chat_mode[callback.from_user.id] = False
     await state.clear()
-    txt = await get_text(ADMIN_ID, "add_router_done")
-    await callback.answer(txt, show_alert=True)
-    await admin_routers(callback)
+    # Edit the current message to show admin panel
+    admin_text = await get_text(callback.from_user.id, "admin_menu")
+    kb = await admin_panel_keyboard(callback.from_user.id)
+    await callback.message.edit_text(admin_text, reply_markup=kb)
+    await callback.answer()
 
-async def send_to_openai(messages, base_url, api_key, model_name):
-    # Prepare payload for standard OpenAI completion endpoint
-    payload = {
-        "model": model_name,
-        "messages": messages,
-        "stream": True
-    }
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    }
-    
-    url = base_url
-    if not url.endswith("/"):
-        url += "/"
-    if not url.endswith("chat/completions"):
-        url += "chat/completions"
-        
-    async with aiohttp.ClientSession() as session:
-        async with session.post(url, json=payload, headers=headers) as response:
-            if response.status != 200:
-                text = await response.text()
-                yield f"Error: HTTP {response.status}\n{text}"
-                return
-            
-            async for line in response.content:
-                line = line.decode('utf-8').strip()
-                if line.startswith("data: "):
-                    data_str = line[6:]
-                    if data_str == "[DONE]":
-                        break
-                    try:
-                        data = json.loads(data_str)
-                        if "choices" in data and len(data["choices"]) > 0:
-                            delta = data["choices"][0].get("delta", {})
-                            if "content" in delta:
-                                yield delta["content"]
-                    except:
-                        pass
-
-@router.message(F.text)
-async def handle_message(message: Message, state: FSMContext):
+# ------------------------------ Contact Admin Handlers ------------------------------
+@router.message(Command("man"))
+@router.message(Command("contactadmin"))
+async def cmd_contact_admin(message: Message, state: FSMContext):
     user_id = message.from_user.id
+    await state.clear()
+    chat_mode[user_id] = False
+    await state.set_state(BotStates.contact_admin)
+    intro = await get_text(user_id, "contact_intro")
+    await message.answer(intro)
+
+@router.callback_query(F.data == "contact_admin")
+async def contact_admin_callback(callback: CallbackQuery, state: FSMContext):
+    user_id = callback.from_user.id
+    await state.clear()
+    chat_mode[user_id] = False
+    await state.set_state(BotStates.contact_admin)
+    intro = await get_text(user_id, "contact_intro")
+    await callback.message.answer(intro)
+    await callback.answer()
+
+# ------------------------------ Main chat handler (FIXED - no reset on /start, invalid model check) ------------------------------
+@router.message()
+async def process_user_chat(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+
+    # ===== 1. Check if user is in contact_admin state =====
     current_state = await state.get_state()
-    if current_state:
-        # Avoid processing when in other states
+    if current_state == BotStates.contact_admin:
+        text = message.text or message.caption or "[non-text message]"
+        forward_text = await get_text(ADMIN_ID, "contact_forward")
+        forward_text = forward_text.format(name=message.from_user.full_name, user_id=user_id, text=text)
+        await bot.send_message(ADMIN_ID, forward_text)
+        end_msg = await get_text(user_id, "contact_end_auto")
+        await message.answer(end_msg)
+        await state.clear()
+        await show_user_panel(message, user_id)
         return
 
-    # Normal chat processing
-    auth_ok, reason = await is_user_authorized_for_chat(user_id)
-    if not auth_ok:
-        if isinstance(reason, tuple):
-            limit, _ = reason
-            txt = await get_text(user_id, "limit_blocked")
-            txt = txt.format(limit=limit)
-            await message.answer(txt)
+    # ===== 2. Handle admin replies =====
+    if message.from_user.id == ADMIN_ID and message.reply_to_message:
+        replied = message.reply_to_message
+        if replied.text and ("User ID:" in replied.text or "شناسه:" in replied.text or "ID:" in replied.text):
+            text = replied.text
+            match = re.search(r'(?:User ID|شناسه|ID):\s*(\d+)', text)
+            if match:
+                target_user_id = int(match.group(1))
+                reply_text = await get_text(target_user_id, "contact_admin_reply")
+                reply_text = reply_text.format(text=message.text)
+                await bot.send_message(target_user_id, reply_text)
+                confirm_text = await get_text(ADMIN_ID, "admin_reply_sent")
+                await message.reply(confirm_text)
+                return
+
+    # ===== 3. Check authorization (LIMIT) =====
+    allowed, limit_data = await is_user_authorized_for_chat(user_id)
+    if not allowed:
+        # User is not authorized (limit reached)
+        limit, msg_count = limit_data
+        pwd_row = await db.fetchone("SELECT value FROM settings WHERE key = 'global_password'")
+        global_pwd = pwd_row[0] if pwd_row else None
+        # Check if this message is the password
+        if global_pwd and message.text and message.text.strip() == global_pwd:
+            # Correct password
+            await db.execute("UPDATE users SET is_auth = 1, msg_count = 0 WHERE user_id = ?", (user_id,))
+            await message.answer(await get_text(user_id, "pwd_ok"))
+            # If user has a selected model, keep chat_mode. Otherwise, show model panel.
+            if not chat_mode.get(user_id, False):
+                await show_user_panel(message, user_id)
+            return
         else:
-            txt = await get_text(user_id, "locked")
-            await message.answer(txt)
-        await state.set_state(BotStates.waiting_for_password)
+            # Not a password
+            # If the user typed something (not a command) and they have already seen the initial limit message
+            if message.text and not message.text.startswith('/') and msg_count > limit:
+                await message.answer(await get_text(user_id, "pwd_err"))
+                # Show the block message with contact button
+                block_msg = await get_text(user_id, "limit_blocked")
+                block_msg = block_msg.format(limit=limit)
+                contact_btn = InlineKeyboardButton(
+                    text=await get_text(user_id, "contact_button"),
+                    callback_data="contact_admin"
+                )
+                kb = InlineKeyboardMarkup(inline_keyboard=[[contact_btn]])
+                await message.answer(block_msg, reply_markup=kb)
+            else:
+                # Show the initial block message
+                block_msg = await get_text(user_id, "limit_blocked")
+                block_msg = block_msg.format(limit=limit)
+                contact_btn = InlineKeyboardButton(
+                    text=await get_text(user_id, "contact_button"),
+                    callback_data="contact_admin"
+                )
+                kb = InlineKeyboardMarkup(inline_keyboard=[[contact_btn]])
+                await message.answer(block_msg, reply_markup=kb)
+            return
+
+    # ===== 4. If we reach here, user is authorized =====
+    # Now check if user has selected a model (chat_mode)
+    if not chat_mode.get(user_id, False):
+        # Not in chat mode: show unknown command and show panel (NO forward to admin)
+        unknown_txt = await get_text(user_id, "unknown_command")
+        await message.answer(unknown_txt)
+        await show_user_panel(message, user_id)
         return
 
+    # ===== 5. Channel join check =====
     joined, channels = await check_channel_join(user_id)
     if not joined:
         txt = await get_text(user_id, "must_join")
@@ -1817,107 +2142,104 @@ async def handle_message(message: Message, state: FSMContext):
         kb_buttons.append([InlineKeyboardButton(text=await get_text(user_id, "btn_check_join"), callback_data="check_join_channel")])
         kb = InlineKeyboardMarkup(inline_keyboard=kb_buttons)
         await message.answer(txt, reply_markup=kb)
+        chat_mode[user_id] = False
         return
 
-    if not chat_mode.get(user_id, False):
-        await show_user_panel(message, user_id)
-        return
-
-    row = await db.fetchone("SELECT current_model_id FROM users WHERE user_id = ?", (user_id,))
-    if not row or not row[0]:
-        await show_user_panel(message, user_id)
-        return
-        
-    m_id = row[0]
-    m_row = await db.fetchone("""
+    # ===== 6. Check if user has selected a valid model =====
+    active_model = await db.fetchone("""
         SELECT m.model_name, r.base_url, r.api_key
-        FROM models m
+        FROM users u
+        JOIN models m ON u.current_model_id = m.id
         JOIN routers r ON m.router_id = r.id
-        WHERE m.id = ?
-    """, (m_id,))
-    
-    if not m_row:
-        err = await get_text(user_id, "invalid_model")
-        await message.answer(err)
+        WHERE u.user_id = ? AND r.api_key IS NOT NULL AND r.api_key != ''
+    """, (user_id,))
+
+    if not active_model:
+        # Invalid model or no router
+        chat_mode[user_id] = False
+        invalid_txt = await get_text(user_id, "invalid_model")
+        await message.answer(invalid_txt)
+        await show_user_panel(message, user_id)
         return
-        
-    model_name, base_url, api_key = m_row
-    
-    # Fetch history
-    history = await db.fetchall("SELECT role, content FROM history WHERE user_id = ? ORDER BY id ASC LIMIT 50", (user_id,))
-    messages = [{"role": role, "content": content} for role, content in history]
-    messages.append({"role": "user", "content": message.text})
-    
-    await db.execute("INSERT INTO history (user_id, role, content) VALUES (?, 'user', ?)", (user_id, message.text))
-    
-    temp_msg = await message.answer("⏳ ...")
-    
-    full_response = ""
-    last_edit_time = time.time()
-    
-    try:
-        async for chunk in send_to_openai(messages, base_url, api_key, model_name):
-            full_response += chunk
-            current_time = time.time()
-            if current_time - last_edit_time > 1.5 and full_response.strip():
-                try:
-                    await temp_msg.edit_text(full_response + " ⏳")
-                    last_edit_time = current_time
-                except TelegramRetryAfter as e:
-                    await asyncio.sleep(e.retry_after)
-                except Exception:
-                    pass
-        
-        if full_response.strip():
-            try:
-                await temp_msg.edit_text(full_response, parse_mode=ParseMode.MARKDOWN)
-            except:
-                await temp_msg.edit_text(full_response)
-            
-            await db.execute("INSERT INTO history (user_id, role, content) VALUES (?, 'assistant', ?)", (user_id, full_response))
-        else:
-            await temp_msg.edit_text("❌ No response from the model.")
-            
-    except Exception as e:
-        await temp_msg.edit_text(f"❌ Error: {str(e)}")
 
-@router.message(BotStates.waiting_for_password)
-async def process_password(message: Message, state: FSMContext):
-    user_id = message.from_user.id
-    pwd_row = await db.fetchone("SELECT value FROM settings WHERE key = 'global_password'")
-    global_pwd = pwd_row[0] if pwd_row else None
-    
-    if global_pwd and message.text.strip() == global_pwd:
-        await db.execute("UPDATE users SET is_auth = 1 WHERE user_id = ?", (user_id,))
-        await state.clear()
-        txt = await get_text(user_id, "pwd_ok")
-        await message.answer(txt)
+    # ===== 7. Proceed with chat =====
+    m_name, url_base, key = active_model
+    url = url_base.strip().rstrip('/')
+    if not url.endswith("/chat/completions"):
+        url += "/chat/completions"
+
+    content_text = message.text or message.caption or ""
+    image_base64 = None
+
+    if message.document:
+        try:
+            file_info = await bot.get_file(message.document.file_id)
+            downloaded = await bot.download_file(file_info.file_path)
+            file_bytes = downloaded.read()
+            try:
+                file_str = file_bytes.decode('utf-8')
+                content_text += f"\n\n--- File Content of {message.document.file_name} ---\n{file_str}"
+            except UnicodeDecodeError:
+                content_text += f"\n\n[Received a binary document file: {message.document.file_name}]"
+        except Exception as e:
+            content_text += f"\n\n[Failed to read file: {e}]"
+    elif message.photo:
+        try:
+            file_info = await bot.get_file(message.photo[-1].file_id)
+            downloaded = await bot.download_file(file_info.file_path)
+            image_base64 = base64.b64encode(downloaded.read()).decode('utf-8')
+        except Exception as e:
+            content_text += f"\n\n[Failed to process image: {e}]"
+    elif message.video or message.audio or message.voice:
+        content_text += f"\n\n[Received a media file]"
+
+    if not content_text and not image_base64:
+        content_text = "."
+
+    rows = await db.fetchall("SELECT role, content FROM history WHERE user_id = ? ORDER BY id DESC LIMIT 10", (user_id,))
+    messages = [{"role": r[0], "content": r[1]} for r in reversed(rows)]
+
+    if image_base64:
+        messages.append({
+            "role": "user",
+            "content": [
+                {"type": "text", "text": content_text or "Please analyze this image"},
+                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_base64}"}}
+            ]
+        })
     else:
-        txt = await get_text(user_id, "pwd_prompt_wrong")
-        await message.answer(txt)
+        messages.append({"role": "user", "content": content_text})
 
-@router.message()
-async def process_unknown(message: Message, state: FSMContext):
-    user_id = message.from_user.id
-    if user_id != ADMIN_ID:
-        if message.text and message.text.startswith("/"):
-            err = await get_text(user_id, "unknown_command")
-            await message.answer(err)
-            fwd = await get_text(ADMIN_ID, "forward_to_admin")
-            fwd = fwd.format(username=message.from_user.username or message.from_user.first_name, user_id=user_id, text=message.text)
-            try:
-                await bot.send_message(ADMIN_ID, fwd)
-            except:
-                pass
+    db_content = content_text[:1000] + (" [Image Attached]" if image_base64 else "")
+    await db.execute("INSERT INTO history (user_id, role, content) VALUES (?, ?, ?)", (user_id, "user", db_content))
 
+    headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
+    payload = {"model": m_name, "messages": messages}
+
+    async with ChatActionSender.typing(bot=bot, chat_id=message.chat.id):
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(url, headers=headers, json=payload, timeout=120) as resp:
+                    resp_data = await resp.json(content_type=None)
+                    if resp.status == 200 and 'choices' in resp_data:
+                        reply_text = resp_data['choices'][0]['message']['content']
+                    else:
+                        reply_text = f"❌ Error API: {resp_data.get('error', {}).get('message', 'Unknown')}"
+        except Exception as e:
+            reply_text = f"❌ Server connection failed. Detail: {e}"
+
+    if len(reply_text) > 4000:
+        text_file = BufferedInputFile(reply_text.encode('utf-8'), filename="response.txt")
+        await message.answer_document(text_file, caption="📄 The response was too long, so it's sent as a file.")
+    else:
+        await message.answer(reply_text)
+
+    await db.execute("INSERT INTO history (user_id, role, content) VALUES (?, ?, ?)", (user_id, "assistant", reply_text[:2000] if len(reply_text) > 2000 else reply_text))
+
+# ------------------------------ Main runner ------------------------------
 async def main():
     await init_db()
-    await bot.delete_webhook(drop_pending_updates=True)
-    print("Bot is starting...")
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except (KeyboardInterrupt, SystemExit):
-        print("Bot stopped.")
+    asyncio.run(main())
