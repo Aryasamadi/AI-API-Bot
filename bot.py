@@ -1126,16 +1126,19 @@ LANGS = {
     }
 }
 
+async def check_column_exists(table: str, column: str) -> bool:
+    rows = await db.fetchall(f"PRAGMA table_info({table})")
+    for row in rows:
+        if row[1] == column:
+            return True
+    return False
+
 async def init_db():
     await db.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY, lang TEXT, is_auth INTEGER DEFAULT 0, current_model_id INTEGER, msg_count INTEGER DEFAULT 0)")
-    try:
+    if not await check_column_exists("users", "current_model_id"):
         await db.execute("ALTER TABLE users ADD COLUMN current_model_id INTEGER")
-    except:
-        pass
-    try:
+    if not await check_column_exists("users", "msg_count"):
         await db.execute("ALTER TABLE users ADD COLUMN msg_count INTEGER DEFAULT 0")
-    except:
-        pass
     await db.execute("CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT)")
     await db.execute("CREATE TABLE IF NOT EXISTS routers (id INTEGER PRIMARY KEY AUTOINCREMENT, domain TEXT, base_url TEXT, api_key TEXT)")
     await db.execute("CREATE TABLE IF NOT EXISTS models (id INTEGER PRIMARY KEY AUTOINCREMENT, router_id INTEGER, model_name TEXT)")
@@ -1909,7 +1912,6 @@ async def process_unknown(message: Message, state: FSMContext):
 
 async def main():
     await init_db()
-    dp.include_router(router)
     await bot.delete_webhook(drop_pending_updates=True)
     print("Bot is starting...")
     await dp.start_polling(bot)
