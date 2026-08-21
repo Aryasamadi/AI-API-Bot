@@ -34,6 +34,7 @@ dp = Dispatcher()
 router = Router()
 dp.include_router(router)
 DB_PATH = "bot_advanced.db"
+shared_http_session: aiohttp.ClientSession = None
 
 class DatabaseManager:
     def __init__(self):
@@ -63,6 +64,37 @@ class DatabaseManager:
             self._local_conn = await aiosqlite.connect(self.db_path)
         return self._local_conn
 
+    async def _safe_local_execute(self, action, query, params):
+        for attempt in range(3):
+            try:
+                conn = await self.get_conn()
+                if action == "execute":
+                    cursor = await conn.execute(query, params)
+                    await conn.commit()
+                    return {"lastrowid": cursor.lastrowid, "rowcount": cursor.rowcount}
+                elif action == "fetchall":
+                    async with conn.execute(query, params) as cursor:
+                        return await cursor.fetchall()
+                elif action == "fetchone":
+                    async with conn.execute(query, params) as cursor:
+                        return await cursor.fetchone()
+            except Exception as e:
+                logging.warning(f"SQLite error (attempt {attempt+1}/3): {e}")
+                if self._local_conn:
+                    try:
+                        await self._local_conn.close()
+                    except:
+                        pass
+                    self._local_conn = None
+                if attempt == 2:
+                    logging.error(f"SQLite fatal error on {action}: {query} | {e}")
+                    if action == "execute":
+                        return {"lastrowid": None, "rowcount": 0}
+                    elif action == "fetchall":
+                        return []
+                    elif action == "fetchone":
+                        return None
+
     async def _cloud_request(self, query, params=()):
         if self.provider == "cloudflare":
             url = f"https://api.cloudflare.com/client/v4/accounts/{CLOUDFLARE_ACCOUNT_ID}/d1/database/{CLOUDFLARE_D1_DATABASE_ID}/query"
@@ -85,22 +117,21 @@ class DatabaseManager:
         else:
             raise Exception("Unsupported DB_PROVIDER")
         try:
-            async with aiohttp.ClientSession() as session:
-                async with session.post(url, headers=headers, json=payload, timeout=10) as resp:
-                    data = await resp.json()
-                    if self.provider == "cloudflare":
-                        if data.get("success"):
-                            return data["result"][0] if data["result"] else None
-                        else:
-                            logging.error(f"Cloudflare error: {data.get('errors')}")
-                            return None
+            async with shared_http_session.post(url, headers=headers, json=payload, timeout=10) as resp:
+                data = await resp.json()
+                if self.provider == "cloudflare":
+                    if data.get("success"):
+                        return data["result"][0] if data["result"] else None
                     else:
-                        if "results" in data:
-                            return data
-                        elif "data" in data:
-                            return data
-                        else:
-                            return data
+                        logging.error(f"Cloudflare error: {data.get('errors')}")
+                        return None
+                else:
+                    if "results" in data:
+                        return data
+                    elif "data" in data:
+                        return data
+                    else:
+                        return data
         except Exception as e:
             logging.error(f"Cloud request failed: {e}")
             return None
@@ -112,10 +143,7 @@ class DatabaseManager:
                 return {"lastrowid": res["meta"].get("last_row_id"), "rowcount": res["meta"].get("changes", 0)}
             return {"lastrowid": None, "rowcount": 0}
         else:
-            conn = await self.get_conn()
-            cursor = await conn.execute(query, params)
-            await conn.commit()
-            return {"lastrowid": cursor.lastrowid, "rowcount": cursor.rowcount}
+            return await self._safe_local_execute("execute", query, params)
 
     async def fetchall(self, query, params=()):
         if self.use_cloud:
@@ -124,9 +152,7 @@ class DatabaseManager:
                 return [tuple(row.values()) for row in res["results"]]
             return []
         else:
-            conn = await self.get_conn()
-            async with conn.execute(query, params) as cursor:
-                return await cursor.fetchall()
+            return await self._safe_local_execute("fetchall", query, params)
 
     async def fetchone(self, query, params=()):
         if self.use_cloud:
@@ -135,9 +161,7 @@ class DatabaseManager:
                 return tuple(res["results"][0].values())
             return None
         else:
-            conn = await self.get_conn()
-            async with conn.execute(query, params) as cursor:
-                return await cursor.fetchone()
+            return await self._safe_local_execute("fetchone", query, params)
 
     async def fetchval(self, query, params=()):
         row = await self.fetchone(query, params)
@@ -525,7 +549,310 @@ LANGS = {
         "admin_reply_sent": "✅ Ответ отправлен пользователю.",
         "pwd_prompt_wrong": "⛔ Введите правильный пароль:",
         "invalid_model": "❌ Эта модель больше недоступна. Пожалуйста, выберите другую."
-    }
+    },
+    "de": {
+        "name": "🇩🇪 Deutsch",
+        "welcome_new": "Bitte wählen Sie Ihre Sprache:",
+        "welcome_back": "Willkommen zurück, {name}!",
+        "welcome_first": "👋 Willkommen! Verwenden Sie /help, um verfügbare Befehle zu sehen.",
+        "locked": "⛔ Unbefugt. Bitte geben Sie das Passwort ein:",
+        "pwd_ok": "✅ Passwort akzeptiert! Weiterchatten...",
+        "pwd_err": "⛔ Bitte geben Sie das richtige Passwort ein:",
+        "pwd_none": "🔓 Passwortanforderung entfernt. Bot ist öffentlich.",
+        "pwd_set": "✅ Neues Passwort gesetzt: `{}`",
+        "admin_only": "❌ Nur für Administratoren.",
+        "type_here": "Schreiben Sie Ihre Nachricht...",
+        "select_model": "Wählen Sie ein KI-Modell, um einen NEUEN Chat zu starten:",
+        "no_models_admin": "⚠️ Keine Modelle verfügbar.",
+        "no_models_user": "⚠️ Keine Modelle verfügbar.",
+        "chat_started": "✅ Verbunden mit {}.\nSenden Sie Ihre Nachricht:",
+        "invalid_url": "❌ Ungültiges URL-Format. Bitte senden Sie eine gültige Basis-URL (http/https):",
+        "admin_menu": "⚙️ Erweitertes Admin-Panel – verwenden Sie das Menü unten:",
+        "title_routers": "🗂 Liste aller verfügbaren API-Router:",
+        "title_settings": "⚙️ Bot-Einstellungen & Datenbankverwaltung:",
+        "btn_routers": "🗂 API-Liste",
+        "btn_add_router": "➕ Router Hinzufügen",
+        "btn_settings": "⚙️ Einstellungen",
+        "btn_database": "🗄️ Datenbank",
+        "btn_stats": "📊 Statistiken & Status",
+        "btn_set_pwd": "🔐 Passwort Setzen",
+        "btn_set_channel": "📢 Kanal Erzwingen",
+        "btn_broadcast": "📢 Rundsendung",
+        "btn_back": "🔙 Zurück",
+        "btn_back_main": "🏠 Hauptmenü",
+        "send_pwd_prompt": "Neues Passwort senden (oder 'none' für öffentlich):",
+        "send_limit_prompt": "Geben Sie nun die Anzahl der erlaubten Nachrichten für unbefugte Benutzer ein (z. B. 5):",
+        "send_broadcast": "Senden Sie Ihre Rundsendungsnachricht:",
+        "broadcast_done": "✅ An {} Benutzer gesendet.",
+        "send_url": "Senden Sie die Basis-URL (z. B. https://api.openai.com/v1):",
+        "url_detected": "Domain: {}\nSenden Sie nun den API-Schlüssel (Token):",
+        "send_model": "API-Schlüssel gespeichert.\nSenden Sie nun den genauen Modellnamen:",
+        "send_model_for_router": "Senden Sie den genauen Modellnamen, um ihn diesem Router hinzuzufügen:",
+        "router_added": "✅ Router und Modell erfolgreich hinzugefügt!",
+        "router_details": "📌 **Router:** {}\n\n🌐 Basis-URL: `{}`\n\n🔑 Token: `{}`\n\n📦 **Modelle (zum Kopieren antippen):**\n{}",
+        "btn_add_mod": "➕ Modell Hinzufügen",
+        "btn_del_mod": "🗑 Modell Löschen",
+        "btn_del_router": "🗑 Router Löschen",
+        "del_confirm_msg": "⚠️ Sind Sie sicher, dass Sie diesen Router und seine Modelle löschen möchten?",
+        "btn_yes": "✅ Ja",
+        "btn_no": "❌ Nein",
+        "del_success": "✅ Gelöscht.",
+        "pls_select_model": "Bitte wählen Sie ein gültiges Modell aus der Liste aus.",
+        "invalid_command": "❌ Bitte verwenden Sie gültige logische Befehle.",
+        "send_channel_prompt": "Kanal-Benutzernamen senden (z. B. @AI_Channel) oder 'none' (für mehrere mit Komma trennen):",
+        "channel_set": "✅ Kanal (Kanäle) zum Beitreten festgelegt auf: `{}`",
+        "channel_none": "🔓 Kanalbeitritt erzwingen deaktiviert.",
+        "must_join": "⛔ Sie müssen unserem/n Kanal/Kanälen beitreten, um den Bot zu nutzen:\n{channels}",
+        "btn_join_channel": "🔗 Kanal Beitreten",
+        "btn_check_join": "🔄 Mitgliedschaft Prüfen",
+        "join_ok": "✅ Mitgliedschaft bestätigt! Sie können den Bot jetzt nutzen.",
+        "join_fail": "❌ Sie sind noch nicht allen erforderlichen Kanälen beigetreten!",
+        "send_del_model": "Senden Sie den genauen Namen des Modells, das Sie löschen möchten:",
+        "model_deleted": "✅ Modell erfolgreich gelöscht.",
+        "model_not_found": "❌ Modell nicht gefunden.",
+        "btn_user_mode": "👤 Benutzermodus",
+        "btn_clear_cache": "🧹 Cache Leeren (nur Verlauf)",
+        "btn_clear_all": "🗑️ Komplette Datenbank Löschen",
+        "clear_cache_confirm": "🧹 Dies löscht den gesamten Chatverlauf (Nachrichten) aller Benutzer.\n❓ Sind Sie sicher?",
+        "clear_cache_done": "✅ Chatverlauf gelöscht.",
+        "clear_all_confirm": "🗑️ Dies löscht ALLE Daten:\n- Benutzer\n- Einstellungen\n- Router\n- Modelle\n- Chatverlauf\n\n❓ Sind Sie sicher?",
+        "clear_all_done": "✅ Alle Daten wurden gelöscht.",
+        "clear_cancelled": "❌ Vorgang abgebrochen.",
+        "btn_admin_panel": "⚙️ Admin-Panel",
+        "no_cloud_db": "⚠️ Keine externe Cloud-Datenbank konfiguriert. Lokales SQLite wird verwendet.",
+        "no_routers": "⚠️ Es wurden noch keine API-Router hinzugefügt.",
+        "help_user": "📖 Verfügbare Befehle\n\n🚀 /start • start ➜ Start\n🌐 /lang • lang ➜ Sprache\n🤖 /model • model ➜ Chat leeren & neues Modell wählen\n📞 /man • man ➜ Admin kontaktieren\n❓ /help • help ➜ Hilfe\n\n✨ Wählen und starten 🚀",
+        "help_admin": "🌐 /lang • lang ➜ Sprache\n👤 /user • user ➜ Benutzermodus\n🤖 /model • model ➜ Cache & Modelle leeren\n📞 /man • man ➜ Admin kontaktieren\n❓ /help • help ➜ Hilfe\n✨ Wählen und starten 🚀",
+        "stats_text": "📊 **Bot-Statistiken**\n\n👤 Benutzer: `{users}`\n📢 Pflichtkanal: `{channel}`\n🤖 Modelle: `{models}`\n🗂️ Router: `{routers}`\n🔑 Tokens: `{tokens}`\n🔐 Passwort: `{pwd_status}`",
+        "btn_view_data": "📋 Alle Daten Anzeigen",
+        "all_data_title": "📋 **Alle Router, Modelle und Tokens**\n\n",
+        "data_router_header": "\n📍 **Router #{id}** – `{domain}`\n🌐 Basis-URL: `{base_url}`\n🔑 Token: `{api_key}`\n📦 Modelle:\n",
+        "data_model_line": "   • `{name}`  {emoji}\n",
+        "data_no_models": "   (keine Modelle)\n",
+        "unknown_command": "❌ Unbekannter Befehl",
+        "blocked_unauthorized": "⛔ Sie haben Ihre {limit} kostenlosen Anfragen verbraucht. Bitte geben Sie das Passwort ein:",
+        "forward_to_admin": "Unbekannter Befehl von @{username} (ID: {user_id}): {text}",
+        "model_added_continue": "✅ Modell hinzugefügt. Geben Sie den nächsten Modellnamen ein oder drücken Sie 'Fertig'.",
+        "finish": "✅ Fertig",
+        "router_added_continue": "✅ Modell hinzugefügt. Geben Sie den nächsten Modellnamen ein oder drücken Sie 'Fertig'.",
+        "add_router_done": "✅ Router und Modelle erfolgreich registriert.",
+        "loading_data": "⏳ Daten werden geladen... {progress}%",
+        "data_loaded": "✅ Daten erfolgreich geladen.",
+        "error_occurred": "❌ Beim Laden der Daten ist ein Fehler aufgetreten. Bitte versuchen Sie es später noch einmal.",
+        "error_detail": "❌ Fehlerdetails: {error}",
+        "limit_blocked": "⛔ Sie haben Ihre {limit} kostenlosen Anfragen verbraucht. Bitte geben Sie das Passwort ein:",
+        "contact_intro": "Bitte schreiben Sie Ihr Anliegen als vollständige Nachricht an den Administrator:",
+        "contact_confirm": "✅ Ihre Nachricht wurde gesendet. Wir werden so schnell wie möglich antworten. Um erneut Kontakt aufzunehmen, senden Sie /man.",
+        "contact_end_auto": "✅ Gesendet. Wir werden so schnell wie möglich antworten.\nUm erneut Kontakt aufzunehmen, senden Sie /man.",
+        "contact_forward": "Nachricht von Benutzer {name} (ID: {user_id}):\n{text}",
+        "contact_button": "📞 Admin Kontaktieren",
+        "contact_admin_reply": "📩 Antwort vom Admin:\n{text}",
+        "admin_reply_sent": "✅ Antwort an Benutzer gesendet.",
+        "pwd_prompt_wrong": "⛔ Bitte geben Sie das richtige Passwort ein:",
+        "invalid_model": "❌ Dieses Modell ist nicht mehr verfügbar. Bitte wählen Sie ein anderes."
+},
+    "ar": {
+        "name": "🇸🇦 العربية",
+        "welcome_new": "يرجى اختيار لغتك:",
+        "welcome_back": "مرحباً بعودتك، {name}!",
+        "welcome_first": "👋 مرحباً! استخدم /help لرؤية الأوامر المتاحة.",
+        "locked": "⛔ غير مصرح لك. الرجاء إدخال كلمة المرور:",
+        "pwd_ok": "✅ تم قبول كلمة المرور! تابع الدردشة...",
+        "pwd_err": "⛔ الرجاء إدخال كلمة المرور الصحيحة:",
+        "pwd_none": "🔓 تمت إزالة طلب كلمة المرور. البوت أصبح متاحاً للعامة.",
+        "pwd_set": "✅ تم تعيين كلمة مرور جديدة: `{}`",
+        "admin_only": "❌ للمشرفين فقط.",
+        "type_here": "اكتب رسالتك...",
+        "select_model": "اختر نموذج ذكاء اصطناعي لبدء دردشة جديدة:",
+        "no_models_admin": "⚠️ لا توجد نماذج متاحة.",
+        "no_models_user": "⚠️ لا توجد نماذج متاحة.",
+        "chat_started": "✅ متصل بـ {}.\nأرسل رسالتك:",
+        "invalid_url": "❌ صيغة الرابط غير صحيحة. يرجى إرسال رابط صحيح (http/https):",
+        "admin_menu": "⚙️ لوحة تحكم المشرف المتقدمة – استخدم القائمة أدناه:",
+        "title_routers": "🗂 قائمة بجميع موجهات API المتاحة:",
+        "title_settings": "⚙️ إعدادات البوت وإدارة قاعدة البيانات :",
+        "btn_routers": "🗂 قائمة API",
+        "btn_add_router": "➕ إضافة موجه",
+        "btn_settings": "⚙️ الإعدادات",
+        "btn_database": "🗄️ قاعدة البيانات",
+        "btn_stats": "📊 الإحصائيات والحالة",
+        "btn_set_pwd": "🔐 تعيين كلمة المرور",
+        "btn_set_channel": "📢 فرض الانضمام",
+        "btn_broadcast": "📢 إذاعة",
+        "btn_back": "🔙 رجوع",
+        "btn_back_main": "🏠 القائمة الرئيسية",
+        "send_pwd_prompt": "أرسل كلمة المرور الجديدة (أو 'none' لجعل البوت عاماً):",
+        "send_limit_prompt": "الآن أدخل عدد الرسائل المسموح بها للمستخدمين غير المصرح لهم (مثال: 5):",
+        "send_broadcast": "أرسل رسالة الإذاعة:",
+        "broadcast_done": "✅ تم الإرسال إلى {} مستخدم.",
+        "send_url": "أرسل الرابط الأساسي Base URL (مثال: https://api.openai.com/v1):",
+        "url_detected": "النطاق: {}\nالآن أرسل مفتاح API (التوكن):",
+        "send_model": "تم حفظ مفتاح API.\nالآن أرسل اسم النموذج بالضبط:",
+        "send_model_for_router": "أرسل اسم النموذج بالضبط لإضافته إلى هذا الموجه:",
+        "router_added": "✅ تم إضافة الموجه والنموذج بنجاح!",
+        "router_details": "📌 **الموجه:** {}\n\n🌐 الرابط: `{}`\n\n🔑 التوكن: `{}`\n\n📦 **النماذج (انقر للنسخ):**\n{}",
+        "btn_add_mod": "➕ إضافة نموذج",
+        "btn_del_mod": "🗑 حذف نموذج",
+        "btn_del_router": "🗑 حذف الموجه",
+        "del_confirm_msg": "⚠️ هل أنت متأكد أنك تريد حذف هذا الموجه ونماذجه؟",
+        "btn_yes": "✅ نعم",
+        "btn_no": "❌ لا",
+        "del_success": "✅ تم الحذف.",
+        "pls_select_model": "يرجى اختيار نموذج صالح من القائمة.",
+        "invalid_command": "❌ يرجى استخدام أوامر منطقية صالحة.",
+        "send_channel_prompt": "أرسل معرف القناة (مثال: @AI_Channel) أو 'none' (لعدة قنوات، افصل بينها بفاصلة):",
+        "channel_set": "✅ تم تعيين القناة/القنوات المطلوبة إلى: `{}`",
+        "channel_none": "🔓 تم تعطيل فرض الانضمام للقناة.",
+        "must_join": "⛔ يجب عليك الانضمام إلى قناتنا/قنواتنا لاستخدام البوت:\n{channels}",
+        "btn_join_channel": "🔗 الانضمام للقناة",
+        "btn_check_join": "🔄 التحقق من العضوية",
+        "join_ok": "✅ تم التحقق من العضوية! يمكنك الآن استخدام البوت.",
+        "join_fail": "❌ لم تنضم إلى جميع القنوات المطلوبة بعد!",
+        "send_del_model": "أرسل الاسم الدقيق للنموذج الذي تريد حذفه:",
+        "model_deleted": "✅ تم حذف النموذج بنجاح.",
+        "model_not_found": "❌ لم يتم العثور على النموذج.",
+        "btn_user_mode": "👤 وضع المستخدم",
+        "btn_clear_cache": "🧹 مسح ذاكرة التخزين (السجل فقط)",
+        "btn_clear_all": "🗑️ مسح قاعدة البيانات بالكامل",
+        "clear_cache_confirm": "🧹 سيؤدي هذا إلى حذف سجل الدردشة (الرسائل) لجميع المستخدمين.\n❓ هل أنت متأكد؟",
+        "clear_cache_done": "✅ تم مسح سجل الدردشة.",
+        "clear_all_confirm": "🗑️ سيؤدي هذا إلى حذف كافة البيانات:\n- المستخدمون\n- الإعدادات\n- الموجهات\n- النماذج\n- سجل الدردشة\n\n❓ هل أنت متأكد؟",
+        "clear_all_done": "✅ تم مسح كافة البيانات.",
+        "clear_cancelled": "❌ تم إلغاء العملية.",
+        "btn_admin_panel": "⚙️ لوحة المشرف",
+        "no_cloud_db": "⚠️ لم يتم تكوين قاعدة بيانات سحابية خارجية. يتم استخدام SQLite المحلي.",
+        "no_routers": "⚠️ لم يتم إضافة موجهات API بعد.",
+        "help_user": "📖 الأوامر المتاحة\n\n🚀 /start • start ➜ البداية\n🌐 /lang • lang ➜ اللغة\n🤖 /model • model ➜ مسح الدردشة واختيار نموذج\n📞 /man • man ➜ الاتصال بالمشرف\n❓ /help • help ➜ مساعدة\n\n✨ اختر وابدأ 🚀",
+        "help_admin": "🌐 /lang • lang ➜ اللغة\n👤 /user • user ➜ وضع المستخدم\n🤖 /model • model ➜ مسح السجل والنماذج\n📞 /man • man ➜ الاتصال بالمشرف\n❓ /help • help ➜ مساعدة\n✨ اختر وابدأ 🚀",
+        "stats_text": "📊 **إحصائيات البوت**\n\n👤 المستخدمون: `{users}`\n📢 القناة المفروضة: `{channel}`\n🤖 النماذج: `{models}`\n🗂️ الموجهات: `{routers}`\n🔑 التوكنز: `{tokens}`\n🔐 كلمة المرور: `{pwd_status}`",
+        "btn_view_data": "📋 عرض كافة البيانات",
+        "all_data_title": "📋 **كافة الموجهات، النماذج، والتوكنز**\n\n",
+        "data_router_header": "\n📍 **الموجه #{id}** – `{domain}`\n🌐 الرابط: `{base_url}`\n🔑 التوكن: `{api_key}`\n📦 النماذج:\n",
+        "data_model_line": "   • `{name}`  {emoji}\n",
+        "data_no_models": "   (لا توجد نماذج)\n",
+        "unknown_command": "❌ أمر غير معروف",
+        "blocked_unauthorized": "⛔ لقد استنفدت طلباتك المجانية الـ {limit}. يرجى إدخال كلمة المرور:",
+        "forward_to_admin": "أمر غير معروف من @{username} (الآي دي: {user_id}): {text}",
+        "model_added_continue": "✅ تم إضافة النموذج. أدخل اسم النموذج التالي، أو اضغط على 'إنهاء'.",
+        "finish": "✅ إنهاء",
+        "router_added_continue": "✅ تم إضافة النموذج. أدخل اسم النموذج التالي، أو اضغط على 'إنهاء'.",
+        "add_router_done": "✅ تم تسجيل الموجه والنماذج بنجاح.",
+        "loading_data": "⏳ جاري تحميل البيانات... {progress}%",
+        "data_loaded": "✅ تم تحميل البيانات بنجاح.",
+        "error_occurred": "❌ حدث خطأ أثناء تحميل البيانات. يرجى المحاولة مرة أخرى لاحقاً.",
+        "error_detail": "❌ تفاصيل الخطأ: {error}",
+        "limit_blocked": "⛔ لقد استنفدت طلباتك المجانية الـ {limit}. يرجى إدخال كلمة المرور:",
+        "contact_intro": "يرجى كتابة طلبك كرسالة كاملة ليتم إرسالها إلى المشرف:",
+        "contact_confirm": "✅ تم إرسال رسالتك. سنرد في أقرب وقت ممكن. للمراسلة مرة أخرى، أرسل /man.",
+        "contact_end_auto": "✅ تم الإرسال. سنرد في أقرب وقت ممكن.\nللمراسلة مرة أخرى، أرسل /man.",
+        "contact_forward": "رسالة من المستخدم {name} (الآي دي: {user_id}):\n{text}",
+        "contact_button": "📞 الاتصال بالمشرف",
+        "contact_admin_reply": "📩 رد من المشرف:\n{text}",
+        "admin_reply_sent": "✅ تم إرسال الرد إلى المستخدم.",
+        "pwd_prompt_wrong": "⛔ الرجاء إدخال كلمة المرور الصحيحة:",
+        "invalid_model": "❌ هذا النموذج لم يعد متاحاً. يرجى اختيار نموذج آخر."
+},
+    "zh": {
+        "name": "🇨🇳 中文",
+        "welcome_new": "请选择您的语言：",
+        "welcome_back": "欢迎回来，{name}！",
+        "welcome_first": "👋 欢迎！使用 /help 查看可用命令。",
+        "locked": "⛔ 未经授权。请输入密码：",
+        "pwd_ok": "✅ 密码验证通过！继续聊天...",
+        "pwd_err": "⛔ 请输入正确的密码：",
+        "pwd_none": "🔓 密码要求已移除。机器人现已公开。",
+        "pwd_set": "✅ 新密码已设置：`{}`",
+        "admin_only": "❌ 仅限管理员。",
+        "type_here": "输入您的消息...",
+        "select_model": "选择一个AI模型以开始新聊天：",
+        "no_models_admin": "⚠️ 没有可用的模型。",
+        "no_models_user": "⚠️ 没有可用的模型。",
+        "chat_started": "✅ 已连接到 {}。\n发送您的消息：",
+        "invalid_url": "❌ URL格式无效。请发送有效的 Base URL (http/https)：",
+        "admin_menu": "⚙️ 高级管理面板 – 请使用以下菜单：",
+        "title_routers": "🗂 所有可用的 API 路由列表：",
+        "title_settings": "⚙️ 机器人设置与数据库管理：",
+        "btn_routers": "🗂 API 列表",
+        "btn_add_router": "➕ 添加路由",
+        "btn_settings": "⚙️ 设置",
+        "btn_database": "🗄️ 数据库",
+        "btn_stats": "📊 统计与状态",
+        "btn_set_pwd": "🔐 设置密码",
+        "btn_set_channel": "📢 强制加入频道",
+        "btn_broadcast": "📢 广播",
+        "btn_back": "🔙 返回",
+        "btn_back_main": "🏠 主菜单",
+        "send_pwd_prompt": "发送新密码（或发送 'none' 以公开）：",
+        "send_limit_prompt": "现在输入允许未授权用户发送的消息数量（例如，5）：",
+        "send_broadcast": "发送您的广播消息：",
+        "broadcast_done": "✅ 已发送给 {} 位用户。",
+        "send_url": "发送 Base URL (例如，https://api.openai.com/v1)：",
+        "url_detected": "域名：{}\n现在发送 API Key (Token)：",
+        "send_model": "API Key 已保存。\n现在发送准确的模型名称：",
+        "send_model_for_router": "发送准确的模型名称以添加到此路由：",
+        "router_added": "✅ 路由和模型已成功添加！",
+        "router_details": "📌 **路由：** {}\n\n🌐 Base URL：`{}`\n\n🔑 Token：`{}`\n\n📦 **模型（点击复制）：**\n{}",
+        "btn_add_mod": "➕ 添加模型",
+        "btn_del_mod": "🗑 删除模型",
+        "btn_del_router": "🗑 删除路由",
+        "del_confirm_msg": "⚠️ 您确定要删除此路由及其模型吗？",
+        "btn_yes": "✅ 是",
+        "btn_no": "❌ 否",
+        "del_success": "✅ 已删除。",
+        "pls_select_model": "请从列表中选择一个有效的模型。",
+        "invalid_command": "❌ 请使用有效的逻辑命令。",
+        "send_channel_prompt": "发送频道用户名（例如，@AI_Channel）或 'none'（多个频道请用逗号分隔）：",
+        "channel_set": "✅ 强制加入的频道已设置为：`{}`",
+        "channel_none": "🔓 已禁用强制加入频道。",
+        "must_join": "⛔ 您必须加入我们的频道才能使用该机器人：\n{channels}",
+        "btn_join_channel": "🔗 加入频道",
+        "btn_check_join": "🔄 检查会员资格",
+        "join_ok": "✅ 会员资格已验证！您现在可以使用该机器人了。",
+        "join_fail": "❌ 您尚未加入所有必需的频道！",
+        "send_del_model": "发送您想要删除的模型的准确名称：",
+        "model_deleted": "✅ 模型删除成功。",
+        "model_not_found": "❌ 未找到模型。",
+        "btn_user_mode": "👤 用户模式",
+        "btn_clear_cache": "🧹 清除缓存 (仅限历史记录)",
+        "btn_clear_all": "🗑️ 完整数据库擦除",
+        "clear_cache_confirm": "🧹 这将删除所有用户的聊天记录。\n❓ 您确定吗？",
+        "clear_cache_done": "✅ 聊天记录已清除。",
+        "clear_all_confirm": "🗑️ 这将删除所有数据：\n- 用户\n- 设置\n- 路由\n- 模型\n- 聊天记录\n\n❓ 您确定吗？",
+        "clear_all_done": "✅ 所有数据已被擦除。",
+        "clear_cancelled": "❌ 操作已取消。",
+        "btn_admin_panel": "⚙️ 管理面板",
+        "no_cloud_db": "⚠️ 未配置外部云数据库。使用本地 SQLite。",
+        "no_routers": "⚠️ 尚未添加任何 API 路由。",
+        "help_user": "📖 可用命令\n\n🚀 /start • start ➜ 开始\n🌐 /lang • lang ➜ 语言\n🤖 /model • model ➜ 清除聊天并选择新模型\n📞 /man • man ➜ 联系管理员\n❓ /help • help ➜ 帮助\n\n✨ 选择并开始 🚀",
+        "help_admin": "🌐 /lang • lang ➜ 语言\n👤 /user • user ➜ 用户模式\n🤖 /model • model ➜ 清除缓存与模型\n📞 /man • man ➜ 联系管理员\n❓ /help • help ➜ 帮助\n✨ 选择并开始 🚀",
+        "stats_text": "📊 **机器人统计信息**\n\n👤 用户：`{users}`\n📢 强制加入频道：`{channel}`\n🤖 模型：`{models}`\n🗂️ 路由：`{routers}`\n🔑 Tokens：`{tokens}`\n🔐 密码：`{pwd_status}`",
+        "btn_view_data": "📋 查看所有数据",
+        "all_data_title": "📋 **所有路由、模型和 Tokens**\n\n",
+        "data_router_header": "\n📍 **路由 #{id}** – `{domain}`\n🌐 Base URL：`{base_url}`\n🔑 Token：`{api_key}`\n📦 模型：\n",
+        "data_model_line": "   • `{name}`  {emoji}\n",
+        "data_no_models": "   (无模型)\n",
+        "unknown_command": "❌ 未知命令",
+        "blocked_unauthorized": "⛔ 您已用完 {limit} 次免费请求。请输入密码：",
+        "forward_to_admin": "来自 @{username} (ID: {user_id}) 的未知命令：{text}",
+        "model_added_continue": "✅ 模型已添加。输入下一个模型名称，或按“完成”按钮。",
+        "finish": "✅ 完成",
+        "router_added_continue": "✅ 模型已添加。输入下一个模型名称，或按“完成”按钮。",
+        "add_router_done": "✅ 路由和模型已成功注册。",
+        "loading_data": "⏳ 正在加载数据... {progress}%",
+        "data_loaded": "✅ 数据加载成功。",
+        "error_occurred": "❌ 加载数据时发生错误。请稍后再试。",
+        "error_detail": "❌ 错误详情：{error}",
+        "limit_blocked": "⛔ 您已用完 {limit} 次免费请求。请输入密码：",
+        "contact_intro": "请将您的请求作为完整消息写给管理员：",
+        "contact_confirm": "✅ 您的消息已发送。我们将尽快回复。若需再次联系，请发送 /man。",
+        "contact_end_auto": "✅ 已发送。我们将尽快回复。\n若需再次联系，请发送 /man。",
+        "contact_forward": "来自用户 {name} (ID: {user_id}) 的消息：\n{text}",
+        "contact_button": "📞 联系管理员",
+        "contact_admin_reply": "📩 来自管理员的回复：\n{text}",
+        "admin_reply_sent": "✅ 已回复给用户。",
+        "pwd_prompt_wrong": "⛔ 请输入正确的密码：",
+        "invalid_model": "❌ 此模型已不再可用。请选择其他模型。"
+}
 }
 async def init_db():
     await db.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY, lang TEXT, is_auth INTEGER DEFAULT 0, current_model_id INTEGER, msg_count INTEGER DEFAULT 0)")
@@ -1525,13 +1852,12 @@ async def process_user_chat(message: Message, state: FSMContext):
 
     async with ChatActionSender.typing(bot=bot, chat_id=message.chat.id):
         try:
-            async with aiohttp.ClientSession() as session:
-                async with session.post(url, headers=headers, json=payload, timeout=120) as resp:
-                    resp_data = await resp.json(content_type=None)
-                    if resp.status == 200 and 'choices' in resp_data:
-                        reply_text = resp_data['choices'][0]['message']['content']
-                    else:
-                        reply_text = f"❌ Error API: {resp_data.get('error', {}).get('message', 'Unknown')}"
+            async with shared_http_session.post(url, headers=headers, json=payload, timeout=120) as resp:
+                resp_data = await resp.json(content_type=None)
+                if resp.status == 200 and 'choices' in resp_data:
+                    reply_text = resp_data['choices'][0]['message']['content']
+                else:
+                    reply_text = f"❌ Error API: {resp_data.get('error', {}).get('message', 'Unknown')}"
         except Exception as e:
             reply_text = f"❌ Server connection failed. Detail: {e}"
 
@@ -1544,8 +1870,13 @@ async def process_user_chat(message: Message, state: FSMContext):
     await db.execute("INSERT INTO history (user_id, role, content) VALUES (?, ?, ?)", (user_id, "assistant", reply_text[:2000] if len(reply_text) > 2000 else reply_text))
 
 async def main():
-    await init_db()
-    await dp.start_polling(bot)
+    global shared_http_session
+    shared_http_session = aiohttp.ClientSession()
+    try:
+        await init_db()
+        await dp.start_polling(bot)
+    finally:
+        await shared_http_session.close()
 
 if __name__ == "__main__":
     asyncio.run(main())
