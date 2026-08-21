@@ -944,11 +944,17 @@ class BotStates(StatesGroup):
 
 def lang_keyboard():
     builder = InlineKeyboardBuilder()
-    ordered_langs = ["en", "fa", "ar", "ru", "de", "zh"]
-    for k in ordered_langs:
-        if k in LANGS:
-            builder.button(text=LANGS[k]["name"], callback_data=f"setlang_{k}")
-    builder.adjust(1)
+    order = [
+        ("en", "🇬🇧 English"),
+        ("fa", "🇮🇷 فارسی"),
+        ("ar", "🇸🇦 العربية"),
+        ("ru", "🇷🇺 Русский"),
+        ("de", "🇩🇪 Deutsch"),
+        ("zh", "🇨🇳 中文")
+    ]
+    for k, name in order:
+        builder.button(text=name, callback_data=f"setlang_{k}")
+    builder.adjust(2)
     return builder.as_markup()
 
 async def admin_panel_keyboard(user_id):
